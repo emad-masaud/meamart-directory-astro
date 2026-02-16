@@ -28,10 +28,13 @@ export function useTranslations(request?: Request, fallbackLocale = "en") {
  * Gets the locale from the request path or cookies
  */
 export function getLocaleFromRequest(request: Request): string {
-  // First check custom header (set by middleware when rewriting)
-  const headerLocale = request.headers.get("x-locale");
-  if (headerLocale && isSupportedLocale(headerLocale)) {
-    return headerLocale;
+  const allowHeaders = import.meta.env.DEV;
+  if (allowHeaders) {
+    // First check custom header (set by middleware when rewriting)
+    const headerLocale = request.headers.get("x-locale");
+    if (headerLocale && isSupportedLocale(headerLocale)) {
+      return headerLocale;
+    }
   }
   
   const url = new URL(request.url);
@@ -40,14 +43,16 @@ export function getLocaleFromRequest(request: Request): string {
     return pathLocale;
   }
 
-  // Try to get from cookie
-  const cookie = request.headers.get("cookie");
-  if (cookie) {
-    const match = cookie.match(/locale=([^;]+)/);
-    if (match) {
-      const cookieLocale = match[1];
-      if (isSupportedLocale(cookieLocale)) {
-        return cookieLocale;
+  if (allowHeaders) {
+    // Try to get from cookie
+    const cookie = request.headers.get("cookie");
+    if (cookie) {
+      const match = cookie.match(/locale=([^;]+)/);
+      if (match) {
+        const cookieLocale = match[1];
+        if (isSupportedLocale(cookieLocale)) {
+          return cookieLocale;
+        }
       }
     }
   }
