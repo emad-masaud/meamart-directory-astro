@@ -76,7 +76,7 @@ href = "https://us.posthog.com/shared/vHlGCcSqPjGH4r_QijaXSETtmN9J-g"
 target = "_blank"
 
 [header.actionButton]
-text = "i18n.header.actionButtonText"
+text = "أضف تطبيق"
 href = "/signup"
 
 [footer]
