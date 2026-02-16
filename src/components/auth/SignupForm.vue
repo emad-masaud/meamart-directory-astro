@@ -2,23 +2,28 @@
   <form @submit.prevent="handleSignup" class="space-y-4">
     <!-- Username -->
     <div>
-      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+      <label for="signup-username" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
         {{ ui.usernameLabel }}
       </label>
       <div class="mt-1 flex items-center gap-2">
         <span class="text-gray-600 dark:text-gray-400">@</span>
         <input
+          id="signup-username"
+          name="username"
           v-model="form.username"
           type="text"
           :placeholder="ui.usernamePlaceholder"
           required
-          pattern="[a-z0-9_-]+"
+          pattern="[a-z0-9_\-]+"
           :title="ui.usernameInvalid"
           class="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
         />
       </div>
       <p v-if="usernameError" class="mt-1 text-xs text-red-600 dark:text-red-400">
         {{ usernameError }}
+      </p>
+      <p v-else-if="usernameWarning" class="mt-1 text-xs text-amber-600 dark:text-amber-400">
+        {{ usernameWarning }}
       </p>
       <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
         {{ formatString(ui.usernameHelp, form.username || "—") }}
@@ -27,10 +32,12 @@
 
     <!-- Display Name -->
     <div>
-      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+      <label for="signup-display-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
         {{ ui.displayNameLabel }}
       </label>
       <input
+        id="signup-display-name"
+        name="displayName"
         v-model="form.displayName"
         type="text"
         :placeholder="ui.displayNamePlaceholder"
@@ -41,10 +48,12 @@
 
     <!-- Email -->
     <div>
-      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+      <label for="signup-email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
         {{ ui.emailLabel }}
       </label>
       <input
+        id="signup-email"
+        name="email"
         v-model="form.email"
         type="email"
         :placeholder="ui.emailPlaceholder"
@@ -59,10 +68,12 @@
     <!-- Country -->
     <div class="grid grid-cols-2 gap-4">
       <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+        <label for="signup-country" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
           {{ ui.countryLabel }}
         </label>
         <select
+          id="signup-country"
+          name="country"
           v-model="form.country"
           required
           class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
@@ -76,10 +87,12 @@
 
       <!-- City -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+        <label for="signup-city" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
           {{ ui.cityLabel }}
         </label>
         <input
+          id="signup-city"
+          name="city"
           v-model="form.city"
           type="text"
           :placeholder="ui.cityPlaceholder"
@@ -90,13 +103,15 @@
 
     <!-- WhatsApp Number -->
     <div>
-      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+      <label for="signup-whatsapp" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
         {{ ui.whatsappLabel }}
       </label>
       <div class="mt-1 grid grid-cols-[140px_1fr] gap-2">
         <div>
-          <label class="sr-only">{{ ui.whatsappCodeLabel }}</label>
+          <label for="signup-whatsapp-code" class="sr-only">{{ ui.whatsappCodeLabel }}</label>
           <select
+            id="signup-whatsapp-code"
+            name="whatsappCountryCode"
             v-model="form.whatsappCountryCode"
             required
             class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
@@ -107,8 +122,10 @@
           </select>
         </div>
         <div>
-          <label class="sr-only">{{ ui.whatsappLabel }}</label>
+          <label for="signup-whatsapp" class="sr-only">{{ ui.whatsappLabel }}</label>
           <input
+            id="signup-whatsapp"
+            name="whatsappLocalNumber"
             v-model="form.whatsappLocalNumber"
             type="tel"
             :placeholder="ui.whatsappPlaceholder"
@@ -126,10 +143,12 @@
 
     <!-- Bio -->
     <div>
-      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+      <label for="signup-bio" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
         {{ ui.bioLabel }}
       </label>
       <textarea
+        id="signup-bio"
+        name="bio"
         v-model="form.bio"
         :placeholder="ui.bioPlaceholder"
         rows="3"
@@ -140,9 +159,10 @@
     <!-- Terms Agreement -->
     <div class="flex items-start gap-2">
       <input
+        id="terms"
+        name="agreeToTerms"
         v-model="form.agreeToTerms"
         type="checkbox"
-        id="terms"
         required
         class="mt-1 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
       />
@@ -226,6 +246,7 @@ const isLoading = ref(false);
 const error = ref("");
 const success = ref(false);
 const usernameError = ref("");
+const usernameWarning = ref("");
 
 const translations = ref(getClientTranslations());
 const t = computed(() => translations.value.t);
@@ -266,6 +287,7 @@ const countryOptions = computed(() => {
 const validateUsername = async (username: string) => {
   if (!username) {
     usernameError.value = "";
+    usernameWarning.value = "";
     return;
   }
 
@@ -277,12 +299,14 @@ const validateUsername = async (username: string) => {
   // Check format
   if (!/^[a-z0-9_-]+$/.test(username)) {
     usernameError.value = ui.value.usernameInvalid;
+    usernameWarning.value = "";
     return;
   }
 
   // Check length
   if (username.length < 3 || username.length > 20) {
     usernameError.value = ui.value.usernameLength;
+    usernameWarning.value = "";
     return;
   }
 
@@ -290,19 +314,23 @@ const validateUsername = async (username: string) => {
   try {
     const response = await fetch(`/api/auth/check-username?username=${encodeURIComponent(username)}`);
     if (!response.ok) {
-      usernameError.value = ui.value.usernameCheckFailed;
+      usernameError.value = "";
+      usernameWarning.value = ui.value.usernameCheckFailed;
       return;
     }
     const data = await response.json();
 
     if (data.available === false) {
       usernameError.value = ui.value.usernameTaken;
+      usernameWarning.value = "";
     } else if (data.available === true) {
       usernameError.value = "";
+      usernameWarning.value = "";
     }
   } catch (err) {
     console.error("Error checking username:", err);
-    usernameError.value = ui.value.usernameCheckFailed;
+    usernameError.value = "";
+    usernameWarning.value = ui.value.usernameCheckFailed;
   }
 };
 

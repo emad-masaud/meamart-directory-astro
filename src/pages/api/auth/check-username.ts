@@ -1,10 +1,14 @@
 import { getCollection } from "astro:content";
 
-export async function GET({ url }: { url: URL }) {
-  const username = url.searchParams.get("username");
+export async function GET({ request }: { request: Request }) {
+  const url = new URL(request.url);
+  const username = url.searchParams.get("username")?.trim().toLowerCase();
 
   if (!username) {
-    return new Response(JSON.stringify({ error: "Username required" }), { status: 400 });
+    return new Response(
+      JSON.stringify({ available: false, error: "Username required" }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
   }
 
   try {
@@ -22,8 +26,9 @@ export async function GET({ url }: { url: URL }) {
       }
     );
   } catch (error) {
-    return new Response(JSON.stringify({ error: "Failed to check username" }), {
-      status: 500,
-    });
+    return new Response(
+      JSON.stringify({ available: false, error: "Failed to check username" }),
+      { status: 500 }
+    );
   }
 }
