@@ -1,8 +1,10 @@
 import { z, defineCollection } from "astro:content";
 import { glob } from 'astro/loaders';
 import { createDirectoryCollection } from "@lib/loaders";
+import { createUsersCollection } from "@lib/loaders/users";
 
 const directory = createDirectoryCollection();
+const users = createUsersCollection();
 
 const pages = defineCollection({
   loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: "./src/data/pages" }),
@@ -24,6 +26,7 @@ const blog = defineCollection({
 
 export const collections = {
   directory,
+  users,
   pages,
   blog,
 };

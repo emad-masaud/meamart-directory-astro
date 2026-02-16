@@ -1,0 +1,41 @@
+{
+  "username": "demo",
+  "displayName": "متجر العرض التوضيحي",
+  "email": "demo@meamart.com",
+  "country": "SA",
+  "city": "Riyadh",
+  "phoneNumber": "966501234567",
+  "whatsappNumber": "966501234567",
+  "bio": "متجر عرض توضيحي لخدمة MeaChat. هنا يمكنك رؤية كيفية عمل منصة الإعلانات المتكاملة مع WhatsApp Business.",
+  "website": "https://meamart.com",
+  "avatar": "../images/demo-store.png",
+  
+  "googleSheet": {
+    "enabled": false,
+    "sheetId": "",
+    "sheetName": "Products",
+    "syncInterval": 3600
+  },
+  
+  "googleMerchant": {
+    "enabled": false,
+    "merchantId": "",
+    "currency": "SAR",
+    "autoSync": false
+  },
+  
+  "meachat": {
+    "enabled": true,
+    "businessAccountId": "demo-account",
+    "catalogId": "demo-catalog",
+    "apiToken": ""
+  },
+
+  "social": {
+    "instagram": "https://instagram.com/meamart",
+    "twitter": "https://twitter.com/meamart",
+    "facebook": "https://facebook.com/meamart"
+  },
+
+  "featured": true
+}
