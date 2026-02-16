@@ -3,10 +3,8 @@ import { getCollection } from "astro:content";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import AppShell from "@components/app/AppShell.astro";
 import { Icon } from "astro-icon/components";
-import { useTranslations } from "@util/useTranslations";
 
 const { username } = Astro.params;
-const { t } = useTranslations(Astro.request);
 
 // Get the user from collection
 const users = await getCollection("users");
@@ -372,7 +370,7 @@ export async function getStaticPaths() {
 <script>
   document.querySelectorAll(".tab-button").forEach((button) => {
     button.addEventListener("click", () => {
-      const tabName = button.dataset.tab;
+      const tabName = (button as HTMLElement).dataset?.tab;
 
       // Hide all tabs
       document.querySelectorAll(".tab-content").forEach((tab) => {
@@ -386,7 +384,9 @@ export async function getStaticPaths() {
       });
 
       // Show selected tab
-      document.getElementById(tabName)?.classList.remove("hidden");
+      if (tabName) {
+        document.getElementById(tabName)?.classList.remove("hidden");
+      }
 
       // Add active state to button
       button.classList.remove("border-transparent");

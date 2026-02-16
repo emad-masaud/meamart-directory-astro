@@ -2,9 +2,8 @@ import { getEntry, type CollectionEntry } from 'astro:content';
 import fs from 'fs';
 import path from 'path';
 import { ImageResponse } from '@vercel/og';
-import { getBlogPages, getRootPages } from '@lib/getRootPages';
+import { getBlogPages } from '@lib/getRootPages';
 import config from '@util/themeConfig';
-import type { AllContent } from '../../../types/content';
 
 const boldFontPath = 'node_modules/@fontsource/gabarito/files/gabarito-latin-700-normal.woff' as const;
 const regularFontPath = 'node_modules/@fontsource/gabarito/files/gabarito-latin-400-normal.woff' as const;

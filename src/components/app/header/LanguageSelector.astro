@@ -1,5 +1,4 @@
 ---
-import { Icon } from "astro-icon/components";
 import { getLocaleFromRequest } from "@util/useTranslations";
 
 const currentLocale = getLocaleFromRequest(Astro.request);
@@ -46,8 +45,8 @@ const currentLocale = getLocaleFromRequest(Astro.request);
   function setupLanguageToggle() {
     const button = document.getElementById("language-toggle");
     
-    if (button && !button.__languageSetup) {
-      button.__languageSetup = true;
+    if (button && !(button as any).__languageSetup) {
+      (button as any).__languageSetup = true;
       button.addEventListener("click", () => {
         const currentLocale = getCurrentLocale();
         const nextLocale = currentLocale === "en" ? "ar" : "en";

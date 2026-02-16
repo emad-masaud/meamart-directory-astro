@@ -7,7 +7,7 @@ interface Props {
   currentPath: string;
 }
 
-const { currentLocale, currentPath } = Astro.props;
+const { currentPath } = Astro.props;
 const locales: SupportedLocale[] = ["en", "ar"];
 
 /**
@@ -40,7 +40,7 @@ function buildAlternateUrl(locale: SupportedLocale, path: string): string {
   locales.map((locale) => (
     <link
       rel="alternate"
-      hrefLang={locale}
+      hreflang={locale}
       href={`https://bestmeditationapps.com${buildAlternateUrl(locale, currentPath)}`}
     />
   ))
@@ -48,6 +48,6 @@ function buildAlternateUrl(locale: SupportedLocale, path: string): string {
 <!-- x-default points to English version -->
 <link
   rel="alternate"
-  hrefLang="x-default"
+  hreflang="x-default"
   href={`https://bestmeditationapps.com${buildAlternateUrl("en", currentPath)}`}
 />

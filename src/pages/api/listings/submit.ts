@@ -15,8 +15,7 @@ function withOptionalCredentials(payload: Record<string, unknown>) {
 }
 
 export const POST: APIRoute = async ({ request }) => {
-  const submitConfig = config.directoryData.submit;
-  const apiConfig = submitConfig?.api;
+  const submitConfig = config.directoryUI?.grid?.submit;
 
   let payload: Record<string, unknown> = {};
   try {
@@ -28,6 +27,8 @@ export const POST: APIRoute = async ({ request }) => {
     );
   }
 
+  // If webhook integration is not configured, just return success
+  const apiConfig = submitConfig && (submitConfig as any).api;
   if (!apiConfig?.enabled || !apiConfig.endpoint) {
     return new Response(
       JSON.stringify({ ok: true, skipped: true }),

@@ -32,7 +32,7 @@ export async function POST({
     }
 
     // Handle the webhook
-    const { vendorNotification, orderDetails } = handleOrderWebhook(payload);
+    const { vendorNotification } = handleOrderWebhook(payload);
 
     // Log webhook (store in file for now, use database in production)
     const webhookLog = {

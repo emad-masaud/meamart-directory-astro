@@ -1,12 +1,9 @@
 import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
 import { readGoogleSheet } from "@lib/google-sheets";
-import {
-  googleSheetListingSchema,
-  transformGoogleSheetRow,
-} from "@validation/google-sheet-listing";
+import { transformGoogleSheetRow } from "@validation/google-sheet-listing";
 
-export const GET: APIRoute = async ({ params, request }) => {
+export const GET: APIRoute = async ({ params }) => {
   const { username } = params;
 
   if (!username) {

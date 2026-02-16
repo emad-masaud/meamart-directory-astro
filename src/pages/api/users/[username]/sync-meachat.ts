@@ -1,10 +1,9 @@
-import { getCollection, getEntry } from "astro:content";
+import { getCollection } from "astro:content";
 import { readGoogleSheet } from "@lib/google-sheets";
 import { transformGoogleSheetRow } from "@validation/google-sheet-listing";
 import {
   syncListingsToCatalog,
   testConnection,
-  transformListingToMeaChatProduct,
 } from "@lib/meachat";
 
 /**
@@ -17,10 +16,8 @@ import {
  * - Valid API token is configured
  */
 export async function POST({
-  request,
   params,
 }: {
-  request: Request;
   params: Record<string, string>;
 }): Promise<Response> {
   const { username } = params;
@@ -54,7 +51,7 @@ export async function POST({
     }
 
     // Check if MeaChat is configured
-    if (!userData.meachat?.enabled || !userData.meachat?.apiToken) {
+    if (!userData.meachat?.enabled || !userData.meachat?.apiToken || !userData.meachat?.businessAccountId || !userData.meachat?.catalogId) {
       return new Response(
         JSON.stringify({
           ok: false,
@@ -65,9 +62,13 @@ export async function POST({
     }
 
     // Test MeaChat connection
+    const businessAccountId = userData.meachat.businessAccountId as string;
+    const apiToken = userData.meachat.apiToken;
+    const catalogId = userData.meachat.catalogId as string;
+    
     const connectionTest = await testConnection({
-      businessAccountId: userData.meachat.businessAccountId,
-      apiToken: userData.meachat.apiToken,
+      businessAccountId,
+      apiToken,
     });
 
     if (!connectionTest.success) {
@@ -83,26 +84,13 @@ export async function POST({
     // Fetch listings from Google Sheet
     let listings: any[] = [];
     try {
-      const csv = await readGoogleSheet(
+      const rows = await readGoogleSheet(
         userData.googleSheet.sheetId,
         userData.googleSheet.sheetName || "Sheet1"
       );
 
-      // Parse CSV and transform rows
-      const lines = csv.split("\n").filter((l) => l.trim());
-      const headers = lines[0].split(",").map((h) => h.trim().toLowerCase());
-
-      listings = lines.slice(1).map((line) => {
-        const values = line.split(",").map((v) => v.trim());
-        const row: Record<string, string> = {};
-
-        headers.forEach((header, index) => {
-          row[header] = values[index] || "";
-        });
-
-        const listing = transformGoogleSheetRow(row);
-        return listing;
-      });
+      // Transform rows to listings
+      listings = rows.map((row) => transformGoogleSheetRow(row));
     } catch (err: any) {
       return new Response(
         JSON.stringify({
@@ -126,11 +114,11 @@ export async function POST({
     // Sync to MeaChat
     const syncResult = await syncListingsToCatalog(
       {
-        businessAccountId: userData.meachat.businessAccountId,
-        apiToken: userData.meachat.apiToken,
+        businessAccountId,
+        apiToken,
       },
       listings,
-      userData.meachat.catalogId
+      catalogId
     );
 
     if (!syncResult.success) {

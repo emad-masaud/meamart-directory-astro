@@ -69,7 +69,7 @@ function generateMerchantFeed(
   return xml;
 }
 
-export const GET: APIRoute = async ({ params, request, site }) => {
+export const GET: APIRoute = async ({ params, site }) => {
   const { username } = params;
 
   if (!username) {
@@ -167,3 +167,10 @@ export const GET: APIRoute = async ({ params, request, site }) => {
     );
   }
 };
+
+export async function getStaticPaths() {
+  const users = await getCollection("users");
+  return users.map((user) => ({
+    params: { username: user.data.username },
+  }));
+}

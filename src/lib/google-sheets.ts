@@ -16,7 +16,7 @@ export async function readGoogleSheet(
   }
 
   // Google Sheets CSV export URL
-  const gid = await getSheetGid(sheetId, sheetName);
+  const gid = await getSheetGid(sheetName);
   const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gid}`;
 
   const response = await fetch(url);
@@ -30,13 +30,11 @@ export async function readGoogleSheet(
   return parseCSV(csv);
 }
 
-async function getSheetGid(
-  sheetId: string,
-  sheetName: string,
-): Promise<string> {
+async function getSheetGid(sheetName: string): Promise<string> {
   // Default to 0 (first sheet) - in production, parse the actual sheet name
   // For now, assuming the sheet name is the first one or provide gid manually
-  return "0";
+  const normalized = sheetName.trim();
+  return normalized ? "0" : "0";
 }
 
 function parseCSV(csv: string): GoogleSheetsRow[] {

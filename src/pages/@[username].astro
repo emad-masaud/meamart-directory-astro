@@ -3,12 +3,9 @@ import { getCollection } from "astro:content";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import AppShell from "@components/app/AppShell.astro";
 import { Icon } from "astro-icon/components";
-import Image from "astro/components/Image.astro";
-import { useTranslations } from "@util/useTranslations";
 import UserListingsDisplay from "@components/listings/UserListingsDisplay.vue";
 
 const { username } = Astro.params;
-const { t } = useTranslations(Astro.request);
 
 // Get the user from collection
 const users = await getCollection("users");
@@ -51,7 +48,7 @@ export async function getStaticPaths() {
           <!-- Avatar -->
           {avatar && (
             <div class="flex-shrink-0">
-              <Image
+              <img
                 src={avatar}
                 alt={displayName}
                 class="h-32 w-32 rounded-full object-cover shadow-md"
@@ -139,7 +136,7 @@ export async function getStaticPaths() {
         </div>
 
         <!-- Social Links -->
-        {social && Object.keys(social).some((k) => social[k]) && (
+        {social && (social.instagram || social.twitter || social.facebook) && (
           <div class="mt-6 border-t border-gray-200 pt-6 dark:border-gray-800">
             <p class="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">تابعنا:</p>
             <div class="flex gap-3">
