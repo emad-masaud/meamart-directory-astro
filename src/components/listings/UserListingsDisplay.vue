@@ -5,12 +5,11 @@
       <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
         <!-- Search -->
         <div class="relative">
-          <Icon name="tabler:search" class="absolute left-3 top-3 h-4 w-4 text-gray-400" />
           <input
             v-model="searchQuery"
             type="text"
             placeholder="ابحث عن إعلان..."
-            class="rounded-md border border-gray-300 bg-white py-2 pl-10 pr-4 text-sm placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
+            class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
           />
         </div>
 
@@ -74,7 +73,6 @@
       v-if="!loading && filteredListings.length === 0"
       class="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-8 text-center dark:border-gray-700 dark:bg-gray-800"
     >
-      <Icon name="tabler:inbox" class="mx-auto h-12 w-12 text-gray-400" />
       <h3 class="mt-2 text-lg font-medium text-gray-900 dark:text-gray-50">لا توجد إعلانات</h3>
       <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
         جرّب تغيير معايير البحث أو الفلاتر
@@ -98,7 +96,6 @@
         :disabled="currentPage === 1"
         class="inline-flex items-center gap-2 rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 disabled:opacity-50 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
       >
-        <Icon name="tabler:chevron-right" class="h-4 w-4" />
         السابق
       </button>
 
@@ -123,7 +120,6 @@
         class="inline-flex items-center gap-2 rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 disabled:opacity-50 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
       >
         التالي
-        <Icon name="tabler:chevron-left" class="h-4 w-4" />
       </button>
     </div>
   </div>
@@ -131,8 +127,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
-import { Icon } from "astro-icon/components";
-import UserListingCard from "./UserListingCard.astro";
+import UserListingCard from "./UserListingCard.vue";
 
 interface Listing {
   id?: string;
