@@ -1,31 +1,19 @@
 import { getCollection, getEntry } from 'astro:content';
-import fs from 'fs';
-import path from 'path';
-import { ImageResponse } from '@vercel/og';
 import { getRootPages } from '@lib/getRootPages';
 import config from '@util/themeConfig';
 import { type AllContent } from '../../types/content';
-
-const boldFontPath = 'node_modules/@fontsource/gabarito/files/gabarito-latin-700-normal.woff' as const;
-const regularFontPath = 'node_modules/@fontsource/gabarito/files/gabarito-latin-400-normal.woff' as const;
  
 interface Props {
   params: { slug: string };
 }
 
-function getPostCoverPath(entry: AllContent) {
-  if (!entry.data.image) {
-    return '/default-listing-image.png';
-  }
-  return entry.data.image.src;
-}
-
-function getPostCoverImage(entry: AllContent) {
-  const imagePath = getPostCoverPath(entry);
-  if (process.env.NODE_ENV === 'development') {
-    return path.resolve(imagePath.replace(/\?.*/, '').replace('/@fs', ''));
-  }
-  return path.resolve(imagePath.replace('/', 'dist/'));
+function escapeXml(value: string) {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
  
 export async function GET({ params }: Props) {
@@ -45,115 +33,32 @@ export async function GET({ params }: Props) {
     throw new Error("Unable to find " + slug);
   }
 
-  // using custom font files
-  const GabartitoSansBold = fs.readFileSync(path.resolve(boldFontPath));
-  const GabaritoSansRegular = fs.readFileSync(
-    path.resolve(regularFontPath),
-  );
-  let postCover;
-  try {
-    postCover = fs.readFileSync(getPostCoverImage(entry));
-  } catch (error) {
-    postCover = null;
-  }
+  const safeTitle = escapeXml(entry.data.title ?? 'Page');
+  const subtitle = entry.collection === 'directory'
+    ? escapeXml(entry.data.description ?? '')
+    : safeTitle;
+  const safeSite = escapeXml(title ?? 'Site');
+  const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f8fafc" />
+      <stop offset="100%" stop-color="#e2e8f0" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="600" fill="url(#bg)" />
+  <rect x="120" y="140" width="200" height="200" rx="32" fill="#e2e8f0" />
+  <text x="360" y="230" font-family="Arial, sans-serif" font-size="48" fill="#0f172a">${safeTitle}</text>
+  <text x="360" y="280" font-family="Arial, sans-serif" font-size="20" fill="#475569">${subtitle}</text>
+  <text x="120" y="520" font-family="Arial, sans-serif" font-size="28" fill="#0f172a">${safeSite}</text>
+</svg>`;
 
-  const image = postCover ? {
-    type: 'img',
-    props: {
-      src: postCover.buffer,
+  return new Response(svg, {
+    status: 200,
+    headers: {
+      'Content-Type': 'image/svg+xml',
+      'Cache-Control': 'public, max-age=3600',
     },
-  } :               {
-    type: 'div',
-    props: {
-      tw: 'bg-gray-200 rounded-full'
-    },
-  };
- 
-  const html = {
-    type: 'div',
-    props: {
-      children: [
-        {
-          type: 'div',
-          props: {
-            tw: 'w-[200px] h-[200px] flex rounded-3xl overflow-hidden',
-            children: [
-              image
-            ],
-          },
-        },
-        {
-          type: 'div',
-          props: {
-            tw: 'pl-10 shrink flex flex-col max-w-xl',
-            children: [
-              {
-                type: 'div',
-                props: {
-                  tw: 'text-zinc-800',
-                  style: {
-                    fontSize: '48px',
-                    fontFamily: 'Gabarito Bold',
-                  },
-                  children: entry.data.title,
-                },
-              },
-              {
-                type: 'div',
-                props: {
-                  tw: 'text-zinc-500 mt-2',
-                  style: {
-                    fontSize: '18px',
-                    fontFamily: 'Gabarito Regular',
-                  },
-                  children: entry.collection === 'directory' ? entry.data.description : entry.data.title,
-                },
-              },
-            ],
-          },
-        },
-        {
-          type: 'div',
-          props: {
-            tw: 'absolute right-[40px] bottom-[40px] flex items-center',
-            children: [
-              {
-                type: 'div',
-                props: {
-                  tw: 'text-gray-900 text-4xl',
-                  style: {
-                    fontFamily: 'Gabarito Bold',
-                  },
-                  children: `${title}`,
-                },
-              },
-            ],
-          },
-        },
-      ],
-      tw: 'w-full h-full flex items-center justify-center relative px-22',
-      style: {
-        background: '#fff',
-        fontFamily: 'Gabarito Regular',
-      },
-    },
-  };
- 
-  return new ImageResponse(html, {
-    width: 1200,
-    height: 600,
-    fonts: [
-      {
-        name: 'Gabarito Bold',
-        data: GabartitoSansBold.buffer,
-        style: 'normal',
-      },
-      {
-        name: 'Gabarito Regular',
-        data: GabaritoSansRegular.buffer,
-        style: 'normal',
-      },
-    ],
   });
 }
 

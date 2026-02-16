@@ -165,6 +165,13 @@ export async function POST({
   }
 }
 
+export async function getStaticPaths() {
+  const users = await getCollection("users");
+  return users.map((user) => ({
+    params: { username: user.data.username },
+  }));
+}
+
 /**
  * GET /api/users/@username/meachat-status
  * Get current sync status and statistics

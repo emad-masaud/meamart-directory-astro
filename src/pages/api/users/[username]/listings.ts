@@ -94,3 +94,10 @@ export const GET: APIRoute = async ({ params }) => {
     );
   }
 };
+
+export async function getStaticPaths() {
+  const users = await getCollection("users");
+  return users.map((user) => ({
+    params: { username: user.data.username },
+  }));
+}
