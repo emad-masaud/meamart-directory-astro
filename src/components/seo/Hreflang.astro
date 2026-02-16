@@ -1,0 +1,53 @@
+---
+import { isSupportedLocale } from "@util/i18nConfig";
+import type { SupportedLocale } from "@util/i18nConfig";
+
+interface Props {
+  currentLocale: string;
+  currentPath: string;
+}
+
+const { currentLocale, currentPath } = Astro.props;
+const locales: SupportedLocale[] = ["en", "ar"];
+
+/**
+ * Build alternate language URLs
+ * For English: removes /en prefix if present
+ * For Arabic: adds /ar prefix if not present
+ */
+function buildAlternateUrl(locale: SupportedLocale, path: string): string {
+  const segments = path.split("/").filter(Boolean);
+  
+  // Remove locale prefix if it exists
+  const hasLocalePrefix = segments[0] && isSupportedLocale(segments[0]);
+  const cleanPath = hasLocalePrefix ? segments.slice(1).join("/") : segments.join("/");
+  
+  // Build new path with correct locale prefix
+  let newPath: string;
+  if (locale === "en") {
+    // English doesn't need prefix, just /path or /
+    newPath = cleanPath ? `/${cleanPath}` : "/";
+  } else {
+    // Arabic needs /ar prefix
+    newPath = cleanPath ? `/${locale}/${cleanPath}` : `/${locale}`;
+  }
+  
+  return newPath.replace(/\/$/, "") || "/";
+}
+---
+
+{
+  locales.map((locale) => (
+    <link
+      rel="alternate"
+      hrefLang={locale}
+      href={`https://bestmeditationapps.com${buildAlternateUrl(locale, currentPath)}`}
+    />
+  ))
+}
+<!-- x-default points to English version -->
+<link
+  rel="alternate"
+  hrefLang="x-default"
+  href={`https://bestmeditationapps.com${buildAlternateUrl("en", currentPath)}`}
+/>

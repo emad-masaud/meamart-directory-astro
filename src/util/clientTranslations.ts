@@ -23,7 +23,7 @@ export function getClientTranslations() {
   }
   
   return {
-    t: locales[currentLocale],
+    t: locales[currentLocale as SupportedLocale],
     formatString,
     locale: currentLocale,
   };

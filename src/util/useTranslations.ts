@@ -1,4 +1,9 @@
-import { getLocale, formatString, type SupportedLocale } from "./i18nConfig";
+import {
+  getLocale,
+  formatString,
+  isSupportedLocale,
+  type SupportedLocale,
+} from "./i18nConfig";
 
 /**
  * Gets translated strings for the current locale
@@ -20,15 +25,30 @@ export function useTranslations(request?: Request, fallbackLocale = "en") {
 }
 
 /**
- * Gets the locale from the request cookies or localStorage
+ * Gets the locale from the request path or cookies
  */
 export function getLocaleFromRequest(request: Request): string {
-  // Try to get from cookie first
+  // First check custom header (set by middleware when rewriting)
+  const headerLocale = request.headers.get("x-locale");
+  if (headerLocale && isSupportedLocale(headerLocale)) {
+    return headerLocale;
+  }
+  
+  const url = new URL(request.url);
+  const pathLocale = url.pathname.split("/").filter(Boolean)[0];
+  if (pathLocale && isSupportedLocale(pathLocale)) {
+    return pathLocale;
+  }
+
+  // Try to get from cookie
   const cookie = request.headers.get("cookie");
   if (cookie) {
     const match = cookie.match(/locale=([^;]+)/);
     if (match) {
-      return match[1];
+      const cookieLocale = match[1];
+      if (isSupportedLocale(cookieLocale)) {
+        return cookieLocale;
+      }
     }
   }
   

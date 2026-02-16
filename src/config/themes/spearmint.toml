@@ -12,11 +12,11 @@ icon = "tabler:bow"
 
 [directoryUI.search.tags]
 display = "show-all" # options: none,select,show-all
-intersection = false
+intersection = true
 
 [directoryUI.grid]
 list = false
-type = "small-card-grid" # options: icon-list, small-card-grid, rectangle-card-grid
+type = "rectangle-card-grid" # options: icon-list, small-card-grid, rectangle-card-grid
 
 [directoryUI.grid.emptyState]
 text = "i18n.directory.emptyStateText"

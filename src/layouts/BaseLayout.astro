@@ -3,6 +3,7 @@ import "@fontsource-variable/gabarito";
 import themeConfig from "@util/themeConfig";
 import "../styles/global.css";
 import Posthog from "@components/analytics/Posthog.astro";
+import Hreflang from "@components/seo/Hreflang.astro";
 import { ClientRouter } from "astro:transitions";
 import { getOGImage } from "@util/getOGImage";
 import { useTranslations } from "@util/useTranslations";
@@ -33,6 +34,7 @@ const calculatedTitle = title || siteTitle;
 
     <title>{calculatedTitle}</title>
     <meta name="description" content={seoDescription} />
+    <Hreflang currentLocale={locale} currentPath={new URL(Astro.request.url).pathname} />
 
     <!-- Facebook Meta Tags -->
     <meta property="og:url" content={themeConfig.general.seo.url} />

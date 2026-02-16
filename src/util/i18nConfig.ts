@@ -11,6 +11,10 @@ export const defaultLocale = "en";
 
 export type SupportedLocale = keyof typeof locales;
 
+export function isSupportedLocale(locale: string): locale is SupportedLocale {
+  return locale in locales;
+}
+
 export function getLocale(locale: string | undefined): LocaleSchema {
   if (!locale || !(locale in locales)) {
     return locales[defaultLocale];

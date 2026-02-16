@@ -27,7 +27,7 @@ key = "breathing"
 name = "Breathing"
 color = "blue"
 emoji = "👃"
-description = "Breathing techniques are a popular feature in meditation apps."
+description = "Breathing techniques are a popular feature in MeaMart."
 
 [[directoryData.tags]]
 key = "sleep"

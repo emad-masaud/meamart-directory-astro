@@ -1,83 +1,88 @@
 ---
 import { Icon } from "astro-icon/components";
-import { locales } from "@util/i18nConfig";
+import { getLocaleFromRequest } from "@util/useTranslations";
+
+const currentLocale = getLocaleFromRequest(Astro.request);
 ---
 
-<div class="relative inline-block" id="language-selector">
+<div transition:persist id="language-selector-container">
   <button
-    id="language-button"
-    class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
-    aria-label="Select language"
-    aria-expanded="false"
+    id="language-toggle"
+    class="flex justify-center items-center border border-gray-200 rounded-full w-8 h-8 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800 dark:border-gray-500 transition-all"
+    aria-label="Toggle language"
   >
-    <Icon name="tabler:language" class="h-6 w-6" aria-hidden="true" />
+    <span class="sr-only">Toggle Language</span>
+    <span id="lang-display" class="text-sm font-semibold">{currentLocale.toUpperCase()}</span>
   </button>
-
-  <!-- Dropdown menu -->
-  <div
-    id="language-menu"
-    class="hidden absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white dark:bg-gray-700 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-    role="menu"
-    aria-orientation="vertical"
-  >
-    {
-      Object.entries(locales).map(([code, locale]) => (
-        <button
-          data-locale={code}
-          class="locale-option block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
-          role="menuitem"
-        >
-          <span class="flex items-center gap-2">
-            {locale.name}
-          </span>
-        </button>
-      ))
-    }
-  </div>
 </div>
 
 <script>
-  import { locale } from "@store";
+  const supportedLocales = ["en", "ar"];
 
-  const button = document.getElementById("language-button");
-  const menu = document.getElementById("language-menu");
-  const options = document.querySelectorAll(".locale-option");
-
-  // Toggle menu
-  button?.addEventListener("click", () => {
-    const isHidden = menu?.classList.contains("hidden");
-    if (isHidden) {
-      menu?.classList.remove("hidden");
-      button?.setAttribute("aria-expanded", "true");
-    } else {
-      menu?.classList.add("hidden");
-      button?.setAttribute("aria-expanded", "false");
+  function getCurrentLocale() {
+    // Get from path first
+    const pathSegment = window.location.pathname.split("/").filter(Boolean)[0];
+    if (pathSegment && supportedLocales.includes(pathSegment)) {
+      return pathSegment;
     }
-  });
 
-  // Close menu when clicking outside
-  document.addEventListener("click", (event) => {
-    const selector = document.getElementById("language-selector");
-    if (!selector?.contains(event.target as Node)) {
-      menu?.classList.add("hidden");
-      button?.setAttribute("aria-expanded", "false");
+    // Get from cookie
+    const match = document.cookie.match(/locale=([^;]+)/);
+    if (match && supportedLocales.includes(match[1])) {
+      return match[1];
     }
-  });
 
-  // Handle language selection
-  options.forEach((option) => {
-    option.addEventListener("click", () => {
-      const selectedLocale = option.getAttribute("data-locale");
-      if (selectedLocale) {
-        locale.set(selectedLocale);
+    return "en";
+  }
+
+  function updateLanguageDisplay() {
+    const langDisplay = document.getElementById("lang-display");
+    if (langDisplay) {
+      const currentLang = getCurrentLocale();
+      langDisplay.textContent = currentLang.toUpperCase();
+    }
+  }
+
+  function setupLanguageToggle() {
+    const button = document.getElementById("language-toggle");
+    
+    if (button && !button.__languageSetup) {
+      button.__languageSetup = true;
+      button.addEventListener("click", () => {
+        const currentLocale = getCurrentLocale();
+        const nextLocale = currentLocale === "en" ? "ar" : "en";
+
+        // Set cookie
         const maxAge = 60 * 60 * 24 * 365;
-        document.cookie = `locale=${selectedLocale}; path=/; max-age=${maxAge}`;
-        menu?.classList.add("hidden");
-        button?.setAttribute("aria-expanded", "false");
+        document.cookie = `locale=${nextLocale}; path=/; max-age=${maxAge}`;
+
+        // Build new URL
+        const url = new URL(window.location.href);
+        const segments = url.pathname.split("/").filter(Boolean);
+        const hasLocalePrefix = segments[0] && supportedLocales.includes(segments[0]);
+        const rest = hasLocalePrefix ? segments.slice(1) : segments;
+
+        const newPath = nextLocale === "en" 
+          ? `/${rest.join("/")}`.replace(/\/$/, "") || "/"
+          : `/${nextLocale}/${rest.join("/")}`.replace(/\/$/, "") || `/${nextLocale}`;
         
-        // Reload page to apply new language
-        window.location.reload();
-      }
-    });
-  });
+        url.pathname = newPath;
+        url.searchParams.delete("lang");
+        window.location.assign(url.toString());
+      });
+    }
+  }
+
+  function init() {
+    updateLanguageDisplay();
+    setupLanguageToggle();
+  }
+
+  // Run immediately
+  init();
+
+  // Also run on various lifecycle events
+  document.addEventListener("DOMContentLoaded", init, { once: true });
+  document.addEventListener("astro:after-swap", init);
+  document.addEventListener("astro:page-load", init);
 </script>

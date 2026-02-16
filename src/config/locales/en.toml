@@ -3,7 +3,7 @@ name = "English"
 dir = "ltr"
 
 [site]
-title = "Meditation Apps"
+title = "MeaMart"
 seoName = "Cafe Directory"
 seoDescription = "Find the best nuxt starter kits."
 
