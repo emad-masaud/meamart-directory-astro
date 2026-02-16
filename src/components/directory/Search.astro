@@ -75,8 +75,23 @@ async function getSearchPlaceholder() {
 
 <script>
   import { search } from "../../store.js";
+  import { getClientTranslations } from "@util/clientTranslations";
 
-  const searchInput = document.getElementById("search");
+  const searchInput = document.getElementById("search") as HTMLInputElement;
+  
+  // Update placeholder dynamically based on locale
+  function updatePlaceholder() {
+    const { t, formatString } = getClientTranslations();
+    if (searchInput && searchInput.placeholder.includes("{0}")) {
+      // Keep the count from the original placeholder
+      const match = searchInput.placeholder.match(/\d+/);
+      if (match) {
+        searchInput.placeholder = formatString(t.common.searchPlaceholder, match[0]);
+      }
+    }
+  }
+  
+  updatePlaceholder();
 
   // Add an event listener to the button
   searchInput?.addEventListener("input", (event: Event) => {

@@ -1,0 +1,32 @@
+code = "en"
+name = "English"
+dir = "ltr"
+
+[nav]
+home = "Home"
+blog = "Blog"
+tags = "Tags"
+
+[common]
+search = "Search"
+searchPlaceholder = "Search among {0} listings of this directory :)"
+noResults = "No results found"
+loading = "Loading..."
+featured = "Featured"
+readMore = "Read more"
+viewAll = "View all"
+
+[footer]
+madeWith = "Made with"
+by = "by"
+
+[blog]
+title = "Blog"
+readTime = "min read"
+publishedOn = "Published on"
+
+[directory]
+title = "Directory"
+listings = "listings"
+tags = "Tags"
+filterByTag = "Filter by tag"

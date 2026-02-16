@@ -1,0 +1,32 @@
+code = "ar"
+name = "العربية"
+dir = "rtl"
+
+[nav]
+home = "الرئيسية"
+blog = "المدونة"
+tags = "الوسوم"
+
+[common]
+search = "بحث"
+searchPlaceholder = "ابحث بين {0} إدراج في هذا الدليل :)"
+noResults = "لا توجد نتائج"
+loading = "جاري التحميل..."
+featured = "مميز"
+readMore = "اقرأ المزيد"
+viewAll = "عرض الكل"
+
+[footer]
+madeWith = "صُنع بـ"
+by = "بواسطة"
+
+[blog]
+title = "المدونة"
+readTime = "دقيقة قراءة"
+publishedOn = "نُشر في"
+
+[directory]
+title = "الدليل"
+listings = "إدراجات"
+tags = "الوسوم"
+filterByTag = "تصفية حسب الوسم"

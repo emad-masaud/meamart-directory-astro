@@ -1,0 +1,53 @@
+---
+/**
+ * Example component showing how to use translations in Astro components
+ * This can be used as a reference for updating other components
+ */
+import { getClientTranslations } from "@util/clientTranslations";
+---
+
+<div class="example-i18n-component">
+  <h2 id="example-title">Loading...</h2>
+  <p id="example-description">Loading...</p>
+  <button id="example-button">Loading...</button>
+</div>
+
+<script>
+  import { getClientTranslations } from "@util/clientTranslations";
+  import { locale } from "@store";
+  
+  // Get initial translations
+  function updateContent() {
+    const { t, formatString } = getClientTranslations();
+    
+    const title = document.getElementById("example-title");
+    const description = document.getElementById("example-description");
+    const button = document.getElementById("example-button");
+    
+    if (title) title.textContent = t.directory.title;
+    if (description) {
+      // Example with formatString
+      description.textContent = formatString(
+        t.common.searchPlaceholder,
+        "50"
+      );
+    }
+    if (button) button.textContent = t.common.search;
+  }
+  
+  // Update on load
+  updateContent();
+  
+  // Listen for locale changes
+  locale.subscribe(() => {
+    // Content will update on page reload
+  });
+</script>
+
+<style>
+  .example-i18n-component {
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+  }
+</style>

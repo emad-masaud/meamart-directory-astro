@@ -12,8 +12,30 @@ const siteTitle = themeConfig.general.title;
 const calculatedTitle = title || siteTitle;
 ---
 
+<script>
+  // Get locale from localStorage
+  function getStoredLocale() {
+    try {
+      const stored = localStorage.getItem("locale");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        return parsed;
+      }
+    } catch (e) {
+      console.error("Error reading locale from localStorage:", e);
+    }
+    return "en";
+  }
+  
+  // Set direction based on locale
+  const currentLocale = getStoredLocale();
+  const dir = currentLocale === "ar" ? "rtl" : "ltr";
+  document.documentElement.setAttribute("dir", dir);
+  document.documentElement.setAttribute("lang", currentLocale);
+</script>
+
 <!doctype html>
-<html lang="en">
+<html>
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content="Astro description" />

@@ -1,6 +1,7 @@
 ---
 import { Icon } from "astro-icon/components";
 import ColorSelector from "./header/ColorSelector.astro";
+import LanguageSelector from "./header/LanguageSelector.astro";
 import Logo from "./Logo.astro";
 import config from "@util/themeConfig";
 
@@ -74,13 +75,14 @@ const currentPath = new URL(Astro.request.url).pathname;
         </div>
       </div>
 
-      <!-- Action button and color selector -->
+      <!-- Action button, language and color selector -->
       <div
         class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"
       >
         <div
           class="flex gap-2 items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse"
         >
+          <LanguageSelector transition:persist class="hidden md:flex" />
           {
             config.header.navbar.colorModeSelector && (
               <ColorSelector transition:persist class="hidden md:flex" />
