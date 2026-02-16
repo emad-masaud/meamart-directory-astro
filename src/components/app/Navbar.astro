@@ -4,6 +4,8 @@ import ColorSelector from "./header/ColorSelector.astro";
 import LanguageSelector from "./header/LanguageSelector.astro";
 import Logo from "./Logo.astro";
 import config from "@util/themeConfig";
+import { useTranslations } from "@util/useTranslations";
+import { resolveI18nString } from "@util/resolveI18nString";
 
 // Helper function to check if a route is active
 const isActive = (path: string, currentPath: string | undefined) => {
@@ -15,6 +17,13 @@ const isActive = (path: string, currentPath: string | undefined) => {
 
 // Get the current path safely
 const currentPath = new URL(Astro.request.url).pathname;
+const { t } = useTranslations(Astro.request);
+
+const getNavName = (name: string) => resolveI18nString(name, t) ?? name;
+const actionButtonText = resolveI18nString(
+  config?.header?.actionButton?.text,
+  t,
+);
 ---
 
 <nav
@@ -27,9 +36,9 @@ const currentPath = new URL(Astro.request.url).pathname;
         <button
           id="mobile-menu-button"
           class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
-          aria-label="Open main menu"
+          aria-label={t.common.openMainMenu}
         >
-          <span class="sr-only">Open main menu</span>
+          <span class="sr-only">{t.common.openMainMenu}</span>
           <Icon
             id="mobile-menu-icon"
             name="tabler:baseline-density-medium"
@@ -58,7 +67,7 @@ const currentPath = new URL(Astro.request.url).pathname;
                       : "border-transparent hover:border-gray-300 dark:hover:border-gray-500 hover:text-gray-700 text-gray-500 dark:text-gray-200"
                   }`}
                 >
-                  {navItem.name}
+                  {getNavName(navItem.name)}
                 </a>
               ) : (
                 <a
@@ -66,7 +75,7 @@ const currentPath = new URL(Astro.request.url).pathname;
                   target="_blank"
                   class="inline-flex gap-2 items-center border-b-2 px-1 pt-1 text-sm font-medium border-transparent hover:border-gray-300 hover:text-gray-700 dark:hover:border-gray-500 text-gray-500 dark:text-gray-200"
                 >
-                  {navItem.name}
+                  {getNavName(navItem.name)}
                   <Icon name="tabler:external-link" />
                 </a>
               ),
@@ -92,7 +101,7 @@ const currentPath = new URL(Astro.request.url).pathname;
             href={config?.header.actionButton?.href}
             class="hidden md:block text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
           >
-            {config?.header.actionButton?.text}
+            {actionButtonText}
           </a>
         </div>
       </div>
@@ -112,7 +121,7 @@ const currentPath = new URL(Astro.request.url).pathname;
                 : "border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700"
             }`}
           >
-            {item.name}
+            {getNavName(item.name)}
             {item.target === "_blank" && <Icon name="tabler:external-link" />}
           </a>
         ))
@@ -125,7 +134,7 @@ const currentPath = new URL(Astro.request.url).pathname;
           href={config?.header.actionButton?.href}
           class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
         >
-          {config?.header.actionButton?.text}
+          {actionButtonText}
         </a>
       </div>
     </div>

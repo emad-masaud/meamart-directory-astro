@@ -5,8 +5,10 @@ import { getLocale, formatString, type SupportedLocale } from "./i18nConfig";
  * This function is meant to be used in Astro components
  * It reads the locale from cookies or uses default
  */
-export function useTranslations(locale?: string) {
-  const currentLocale = (locale || "en") as SupportedLocale;
+export function useTranslations(request?: Request, fallbackLocale = "en") {
+  const currentLocale = (request
+    ? getLocaleFromRequest(request)
+    : fallbackLocale) as SupportedLocale;
   const t = getLocale(currentLocale);
 
   return {

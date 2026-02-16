@@ -1,8 +1,11 @@
 ---
 import { Icon } from "astro-icon/components";
 import ColorSelector from "./header/ColorSelector.astro";
+import LanguageSelector from "./header/LanguageSelector.astro";
 import Logo from "./Logo.astro";
 import config from "@util/themeConfig";
+import { useTranslations } from "@util/useTranslations";
+import { resolveI18nString } from "@util/resolveI18nString";
 
 // Helper function to check if a route is active
 const isActive = (path: string, currentPath: string | undefined) => {
@@ -12,6 +15,13 @@ const isActive = (path: string, currentPath: string | undefined) => {
 
 // Get the current path safely
 const currentPath = new URL(Astro.request.url).pathname;
+const { t } = useTranslations(Astro.request);
+
+const getNavName = (name: string) => resolveI18nString(name, t) ?? name;
+const actionButtonText = resolveI18nString(
+  config?.header?.actionButton?.text,
+  t,
+);
 ---
 
 <nav
@@ -38,7 +48,7 @@ const currentPath = new URL(Astro.request.url).pathname;
                   class="font-medium inline-flex py-2 px-3 text-gray-700 dark:text-gray-200 bg-primary-700 rounded md:bg-transparent md:p-0 md:dark:text-gray-300"
                   aria-current="page"
                 >
-                  {nav.name}
+                  {getNavName(nav.name)}
                   {nav.target === '_blank' ? <Icon class="text-gray-500" name="tabler:arrow-up-right" /> : <></>}
                 </a>
               </li>
@@ -55,9 +65,10 @@ const currentPath = new URL(Astro.request.url).pathname;
         href={config.header.actionButton.href}
         class="hidden md:inline-flex items-center dark:text-gray-300 text-gray-600"
       >
-        {config.header.actionButton.text}
+        {actionButtonText}
       </a>
       }
+      <LanguageSelector transition:persist class="hidden md:flex" />
       <ColorSelector transition:persist class="hidden md:flex" />
       <button
         id="mobile-menu-button"
@@ -66,7 +77,7 @@ const currentPath = new URL(Astro.request.url).pathname;
         aria-controls="navbar-sticky"
         aria-expanded="false"
       >
-        <span class="sr-only">Open main menu</span>
+        <span class="sr-only">{t.common.openMainMenu}</span>
         <svg
           class="w-5 h-5"
           aria-hidden="true"
@@ -94,11 +105,14 @@ const currentPath = new URL(Astro.request.url).pathname;
                     : 'border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700'
                 }`}
               >
-                {item.name}
+                {getNavName(item.name)}
                 {item.target === '_blank' && <Icon name="tabler:external-link" />}
               </a>
             ))
           }
+        </div>
+        <div class="border-t border-gray-200 px-3 py-3">
+          <LanguageSelector transition:persist />
         </div>
     </div>
   </div>

@@ -5,6 +5,8 @@ import formatString from "../../util/formatString";
 import type Tag from "../../types/Tag";
 import config from "@util/themeConfig";
 import Sidebar from "@layouts/Sidebar.astro";
+import { useTranslations } from "@util/useTranslations";
+import { resolveI18nString } from "@util/resolveI18nString";
 
 export async function getStaticPaths() {
   const tags: Array<Tag> = config.directoryData.tags;
@@ -18,6 +20,7 @@ export async function getStaticPaths() {
 }
 
 const { title } = Astro.props;
+const { t } = useTranslations(Astro.request);
 
 const allListings = await getCollection("directory");
 
@@ -46,7 +49,11 @@ function toTitleCase(str: string) {
     <h1 class="text-gray-600 font-semibold text-4xl">
       {
         toTitleCase(
-          formatString(config.directoryData.tagPages.title, calculatedTitle),
+          formatString(
+            resolveI18nString(config.directoryData.tagPages.title, t) ??
+              config.directoryData.tagPages.title,
+            calculatedTitle,
+          ),
         )
       }
     </h1>

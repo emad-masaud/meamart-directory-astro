@@ -5,37 +5,24 @@ import "../styles/global.css";
 import Posthog from "@components/analytics/Posthog.astro";
 import { ClientRouter } from "astro:transitions";
 import { getOGImage } from "@util/getOGImage";
+import { useTranslations } from "@util/useTranslations";
+import { resolveI18nString } from "@util/resolveI18nString";
 
 const { title, slug } = Astro.props;
-const siteTitle = themeConfig.general.title;
+const { t, locale, dir } = useTranslations(Astro.request);
+const siteTitle =
+  resolveI18nString(themeConfig.general.title, t) ?? themeConfig.general.title;
+const seoName =
+  resolveI18nString(themeConfig.general.seo.name, t) ??
+  themeConfig.general.seo.name;
+const seoDescription =
+  resolveI18nString(themeConfig.general.seo.description, t) ??
+  themeConfig.general.seo.description;
 
 const calculatedTitle = title || siteTitle;
 ---
-
-<script>
-  // Get locale from localStorage
-  function getStoredLocale() {
-    try {
-      const stored = localStorage.getItem("locale");
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        return parsed;
-      }
-    } catch (e) {
-      console.error("Error reading locale from localStorage:", e);
-    }
-    return "en";
-  }
-  
-  // Set direction based on locale
-  const currentLocale = getStoredLocale();
-  const dir = currentLocale === "ar" ? "rtl" : "ltr";
-  document.documentElement.setAttribute("dir", dir);
-  document.documentElement.setAttribute("lang", currentLocale);
-</script>
-
 <!doctype html>
-<html>
+<html lang={locale} dir={dir}>
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content="Astro description" />
@@ -45,7 +32,7 @@ const calculatedTitle = title || siteTitle;
     <meta name="generator" content={Astro.generator} />
 
     <title>{calculatedTitle}</title>
-    <meta name="description" content={themeConfig.general.seo.description} />
+    <meta name="description" content={seoDescription} />
 
     <!-- Facebook Meta Tags -->
     <meta property="og:url" content={themeConfig.general.seo.url} />
@@ -53,7 +40,7 @@ const calculatedTitle = title || siteTitle;
     <meta property="og:title" content={calculatedTitle} />
     <meta
       property="og:description"
-      content={themeConfig.general.seo.description}
+      content={seoDescription}
     />
     <meta property="og:image" content={getOGImage(slug)} />
 
@@ -61,10 +48,10 @@ const calculatedTitle = title || siteTitle;
     <meta name="twitter:card" content="summary_large_image" />
     <meta property="twitter:domain" content="codeagents.dev" />
     <meta property="twitter:url" content={themeConfig.general.seo.url} />
-    <meta name="twitter:title" content={themeConfig.general.seo.name} />
+    <meta name="twitter:title" content={seoName} />
     <meta
       name="twitter:description"
-      content={themeConfig.general.seo.description}
+      content={seoDescription}
     />
     <meta name="twitter:image" content={getOGImage(slug)} />
     <ClientRouter />

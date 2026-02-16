@@ -1,9 +1,16 @@
 ---
 import configData from "@util/themeConfig";
+import { useTranslations } from "@util/useTranslations";
+import { resolveI18nString } from "@util/resolveI18nString";
+
+const { t } = useTranslations(Astro.request);
+const featuredLabel =
+  resolveI18nString(configData.directoryUI.featured.labelForCard, t) ??
+  configData.directoryUI.featured.labelForCard;
 ---
 
 <span
   class="absolute text-sm ml-4 font-medium py-0.5 group-hover:border-primary-500 -top-3 border border-gray-300 rounded-full bg-white px-3.5 text-gray-600 dark:bg-gray-800 dark:border-gray-500 dark:text-white"
 >
-  {configData.directoryUI.featured.labelForCard}
+  {featuredLabel}
 </span>

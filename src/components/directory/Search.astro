@@ -5,22 +5,27 @@ import formatString from "../../util/formatString";
 import UiTagGrid from "../ui/tags/Grid.vue";
 import UiTagSelect from "../ui/tags/Select.vue";
 import config from "@util/themeConfig";
+import { useTranslations } from "@util/useTranslations";
+import { resolveI18nString } from "@util/resolveI18nString";
 
-const searchPlaceholder = await getSearchPlaceholder();
+const { t } = useTranslations(Astro.request);
+const searchPlaceholder = await getSearchPlaceholder(t);
 
-async function getSearchPlaceholder() {
-  if (
-    config.directoryData.search?.placeholder &&
-    config.directoryData.search.placeholder.includes("{0}")
-  ) {
+async function getSearchPlaceholder(translations: typeof t) {
+  const resolvedPlaceholder = resolveI18nString(
+    config.directoryData.search?.placeholder ?? "Search",
+    translations,
+  );
+
+  if (resolvedPlaceholder && resolvedPlaceholder.includes("{0}")) {
     const count = (await getCollection("directory")).length;
     return formatString(
-      config.directoryData.search?.placeholder ?? "Search among {0} listings",
+      resolvedPlaceholder,
       count,
     );
   }
 
-  return config.directoryData.search?.placeholder ?? "Search";
+  return resolvedPlaceholder ?? "Search";
 }
 ---
 

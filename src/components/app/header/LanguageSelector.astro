@@ -28,7 +28,6 @@ import { locales } from "@util/i18nConfig";
           role="menuitem"
         >
           <span class="flex items-center gap-2">
-            <Icon name={`circle-flags:${code === 'ar' ? 'sa' : 'us'}`} class="h-5 w-5" />
             {locale.name}
           </span>
         </button>
@@ -71,6 +70,8 @@ import { locales } from "@util/i18nConfig";
       const selectedLocale = option.getAttribute("data-locale");
       if (selectedLocale) {
         locale.set(selectedLocale);
+        const maxAge = 60 * 60 * 24 * 365;
+        document.cookie = `locale=${selectedLocale}; path=/; max-age=${maxAge}`;
         menu?.classList.add("hidden");
         button?.setAttribute("aria-expanded", "false");
         

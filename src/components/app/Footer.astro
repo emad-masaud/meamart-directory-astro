@@ -2,20 +2,27 @@
 import AppLogo from "./Logo.astro";
 import { Icon } from "astro-icon/components";
 import config from "@util/themeConfig";
+import { useTranslations } from "@util/useTranslations";
+import { resolveI18nString } from "@util/resolveI18nString";
+import formatString from "@util/formatString";
 
 const socials = Object.values(config.footer.socials);
 const socialNames = Object.keys(config.footer.socials);
+const { t } = useTranslations(Astro.request);
+const siteTitle =
+  resolveI18nString(config.general.title, t) ?? config.general.title;
+const rightsText = formatString(t.footer.rights, siteTitle);
 
 const navigation = [
   {
-    title: "Directory",
+    title: t.footer.navigationDirectory,
     links: [
-      { title: "Submit", link: "/submit" },
-      { title: "Advertise", link: "/advertise" },
+      { title: t.footer.linkSubmit, link: "/submit" },
+      { title: t.footer.linkAdvertise, link: "/advertise" },
     ],
   },
   {
-    title: "Categories",
+    title: t.footer.navigationCategories,
     links: config.directoryData.tags
       ?.filter((e) => e && e.name)
       .map((e) => ({
@@ -25,14 +32,14 @@ const navigation = [
       .slice(0, 4),
   },
   {
-    title: "Blog",
-    links: [{ title: "Articles", link: "/blog" }],
+    title: t.footer.navigationBlog,
+    links: [{ title: t.footer.linkArticles, link: "/blog" }],
   },
   {
-    title: "Legal",
+    title: t.footer.navigationLegal,
     links: [
-      { title: "Privacy Policy", link: "/legal/terms-of-service" },
-      { title: "Terms of Service", link: "/legal/privacy-policy" },
+      { title: t.footer.linkPrivacyPolicy, link: "/legal/terms-of-service" },
+      { title: t.footer.linkTermsOfService, link: "/legal/privacy-policy" },
     ],
   },
 ];
@@ -42,7 +49,7 @@ const navigation = [
   class="border-t border-gray-200 dark:border-gray-600 font-display"
   aria-labelledby="footer-heading"
 >
-  <h2 id="footer-heading" class="sr-only">Footer</h2>
+  <h2 id="footer-heading" class="sr-only">{t.footer.heading}</h2>
   <div class="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
     <div class="xl:grid xl:grid-cols-3 xl:gap-8">
       <div class="space-y-8">
@@ -114,8 +121,7 @@ const navigation = [
       class="mt-16 border-t border-gray-900/10 dark:border-gray-600 pt-8 sm:mt-20 lg:mt-24"
     >
       <p class="text-xs leading-5 text-gray-500">
-        &copy; {new Date().getFullYear()}
-        {config.general.title} All rights reserved.
+        &copy; {new Date().getFullYear()} {rightsText}
       </p>
     </div>
   </div>

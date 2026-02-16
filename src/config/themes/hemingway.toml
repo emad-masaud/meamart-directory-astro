@@ -6,7 +6,7 @@ emoji = false
 pageHeader = 'title' # none, title
 
 [directoryUI.search]
-placeholder = "Search among {0} agent frameworks"
+placeholder = "i18n.common.searchPlaceholder"
 showCount = true
 icon = "tabler:bow"
 
@@ -19,7 +19,7 @@ list = false
 type = "icon-list" # options: icon-list, small-card-grid, rectangle-card-grid
 
 [directoryUI.grid.emptyState]
-text = "Seems that this entry is missing from the archives."
+text = "i18n.directory.emptyStateText"
 type = "button"    # options: button, simple, link
 icon = "tabler:exclamation-mark"
 
@@ -29,15 +29,15 @@ image = true
 [directoryUI.grid.submit]
 show = true
 first = false
-title = "Submit a template"
-description = "Submit a template to show off a good project to other people."
+title = "i18n.directory.submitTitle"
+description = "i18n.directory.submitDescription"
 hideable = true
 
 [directoryUI.featured]
 showOnAllPages = true
 showOnSide = true
 icon = "tabler:star"
-labelForCard = "Featured ✨"
+labelForCard = "i18n.directory.featuredLabel"
 
 [ui.icons]
 dark = "tabler:moon"

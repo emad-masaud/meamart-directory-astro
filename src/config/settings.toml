@@ -1,15 +1,15 @@
 # available directory themes:
 # spearmint, peppermint, hemingway, brookmint
-theme = 'brookmint'
+theme = 'spearmint'
 
 [general]
-title = "Meditation Apps"
+title = "i18n.site.title"
 logo = ""
 iconLogo = "tabler:coffee"
 
 [general.seo]
-name = "Cafe Directory"
-description = "Find the best nuxt starter kits."
+name = "i18n.site.seoName"
+description = "i18n.site.seoDescription"
 url = "https://nuxtstarters.com"
 
 [directoryData.source]
@@ -17,10 +17,10 @@ name = "json"    # default, mock, sheets, json
 links = "normal"
 
 [directoryData.tagPages]
-title = "{0} Apps"
+title = "i18n.directory.tagPagesTitle"
 
 [directoryData.search]
-placeholder = "Search among {0} listings of this directory :)"
+placeholder = "i18n.common.searchPlaceholder"
 
 [[directoryData.tags]]
 key = "breathing"
@@ -59,28 +59,28 @@ description = "Timers can be used to track how much you meditate."
 
 [header.banner]
 show = true
-text = "Follow mark_bruderer on twitter."
+text = "i18n.header.bannerText"
 link = "https://x.com/intent/follow?screen_name=mark_bruderer"
-brandText = "AI Agent Libraries"
+brandText = "i18n.header.bannerBrandText"
 
 [header.navbar]
 colorModeSelector = true
 
 [[header.navbar.links]]
-name = "Blog"
+name = "i18n.nav.blog"
 href = "/blog"
 
 [[header.navbar.links]]
-name = "Analytics"
+name = "i18n.nav.analytics"
 href = "https://us.posthog.com/shared/vHlGCcSqPjGH4r_QijaXSETtmN9J-g"
 target = "_blank"
 
 [header.actionButton]
-text = "Submit an app"
+text = "i18n.header.actionButtonText"
 href = "https://tally.so"
 
 [footer]
-description = "Best directory for my niche."
+description = "i18n.footer.description"
 
 [footer.socials.x]
 link = "https://x.com/mark_bruderer"

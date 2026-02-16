@@ -2,10 +2,21 @@ code = "en"
 name = "English"
 dir = "ltr"
 
+[site]
+title = "Meditation Apps"
+seoName = "Cafe Directory"
+seoDescription = "Find the best nuxt starter kits."
+
 [nav]
 home = "Home"
 blog = "Blog"
 tags = "Tags"
+analytics = "Analytics"
+
+[header]
+bannerText = "Follow mark_bruderer on twitter."
+bannerBrandText = "AI Agent Libraries"
+actionButtonText = "Submit an app"
 
 [common]
 search = "Search"
@@ -15,10 +26,23 @@ loading = "Loading..."
 featured = "Featured"
 readMore = "Read more"
 viewAll = "View all"
+openMainMenu = "Open main menu"
 
 [footer]
 madeWith = "Made with"
 by = "by"
+heading = "Footer"
+description = "Best directory for my niche."
+navigationDirectory = "Directory"
+navigationCategories = "Categories"
+navigationBlog = "Blog"
+navigationLegal = "Legal"
+linkSubmit = "Submit"
+linkAdvertise = "Advertise"
+linkArticles = "Articles"
+linkPrivacyPolicy = "Privacy Policy"
+linkTermsOfService = "Terms of Service"
+rights = "{0} All rights reserved."
 
 [blog]
 title = "Blog"
@@ -30,3 +54,8 @@ title = "Directory"
 listings = "listings"
 tags = "Tags"
 filterByTag = "Filter by tag"
+tagPagesTitle = "{0} Apps"
+emptyStateText = "Seems that this entry is missing from the archives."
+submitTitle = "Submit a template"
+submitDescription = "Submit a template to show off a good project to other people."
+featuredLabel = "Featured ✨"

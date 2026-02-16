@@ -5,7 +5,13 @@ import AppProse from "../components/app/Prose.astro";
 const { frontmatter, slug } = Astro.props;
 import themeConfig from "@util/themeConfig";
 import AppShell from "@components/app/AppShell.astro";
-const siteTitle = themeConfig.general.title;
+import { useTranslations } from "@util/useTranslations";
+import { resolveI18nString } from "@util/resolveI18nString";
+
+const { t } = useTranslations(Astro.request);
+const siteTitle =
+  resolveI18nString(themeConfig.general.title, t) ??
+  themeConfig.general.title;
 const title = frontmatter?.title || siteTitle;
 const description = frontmatter?.description;
 ---

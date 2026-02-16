@@ -8,8 +8,13 @@ import AppShell from "@components/app/AppShell.astro";
 import config from "@util/themeConfig";
 import SidebarShell from "@components/app/SidebarShell.astro";
 import TitleHeader from "@components/listings/TitleHeader.astro";
+import { useTranslations } from "@util/useTranslations";
+import { resolveI18nString } from "@util/resolveI18nString";
 
-const siteTitle = themeConfig.general.title;
+const { t } = useTranslations(Astro.request);
+const siteTitle =
+  resolveI18nString(themeConfig.general.title, t) ??
+  themeConfig.general.title;
 const title = frontmatter?.title || siteTitle;
 const link = frontmatter?.link;
 const description = frontmatter?.description;

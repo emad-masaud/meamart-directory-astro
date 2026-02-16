@@ -2,6 +2,8 @@
 import Dot from "./Dot.astro";
 import { Icon } from "astro-icon/components";
 import config from "@util/themeConfig";
+import { useTranslations } from "@util/useTranslations";
+import { resolveI18nString } from "@util/resolveI18nString";
 
 
 const getHref = () => {
@@ -13,7 +15,10 @@ const getHref = () => {
   return "#";
 };
 
+const { t } = useTranslations(Astro.request);
 const href = getHref();
+const bannerText = resolveI18nString(config.header.banner?.text, t);
+const bannerBrandText = resolveI18nString(config.header.banner?.brandText, t);
 ---
 
 {
@@ -21,11 +26,11 @@ const href = getHref();
 <div class="flex items-center justify-center gap-x-6 bg-primary-600 px-6 py-2.5">
   <p class="text-sm leading-6 text-white">
     <a href={href} target="_blank" class="inline-flex items-center gap-1">
-      <strong v-if="bannerConfig?.brandText" class="font-semibold hidden sm:block">
-        { config.header.banner.brandText }
+      <strong class="font-semibold hidden sm:block">
+        { bannerBrandText }
       </strong>
-      {config.header.banner.brandText ? <Dot class="hidden sm:block" v-if="bannerConfig?.brandText" /> : <></>}
-      { config.header.banner?.text }
+      {bannerBrandText ? <Dot class="hidden sm:block" /> : <></>}
+      { bannerText }
       <Icon class="hidden sm:block w-5 h-5" name="tabler:arrow-right" />
     </a>
   </p>

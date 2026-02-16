@@ -2,10 +2,21 @@ code = "ar"
 name = "العربية"
 dir = "rtl"
 
+[site]
+title = "تطبيقات التأمل"
+seoName = "دليل المقاهي"
+seoDescription = "اعثر على أفضل قوالب نوكست."
+
 [nav]
 home = "الرئيسية"
 blog = "المدونة"
 tags = "الوسوم"
+analytics = "التحليلات"
+
+[header]
+bannerText = "تابع mark_bruderer على تويتر."
+bannerBrandText = "مكتبات وكلاء الذكاء الاصطناعي"
+actionButtonText = "إضافة تطبيق"
 
 [common]
 search = "بحث"
@@ -15,10 +26,23 @@ loading = "جاري التحميل..."
 featured = "مميز"
 readMore = "اقرأ المزيد"
 viewAll = "عرض الكل"
+openMainMenu = "فتح القائمة الرئيسية"
 
 [footer]
 madeWith = "صُنع بـ"
 by = "بواسطة"
+heading = "التذييل"
+description = "أفضل دليل لتخصصي."
+navigationDirectory = "الدليل"
+navigationCategories = "التصنيفات"
+navigationBlog = "المدونة"
+navigationLegal = "قانوني"
+linkSubmit = "إضافة"
+linkAdvertise = "إعلان"
+linkArticles = "المقالات"
+linkPrivacyPolicy = "سياسة الخصوصية"
+linkTermsOfService = "شروط الخدمة"
+rights = "{0} جميع الحقوق محفوظة."
 
 [blog]
 title = "المدونة"
@@ -30,3 +54,8 @@ title = "الدليل"
 listings = "إدراجات"
 tags = "الوسوم"
 filterByTag = "تصفية حسب الوسم"
+tagPagesTitle = "{0} تطبيقات"
+emptyStateText = "يبدو أن هذا الإدراج غير موجود في الأرشيف."
+submitTitle = "إضافة قالب"
+submitDescription = "أضف قالبًا لعرض مشروع جيد للآخرين."
+featuredLabel = "مميز ✨"
