@@ -7,7 +7,8 @@ export default {
 	theme: {
 		extend: {
 			fontFamily: {
-        sans: ['Gabarito'],
+        sans: ['Gabarito', 'sans-serif'],
+        display: ['Fraunces', 'serif'],
       },
 			colors: {
 				primary: colors.sky,
