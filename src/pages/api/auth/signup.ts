@@ -11,6 +11,8 @@ interface SignupRequest {
   city?: string;
   whatsappNumber: string;
   bio?: string;
+  whatsappCountryCode?: string;
+  whatsappLocalNumber?: string;
 }
 
 export async function POST({ request }: { request: Request }): Promise<Response> {
@@ -72,7 +74,7 @@ export async function POST({ request }: { request: Request }): Promise<Response>
       displayName: data.displayName,
       email: data.email,
       country: data.country,
-      city: data.city || "",
+      city: data.city?.trim() || undefined,
       phoneNumber: data.whatsappNumber,
       whatsappNumber: data.whatsappNumber,
       bio: data.bio || "",
