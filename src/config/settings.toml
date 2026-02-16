@@ -77,7 +77,7 @@ target = "_blank"
 
 [header.actionButton]
 text = "i18n.header.actionButtonText"
-href = "https://tally.so"
+href = "/signup"
 
 [footer]
 description = "i18n.footer.description"
