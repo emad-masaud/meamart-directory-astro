@@ -59,3 +59,38 @@ emptyStateText = "يبدو أن هذا الإدراج غير موجود في ا�
 submitTitle = "إضافة قالب"
 submitDescription = "أضف قالبًا لعرض مشروع جيد للآخرين."
 featuredLabel = "مميز ✨"
+
+[signup]
+usernameLabel = "اسم المستخدم"
+usernamePlaceholder = "username"
+usernameHelp = "متجرك سيكون متاح على: meamart.com/@{0}"
+usernameInvalid = "أحرف إنجليزية صغيرة وأرقام وشرطة فقط"
+usernameLength = "يجب أن يكون من 3 إلى 20 حرف"
+usernameTaken = "هذا الاسم مستخدم بالفعل"
+usernameCheckFailed = "تعذر التحقق من اسم المستخدم"
+displayNameLabel = "اسم المتجر"
+displayNamePlaceholder = "اسم متجرك أو شركتك"
+emailLabel = "البريد الإلكتروني"
+emailPlaceholder = "email@example.com"
+emailHelp = "سنستخدمه فقط لإرسال رسائل مهمة حول متجرك"
+countryLabel = "الدولة"
+countryPlaceholder = "اختر الدولة"
+cityLabel = "المدينة"
+cityPlaceholder = "دبي، الرياض، إلخ"
+whatsappLabel = "رقم WhatsApp"
+whatsappCodeLabel = "رمز الدولة"
+whatsappPlaceholder = "501234567"
+whatsappInvalid = "أدخل رقم بدون +، من 6 إلى 12 رقم"
+whatsappHelp = "رقم العملاء سيتواصلون معك عليه مباشرة عبر WhatsApp"
+bioLabel = "معلومات عن متجرك (اختياري)"
+bioPlaceholder = "وصف قصير عن متجرك أو خدماتك..."
+termsPrefix = "أوافق على"
+termsAnd = "و"
+termsService = "شروط الخدمة"
+termsPrivacy = "سياسة الخصوصية"
+successMessage = "✅ تم إنشاء متجرك بنجاح! جاري التحويل..."
+submitLabel = "إنشاء المتجر الآن"
+submitLoading = "جاري الإنشاء..."
+errorGeneric = "حدث خطأ ما. حاول مجدداً"
+loginPrompt = "هل لديك متجر بالفعل؟"
+loginComingSoon = "تسجيل الدخول قريبًا"
