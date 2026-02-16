@@ -321,8 +321,13 @@ const validateUsername = async (username: string) => {
     const data = await response.json();
 
     if (data.available === false) {
-      usernameError.value = ui.value.usernameTaken;
-      usernameWarning.value = "";
+      if (data.reason === "taken") {
+        usernameError.value = ui.value.usernameTaken;
+        usernameWarning.value = "";
+      } else {
+        usernameError.value = "";
+        usernameWarning.value = ui.value.usernameCheckFailed;
+      }
     } else if (data.available === true) {
       usernameError.value = "";
       usernameWarning.value = "";

@@ -1,4 +1,5 @@
-import { getCollection } from "astro:content";
+import { promises as fs } from "fs";
+import path from "path";
 
 export async function GET({ request }: { request: Request }) {
   const url = new URL(request.url);
@@ -12,13 +13,24 @@ export async function GET({ request }: { request: Request }) {
   }
 
   try {
-    const users = await getCollection("users");
-    const exists = users.some((u) => u.data.username === username);
+    const usersDir = path.join(process.cwd(), "src/data/users");
+    const filePath = path.join(usersDir, `@${username}.json`);
+    let exists = false;
+
+    try {
+      await fs.access(filePath);
+      exists = true;
+    } catch (err: any) {
+      if (err?.code !== "ENOENT") {
+        throw err;
+      }
+    }
 
     return new Response(
       JSON.stringify({
         available: !exists,
         username,
+        reason: exists ? "taken" : "available",
       }),
       {
         status: 200,
