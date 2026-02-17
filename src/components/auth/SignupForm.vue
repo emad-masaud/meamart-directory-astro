@@ -156,6 +156,45 @@
       ></textarea>
     </div>
 
+    <!-- Password -->
+    <div>
+      <label for="signup-password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+        {{ ui.passwordLabel || 'Password' }}
+      </label>
+      <input
+        id="signup-password"
+        name="password"
+        v-model="form.password"
+        type="password"
+        :placeholder="ui.passwordPlaceholder || 'Enter your password'"
+        required
+        minlength="8"
+        class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+      />
+      <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+        {{ ui.passwordHelp || 'At least 8 characters' }}
+      </p>
+    </div>
+
+    <!-- Confirm Password -->
+    <div>
+      <label for="signup-password-confirm" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+        {{ ui.passwordConfirmLabel || 'Confirm Password' }}
+      </label>
+      <input
+        id="signup-password-confirm"
+        name="passwordConfirm"
+        v-model="form.passwordConfirm"
+        type="password"
+        :placeholder="ui.passwordConfirmPlaceholder || 'Re-enter your password'"
+        required
+        class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+      />
+      <p v-if="passwordMismatch" class="mt-1 text-xs text-red-600 dark:text-red-400">
+        {{ ui.passwordMismatch || 'Passwords do not match' }}
+      </p>
+    </div>
+
     <!-- Terms Agreement -->
     <div class="flex items-start gap-2">
       <input
@@ -207,9 +246,9 @@
     <!-- Login Link -->
     <p class="text-center text-sm text-gray-600 dark:text-gray-400">
       {{ ui.loginPrompt }}
-      <span class="font-semibold text-gray-500 dark:text-gray-400">
-        {{ ui.loginComingSoon }}
-      </span>
+      <a href="/login" class="font-semibold text-blue-600 hover:underline dark:text-blue-400">
+        {{ ui.loginLink || 'Log in' }}
+      </a>
     </p>
   </form>
 </template>
@@ -227,6 +266,8 @@ interface SignupForm {
   whatsappCountryCode: string;
   whatsappLocalNumber: string;
   bio: string;
+  password: string;
+  passwordConfirm: string;
   agreeToTerms: boolean;
 }
 
@@ -239,6 +280,8 @@ const form = ref<SignupForm>({
   whatsappCountryCode: "971",
   whatsappLocalNumber: "",
   bio: "",
+  password: "",
+  passwordConfirm: "",
   agreeToTerms: false,
 });
 
@@ -247,6 +290,11 @@ const error = ref("");
 const success = ref(false);
 const usernameError = ref("");
 const usernameWarning = ref("");
+
+const passwordMismatch = computed(() => {
+  if (!form.value.password || !form.value.passwordConfirm) return false;
+  return form.value.password !== form.value.passwordConfirm;
+});
 
 const translations = ref(getClientTranslations());
 const t = computed(() => translations.value.t);
@@ -310,9 +358,14 @@ const validateUsername = async (username: string) => {
     return;
   }
 
+  const apiBase = (import.meta.env.PUBLIC_API_BASE_URL || "").replace(/\/$/, "");
+  const apiUrl = (path: string) => `${apiBase}${path}`;
+
   // Check availability on server
   try {
-    const response = await fetch(`/api/auth/check-username/${encodeURIComponent(username)}`);
+    const response = await fetch(
+      apiUrl(`/api/auth/check-username?username=${encodeURIComponent(username)}`)
+    );
     if (!response.ok) {
       usernameError.value = "";
       usernameWarning.value = ui.value.usernameCheckFailed;
@@ -350,21 +403,38 @@ const handleSignup = async () => {
       throw new Error(usernameError.value);
     }
 
+    // Validate password match
+    if (form.value.password !== form.value.passwordConfirm) {
+      throw new Error(ui.value.passwordMismatch || "Passwords do not match");
+    }
+
+    if (form.value.password.length < 8) {
+      throw new Error(ui.value.passwordTooShort || "Password must be at least 8 characters");
+    }
+
     const username = form.value.username.trim().toLowerCase();
     const countryCode = form.value.whatsappCountryCode.replace(/\D/g, "");
     const localNumber = form.value.whatsappLocalNumber.replace(/\D/g, "");
     const whatsappNumber = `${countryCode}${localNumber}`;
 
+    const apiBase = (import.meta.env.PUBLIC_API_BASE_URL || "").replace(/\/$/, "");
+    const apiUrl = (path: string) => `${apiBase}${path}`;
+
     // Submit signup
-    const response = await fetch("/api/auth/signup", {
+    const response = await fetch(apiUrl("/api/auth/signup"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        ...form.value,
         username,
+        displayName: form.value.displayName,
+        email: form.value.email,
+        country: form.value.country,
+        city: form.value.city,
         whatsappNumber,
+        bio: form.value.bio,
+        password: form.value.password,
       }),
     });
 
@@ -372,6 +442,12 @@ const handleSignup = async () => {
 
     if (!response.ok) {
       throw new Error(data.message || "فشل إنشاء المتجر");
+    }
+
+    // Save token to localStorage
+    if (data.token) {
+      localStorage.setItem("meamart_token", data.token);
+      localStorage.setItem("meamart_username", username);
     }
 
     success.value = true;

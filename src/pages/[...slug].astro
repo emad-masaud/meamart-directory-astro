@@ -8,6 +8,10 @@ import { getRootPages } from "@lib/getRootPages";
 const { slug } = Astro.params;
 const { entry } = Astro.props;
 
+if (!entry) {
+  return Astro.redirect("/404");
+}
+
 const { Content } = await render(entry);
 
 export async function getStaticPaths() {

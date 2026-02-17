@@ -1,0 +1,11 @@
+name = "meamart-api"
+main = "workers/meamart-api.js"
+compatibility_date = "2025-02-01"
+
+routes = [
+	{ pattern = "meamart.com/api/*", zone_name = "meamart.com" }
+]
+
+[[kv_namespaces]]
+binding = "MEAMART_USERS"
+id = "be959515af0c40b1b498642fab092e0f"

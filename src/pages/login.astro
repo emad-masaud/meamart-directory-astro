@@ -1,0 +1,139 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import AppShell from "@components/app/AppShell.astro";
+import { Icon } from "astro-icon/components";
+import LoginForm from "@components/auth/LoginForm.vue";
+---
+
+<BaseLayout title="تسجيل الدخول" description="سجل دخول إلى حسابك في MeaMart">
+  <AppShell>
+    <section class="relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-b from-blue-50 via-white to-sky-50" aria-hidden="true"></div>
+      <div class="absolute -top-24 end-8 h-56 w-56 rounded-full bg-blue-200/50 blur-3xl" aria-hidden="true"></div>
+      <div class="absolute bottom-0 start-10 h-72 w-72 rounded-full bg-sky-200/40 blur-3xl" aria-hidden="true"></div>
+
+      <div class="relative mx-auto max-w-6xl px-6 py-16">
+        <div class="mb-12 text-center">
+          <span class="reveal-up inline-flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-blue-700 shadow-sm">
+            Welcome back
+          </span>
+          <h1 class="reveal-up reveal-delay-1 mt-6 font-display text-4xl font-semibold text-gray-900 sm:text-5xl">
+            تسجيل الدخول 🔐
+          </h1>
+          <p class="reveal-up reveal-delay-2 mt-4 text-lg text-gray-600">
+            سجل دخولك وابدأ بإدارة متجرك ومنتجاتك
+          </p>
+        </div>
+
+        <div class="grid gap-10 lg:grid-cols-[1.05fr_0.95fr]">
+          <div class="reveal-up rounded-3xl border border-gray-200/70 bg-white/90 p-8 shadow-xl shadow-blue-100">
+            <h2 class="mb-6 text-2xl font-semibold text-gray-900">سجل دخولك</h2>
+            <LoginForm client:load />
+          </div>
+
+          <div class="space-y-6">
+            <div class="reveal-up reveal-delay-1 rounded-3xl border border-blue-200/60 bg-white/80 p-6 shadow-sm">
+              <h3 class="flex items-center gap-2 text-lg font-semibold text-blue-900">
+                <Icon name="tabler:shield-check" class="h-6 w-6 text-blue-600" />
+                آمن ومشفر
+              </h3>
+              <ul class="mt-4 space-y-3 text-sm text-blue-900/80">
+                <li class="flex items-start gap-2">
+                  <Icon name="tabler:circle-check" class="mt-1 h-5 w-5 flex-shrink-0" />
+                  <span>تشفير من الطراز العالمي لحماية بياناتك</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <Icon name="tabler:circle-check" class="mt-1 h-5 w-5 flex-shrink-0" />
+                  <span>أمان على مستوى البنوك</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <Icon name="tabler:circle-check" class="mt-1 h-5 w-5 flex-shrink-0" />
+                  <span>حماية ضد الوصول غير المصرح به</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <Icon name="tabler:circle-check" class="mt-1 h-5 w-5 flex-shrink-0" />
+                  <span>نحن لا نشارك بياناتك أبدًا</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="reveal-up reveal-delay-2 rounded-3xl border border-emerald-200/60 bg-emerald-50/70 p-6">
+              <h3 class="flex items-center gap-2 text-lg font-semibold text-emerald-900">
+                <Icon name="tabler:rocket" class="h-6 w-6 text-emerald-600" />
+                بعد تسجيل الدخول
+              </h3>
+              <div class="mt-4 space-y-2 text-sm text-emerald-900/80">
+                <div class="flex items-center gap-2">
+                  <div class="h-2 w-2 rounded-full bg-emerald-500"></div>
+                  <span>إدارة منتجاتك وتحديثها فورًا</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <div class="h-2 w-2 rounded-full bg-blue-500"></div>
+                  <span>إضافة منتجات جديدة لمتجرك</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <div class="h-2 w-2 rounded-full bg-orange-500"></div>
+                  <span>متابعة طلبات العملاء عبر واتساب</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <div class="h-2 w-2 rounded-full bg-purple-500"></div>
+                  <span>تحديث ملفك الشخصي وبياناتك</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="reveal-up reveal-delay-3 rounded-3xl border border-amber-200/60 bg-amber-50/70 p-6">
+              <h3 class="flex items-center gap-2 text-lg font-semibold text-amber-900">
+                <Icon name="tabler:user-plus" class="h-6 w-6 text-amber-600" />
+                ليس لديك حساب؟
+              </h3>
+              <p class="mt-4 text-sm text-amber-900/80">
+                انضم إلى MeaMart اليوم وابدأ ببيع منتجاتك مباشرة عبر WhatsApp Business
+              </p>
+              <a
+                href="/signup"
+                class="mt-4 inline-flex items-center gap-2 rounded-full bg-amber-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-amber-700"
+              >
+                <Icon name="tabler:plus" class="h-5 w-5" />
+                إنشاء حساب جديد
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Help Section -->
+        <div class="reveal-up mt-12 rounded-3xl border border-slate-200 bg-white/80 p-6 text-center shadow-sm">
+          <h3 class="text-lg font-semibold text-gray-900">
+            تحتاج مساعدة؟
+          </h3>
+          <p class="mt-2 text-sm text-gray-600">
+            هل نسيت كلمة المرور؟ أو تواجه مشكلة في تسجيل الدخول؟
+          </p>
+          <div class="mt-4 flex flex-wrap items-center justify-center gap-4">
+            <a
+              href="https://wa.me/971XXXXXXXXX"
+              class="inline-flex items-center gap-2 rounded-full border border-gray-300 px-6 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+            >
+              <Icon name="tabler:brand-whatsapp" class="h-5 w-5 text-green-600" />
+              تواصل معنا
+            </a>
+            <a
+              href="/help"
+              class="inline-flex items-center gap-2 rounded-full border border-gray-300 px-6 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+            >
+              <Icon name="tabler:help-circle" class="h-5 w-5 text-blue-600" />
+              مركز المساعدة
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </AppShell>
+</BaseLayout>
+
+<style>
+.hero-grid {
+  background-image: radial-gradient(circle at 1px 1px, rgb(0 0 0 / 0.03) 1px, transparent 0);
+  background-size: 40px 40px;
+}
+</style>
