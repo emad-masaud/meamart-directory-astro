@@ -1,0 +1,18 @@
+---
+import Landing from "@layouts/Landing.astro";
+import { render } from "astro:content";
+import { getCollection } from "astro:content";
+
+const pages = await getCollection("pages");
+const indexPage = pages.find((p) => p.id === "index");
+
+if (!indexPage) {
+  return Astro.redirect("/404");
+}
+
+const { Content } = await render(indexPage);
+---
+
+<Landing>
+  <Content />
+</Landing>
