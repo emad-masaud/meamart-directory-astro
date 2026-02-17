@@ -23,39 +23,76 @@ title = "i18n.directory.tagPagesTitle"
 placeholder = "i18n.common.searchPlaceholder"
 
 [[directoryData.tags]]
-key = "breathing"
-name = "Breathing"
+key = "electronics"
+name = "Electronics"
+name_ar = "إلكترونيات"
 color = "blue"
-emoji = "👃"
-description = "Breathing techniques are a popular feature in MeaMart."
+emoji = "💻"
+description = "Electronic devices, computers, phones, and tech accessories."
+description_ar = "أجهزة إلكترونية، كمبيوترات، هواتف، وملحقات تقنية."
 
 [[directoryData.tags]]
-key = "sleep"
-name = "Sleep"
+key = "food"
+name = "Food & Restaurants"
+name_ar = "مطاعم وأطعمة"
+color = "orange"
+emoji = "🍔"
+description = "Restaurants, cafes, food delivery, and catering services."
+description_ar = "مطاعم، مقاهي، توصيل طعام، وخدمات تموين."
+
+[[directoryData.tags]]
+key = "fashion"
+name = "Fashion & Clothing"
+name_ar = "أزياء وملابس"
+color = "pink"
+emoji = "👗"
+description = "Clothing stores, fashion accessories, and style boutiques."
+description_ar = "محلات ملابس، إكسسوارات موضة، ومتاجر أزياء."
+
+[[directoryData.tags]]
+key = "real-estate"
+name = "Real Estate"
+name_ar = "عقارات"
 color = "green"
-emoji = "💤"
-description = "Some apps include music that slowly goes away to help you sleep better and rest."
+emoji = "🏠"
+description = "Properties for sale or rent, real estate agencies."
+description_ar = "عقارات للبيع أو الإيجار، مكاتب عقارية."
 
 [[directoryData.tags]]
-key = "meditation"
-name = "Meditation"
+key = "services"
+name = "Services"
+name_ar = "خدمات"
 color = "purple"
-emoji = "🧘‍♂️"
-description = "A meditation for your life. It's a great way to relax and clear your mind. It's also a great way to improve your sleep."
+emoji = "🛠️"
+description = "Professional services, repairs, maintenance, and consulting."
+description_ar = "خدمات احترافية، إصلاحات، صيانة، واستشارات."
 
 [[directoryData.tags]]
-key = "yoga"
-name = "Yoga"
-color = "purple"
-emoji = "🧘‍♂️"
-description = "A yoga for your life."
+key = "health"
+name = "Health & Beauty"
+name_ar = "صحة وجمال"
+color = "red"
+emoji = "💊"
+description = "Pharmacies, beauty salons, health clinics, and wellness centers."
+description_ar = "صيدليات، صالونات تجميل، عيادات صحية، ومراكز عافية."
 
 [[directoryData.tags]]
-key = "timer"
-name = "Timer"
-color = "green"
-emoji = "⏰"
-description = "Timers can be used to track how much you meditate."
+key = "automotive"
+name = "Automotive"
+name_ar = "سيارات"
+color = "gray"
+emoji = "🚗"
+description = "Car dealerships, auto repair, spare parts, and accessories."
+description_ar = "معارض سيارات، إصلاح سيارات، قطع غيار، وإكسسوارات."
+
+[[directoryData.tags]]
+key = "education"
+name = "Education"
+name_ar = "تعليم"
+color = "blue"
+emoji = "📚"
+description = "Schools, training centers, tutoring, and online courses."
+description_ar = "مدارس، مراكز تدريب، دروس خصوصية، ودورات عبر الإنترنت."
 
 [header.banner]
 show = true
@@ -76,8 +113,8 @@ href = "https://us.posthog.com/shared/vHlGCcSqPjGH4r_QijaXSETtmN9J-g"
 target = "_blank"
 
 [header.actionButton]
-text = "أضف تطبيق"
-href = "/signup"
+text = "أضف إعلان"
+href = "https://a55f440a.meamart-dashboard.pages.dev/signup.html"
 
 [footer]
 description = "i18n.footer.description"
