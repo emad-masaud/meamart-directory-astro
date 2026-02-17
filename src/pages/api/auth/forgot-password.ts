@@ -1,13 +1,12 @@
 import { promises as fs } from "fs";
 import path from "path";
-import { generateVerificationCode, sendEmail } from "../../../lib/email";
+import { generateVerificationCode } from "../../../lib/email";
 import { sendResetCodeEmail } from "../../../lib/passwordReset";
 
 export const prerender = false;
 
 const RESET_CODES_DIR = path.join(process.cwd(), "src/data/reset-codes");
 
-// Ensure reset codes directory exists
 async function ensureResetCodesDir() {
   try {
     await fs.mkdir(RESET_CODES_DIR, { recursive: true });
@@ -16,15 +15,15 @@ async function ensureResetCodesDir() {
   }
 }
 
-export async function POST({ request }: any) {
-  try {
-    if (request.method !== "POST") {
-      return new Response(
-        JSON.stringify({ message: "Method not allowed" }),
-        { status: 405, headers: { "Content-Type": "application/json" } }
-      );
-    }
+export async function POST({ request }: { request: Request }): Promise<Response> {
+  if (request.method !== "POST") {
+    return new Response(
+      JSON.stringify({ message: "Method not allowed" }),
+      { status: 405, headers: { "Content-Type": "application/json" } }
+    );
+  }
 
+  try {
     await ensureResetCodesDir();
 
     const body = await request.json();
@@ -99,7 +98,6 @@ export async function POST({ request }: any) {
 
     if (!emailSent) {
       console.warn("Email sending may have failed, but code was stored");
-      // Still return success, as the code is stored
     }
 
     return new Response(

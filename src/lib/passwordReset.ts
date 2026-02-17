@@ -1,4 +1,4 @@
-import { sendEmail } from "../../lib/email";
+import { sendEmail } from "./email";
 
 // Email service configuration
 const CLOUDFLARE_API_URL = process.env.CLOUDFLARE_API_URL;

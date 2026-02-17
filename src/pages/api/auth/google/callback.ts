@@ -72,7 +72,7 @@ async function findUserByEmail(email: string): Promise<any> {
   return null;
 }
 
-export async function GET({ url }: any) {
+export async function GET({ url }: { url: URL }): Promise<Response> {
   try {
     await ensureUsersDir();
 

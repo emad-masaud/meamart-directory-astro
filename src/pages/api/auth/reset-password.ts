@@ -8,15 +8,15 @@ export const prerender = false;
 const RESET_CODES_DIR = path.join(process.cwd(), "src/data/reset-codes");
 const USERS_DIR = path.join(process.cwd(), "src/data/users");
 
-export async function POST({ request }: any) {
-  try {
-    if (request.method !== "POST") {
-      return new Response(
-        JSON.stringify({ message: "Method not allowed" }),
-        { status: 405, headers: { "Content-Type": "application/json" } }
-      );
-    }
+export async function POST({ request }: { request: Request }): Promise<Response> {
+  if (request.method !== "POST") {
+    return new Response(
+      JSON.stringify({ message: "Method not allowed" }),
+      { status: 405, headers: { "Content-Type": "application/json" } }
+    );
+  }
 
+  try {
     const body = await request.json();
     const { email, code, newPassword } = body;
 
@@ -43,50 +43,48 @@ export async function POST({ request }: any) {
     }
 
     const normalizedEmail = email.trim().toLowerCase();
+
+    // Verify reset code
     const codeFile = path.join(RESET_CODES_DIR, `@${normalizedEmail}.json`);
 
-    // Verify the reset code
+    let codeData;
     try {
-      const codeContent = await fs.readFile(codeFile, "utf-8");
-      const resetCode = JSON.parse(codeContent);
-
-      // Check if code has expired
-      const expirationTime = new Date(resetCode.expiresAt).getTime();
-      if (Date.now() > expirationTime) {
-        return new Response(
-          JSON.stringify({ message: "Verification code has expired" }),
-          { status: 401, headers: { "Content-Type": "application/json" } }
-        );
-      }
-
-      // Check if code matches
-      if (resetCode.code !== code) {
-        return new Response(
-          JSON.stringify({ message: "Invalid verification code" }),
-          { status: 401, headers: { "Content-Type": "application/json" } }
-        );
-      }
-
-      // Check if code was already used
-      if (resetCode.used) {
-        return new Response(
-          JSON.stringify({ message: "Verification code has already been used" }),
-          { status: 401, headers: { "Content-Type": "application/json" } }
-        );
-      }
+      const fileContent = await fs.readFile(codeFile, "utf-8");
+      codeData = JSON.parse(fileContent);
     } catch (error) {
-      if ((error as any).code === "ENOENT") {
-        return new Response(
-          JSON.stringify({ message: "No reset request found for this email" }),
-          { status: 404, headers: { "Content-Type": "application/json" } }
-        );
-      }
-
-      throw error;
+      return new Response(
+        JSON.stringify({ message: "Invalid or expired reset code" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
     }
 
-    // Find and update user
-    let userFile: string | null = null;
+    // Check expiration
+    const expirationTime = new Date(codeData.expiresAt).getTime();
+    if (Date.now() > expirationTime) {
+      return new Response(
+        JSON.stringify({ message: "Reset code has expired" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    // Check code match
+    if (codeData.code !== code) {
+      return new Response(
+        JSON.stringify({ message: "Invalid reset code" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    // Check if used
+    if (codeData.used) {
+      return new Response(
+        JSON.stringify({ message: "Reset code has already been used" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    // Find user by email
+    let userFilePath: string | null = null;
     let userData: any = null;
 
     try {
@@ -97,7 +95,7 @@ export async function POST({ request }: any) {
           const content = await fs.readFile(filePath, "utf-8");
           const user = JSON.parse(content);
           if (user.email.toLowerCase() === normalizedEmail) {
-            userFile = filePath;
+            userFilePath = filePath;
             userData = user;
             break;
           }
@@ -107,7 +105,7 @@ export async function POST({ request }: any) {
       console.error("Error reading users directory:", error);
     }
 
-    if (!userFile || !userData) {
+    if (!userFilePath || !userData) {
       return new Response(
         JSON.stringify({ message: "User not found" }),
         { status: 404, headers: { "Content-Type": "application/json" } }
@@ -121,22 +119,23 @@ export async function POST({ request }: any) {
     userData.password = hashedPassword;
     userData.passwordResetAt = new Date().toISOString();
 
-    // Save updated user
-    await fs.writeFile(userFile, JSON.stringify(userData, null, 2));
+    await fs.writeFile(userFilePath, JSON.stringify(userData, null, 2));
 
-    // Mark the reset code as used
-    const resetCodeData = JSON.parse(await fs.readFile(codeFile, "utf-8"));
-    resetCodeData.used = true;
-    resetCodeData.usedAt = new Date().toISOString();
-    await fs.writeFile(codeFile, JSON.stringify(resetCodeData, null, 2));
+    // Mark code as used
+    codeData.used = true;
+    codeData.usedAt = new Date().toISOString();
+    await fs.writeFile(codeFile, JSON.stringify(codeData, null, 2));
 
     // Send confirmation email
-    await sendPasswordResetConfirmationEmail(normalizedEmail, userData.displayName || "User");
+    await sendPasswordResetConfirmationEmail(
+      normalizedEmail,
+      userData.displayName || "User"
+    );
 
     return new Response(
       JSON.stringify({
         message: "Password reset successfully",
-        email: normalizedEmail,
+        username: userData.username,
       }),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );

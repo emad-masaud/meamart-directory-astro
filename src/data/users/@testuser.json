@@ -1,0 +1,27 @@
+{
+  "username": "testuser",
+  "displayName": "Test User",
+  "email": "test@meamart.com",
+  "country": "AE",
+  "phoneNumber": "971501234567",
+  "whatsappNumber": "971501234567",
+  "bio": "Test",
+  "googleSheet": {
+    "enabled": false,
+    "sheetName": "Products",
+    "syncInterval": 3600
+  },
+  "googleMerchant": {
+    "enabled": false,
+    "currency": "AED",
+    "autoSync": false
+  },
+  "meachat": {
+    "enabled": false
+  },
+  "social": {},
+  "createdAt": "2026-02-17T17:19:16.444Z",
+  "featured": false,
+  "password": "$2b$10$PCvLwnQgNp05iJQjFQtcdeF6AED48lU9bWFK3rW/LJASVPTf/jMba",
+  "passwordResetAt": "2026-02-17T17:19:53.010Z"
+}

@@ -2,15 +2,15 @@ import { generateGoogleAuthUrl } from "../../../../lib/googleOAuth";
 
 export const prerender = false;
 
-export async function POST({ request }: any) {
-  try {
-    if (request.method !== "POST") {
-      return new Response(
-        JSON.stringify({ message: "Method not allowed" }),
-        { status: 405, headers: { "Content-Type": "application/json" } }
-      );
-    }
+export async function POST({ request }: { request: Request }): Promise<Response> {
+  if (request.method !== "POST") {
+    return new Response(
+      JSON.stringify({ message: "Method not allowed" }),
+      { status: 405, headers: { "Content-Type": "application/json" } }
+    );
+  }
 
+  try {
     const body = await request.json();
     const { redirectUri } = body;
 

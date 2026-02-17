@@ -5,15 +5,15 @@ export const prerender = false;
 
 const RESET_CODES_DIR = path.join(process.cwd(), "src/data/reset-codes");
 
-export async function POST({ request }: any) {
-  try {
-    if (request.method !== "POST") {
-      return new Response(
-        JSON.stringify({ message: "Method not allowed" }),
-        { status: 405, headers: { "Content-Type": "application/json" } }
-      );
-    }
+export async function POST({ request }: { request: Request }): Promise<Response> {
+  if (request.method !== "POST") {
+    return new Response(
+      JSON.stringify({ message: "Method not allowed" }),
+      { status: 405, headers: { "Content-Type": "application/json" } }
+    );
+  }
 
+  try {
     const body = await request.json();
     const { email, code } = body;
 
@@ -34,58 +34,55 @@ export async function POST({ request }: any) {
     const normalizedEmail = email.trim().toLowerCase();
     const codeFile = path.join(RESET_CODES_DIR, `@${normalizedEmail}.json`);
 
+    let codeData;
     try {
-      const content = await fs.readFile(codeFile, "utf-8");
-      const resetCode = JSON.parse(content);
-
-      // Check if code has expired
-      const expirationTime = new Date(resetCode.expiresAt).getTime();
-      if (Date.now() > expirationTime) {
-        return new Response(
-          JSON.stringify({ message: "Verification code has expired" }),
-          { status: 401, headers: { "Content-Type": "application/json" } }
-        );
-      }
-
-      // Check if code matches
-      if (resetCode.code !== code) {
-        return new Response(
-          JSON.stringify({ message: "Invalid verification code" }),
-          { status: 401, headers: { "Content-Type": "application/json" } }
-        );
-      }
-
-      // Check if code was already used
-      if (resetCode.used) {
-        return new Response(
-          JSON.stringify({ message: "Verification code has already been used" }),
-          { status: 401, headers: { "Content-Type": "application/json" } }
-        );
-      }
-
-      return new Response(
-        JSON.stringify({
-          message: "Code verified successfully",
-          email: normalizedEmail,
-        }),
-        { status: 200, headers: { "Content-Type": "application/json" } }
-      );
+      const fileContent = await fs.readFile(codeFile, "utf-8");
+      codeData = JSON.parse(fileContent);
     } catch (error) {
-      if ((error as any).code === "ENOENT") {
-        return new Response(
-          JSON.stringify({ message: "No reset request found for this email" }),
-          { status: 404, headers: { "Content-Type": "application/json" } }
-        );
-      }
-
-      throw error;
+      return new Response(
+        JSON.stringify({ message: "Invalid or expired reset code" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
     }
+
+    // Check if code has expired
+    const expirationTime = new Date(codeData.expiresAt).getTime();
+    if (Date.now() > expirationTime) {
+      return new Response(
+        JSON.stringify({ message: "Reset code has expired" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    // Check if code matches
+    if (codeData.code !== code) {
+      return new Response(
+        JSON.stringify({ message: "Invalid reset code" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    // Check if code has been used
+    if (codeData.used) {
+      return new Response(
+        JSON.stringify({ message: "Reset code has already been used" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    return new Response(
+      JSON.stringify({
+        message: "Code verified successfully",
+        email: normalizedEmail,
+      }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     console.error("Verify reset code error:", errorMessage);
 
     return new Response(
-      JSON.stringify({ message: "Failed to verify code" }),
+      JSON.stringify({ message: "Failed to verify reset code" }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
