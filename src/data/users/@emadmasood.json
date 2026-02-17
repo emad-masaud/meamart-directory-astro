@@ -1,0 +1,27 @@
+{
+  "username": "emadmasood",
+  "displayName": "Hero",
+  "email": "bohneen@gmail.com",
+  "country": "SA",
+  "city": "sanaa",
+  "phoneNumber": "96666757174",
+  "whatsappNumber": "96666757174",
+  "bio": "wccwe",
+  "googleSheet": {
+    "enabled": false,
+    "sheetName": "Products",
+    "syncInterval": 3600
+  },
+  "googleMerchant": {
+    "enabled": false,
+    "currency": "AED",
+    "autoSync": false
+  },
+  "meachat": {
+    "enabled": false
+  },
+  "social": {},
+  "createdAt": "2026-02-17T15:56:20.951Z",
+  "featured": false,
+  "password": "$2b$10$5SaF9.NNcCPfN.RW4Lrn3uA5Y76.FyFwmR23cnR5eJ3WwI4QxQ.3G"
+}
