@@ -1,19 +1,16 @@
 import { promises as fs } from "fs";
 import path from "path";
-import crypto from "crypto";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 interface LoginRequest {
   username: string;
   password: string;
 }
 
-// Simple password hashing for development (matches signup.ts)
-function hashPassword(password: string): string {
-  return crypto.createHash("sha256").update(password).digest("hex");
-}
+const JWT_SECRET = process.env.JWT_SECRET || "meamart-jwt-secret-change-in-production";
 
 export async function POST({ request }: { request: Request }): Promise<Response> {
-  // Only accept POST requests
   if (request.method !== "POST") {
     return new Response(JSON.stringify({ message: "Method not allowed" }), {
       status: 405,
@@ -24,93 +21,76 @@ export async function POST({ request }: { request: Request }): Promise<Response>
   try {
     const data: LoginRequest = await request.json();
 
-    // Validate required fields
     if (!data.username || !data.password) {
       return new Response(
         JSON.stringify({ message: "Username and password required" }),
-        { 
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
+        { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    // Normalize username
     const username = data.username.trim().toLowerCase();
 
-    // Validate username format
     if (!/^[a-z0-9_-]{3,20}$/.test(username)) {
       return new Response(
         JSON.stringify({ message: "Invalid username or password" }),
-        { 
-          status: 401,
-          headers: { "Content-Type": "application/json" },
-        }
+        { status: 401, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    // Check if user file exists
     const usersDir = path.join(process.cwd(), "src/data/users");
     const filePath = path.join(usersDir, `@${username}.json`);
 
-    let userExists = false;
     let userData;
-
     try {
       const fileContent = await fs.readFile(filePath, "utf-8");
       userData = JSON.parse(fileContent);
-      userExists = true;
     } catch (error) {
-      // User file doesn't exist
-      userExists = false;
-    }
-
-    if (!userExists) {
       return new Response(
         JSON.stringify({ message: "Invalid username or password" }),
-        { 
-          status: 401,
-          headers: { "Content-Type": "application/json" },
-        }
+        { status: 401, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    // Verify password
-    // If the user was created before password support was added, they won't have a password field
     if (!userData.password) {
       return new Response(
-        JSON.stringify({ 
-          message: "Account created before authentication was enabled. Please contact support." 
-        }),
-        { 
-          status: 401,
-          headers: { "Content-Type": "application/json" },
-        }
+        JSON.stringify({ message: "Account needs password reset" }),
+        { status: 401, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    const hashedInputPassword = hashPassword(data.password);
-    if (hashedInputPassword !== userData.password) {
+    // Verify password - support both bcrypt and legacy SHA-256
+    let isValid = false;
+    if (userData.password.startsWith("$2")) {
+      isValid = await bcrypt.compare(data.password, userData.password);
+    } else {
+      // Legacy SHA-256 - verify and upgrade
+      const crypto = await import("crypto");
+      const sha256Hash = crypto.createHash("sha256").update(data.password).digest("hex");
+      if (sha256Hash === userData.password) {
+        isValid = true;
+        // Upgrade to bcrypt
+        userData.password = await bcrypt.hash(data.password, 10);
+        await fs.writeFile(filePath, JSON.stringify(userData, null, 2));
+      }
+    }
+
+    if (!isValid) {
       return new Response(
         JSON.stringify({ message: "Invalid username or password" }),
-        { 
-          status: 401,
-          headers: { "Content-Type": "application/json" },
-        }
+        { status: 401, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    // Generate a mock JWT token for development
-    // In production, the Cloudflare Worker generates real JWT tokens
-    const mockToken = Buffer.from(
-      JSON.stringify({
+    // Generate JWT token
+    const token = jwt.sign(
+      {
         username: userData.username,
         displayName: userData.displayName,
         email: userData.email,
-        iat: Math.floor(Date.now() / 1000),
-        exp: Math.floor(Date.now() / 1000) + (7 * 24 * 60 * 60), // 7 days
-      })
-    ).toString("base64");
+      },
+      JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
     return new Response(
       JSON.stringify({
@@ -118,25 +98,16 @@ export async function POST({ request }: { request: Request }): Promise<Response>
         username: userData.username,
         displayName: userData.displayName,
         profile: `/@${userData.username}`,
-        token: mockToken,
+        token,
       }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }
+      { status: 200, headers: { "Content-Type": "application/json" } }
     );
 
   } catch (error: any) {
     console.error("Login error:", error);
-
     return new Response(
-      JSON.stringify({
-        message: error.message || "Failed to login",
-      }),
-      { 
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
+      JSON.stringify({ message: error.message || "Failed to login" }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
 }

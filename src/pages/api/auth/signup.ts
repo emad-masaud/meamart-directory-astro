@@ -2,7 +2,8 @@ import { getCollection } from "astro:content";
 import { userSchema } from "@validation/user";
 import { promises as fs } from "fs";
 import path from "path";
-import crypto from "crypto";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 interface SignupRequest {
   username: string;
@@ -12,21 +13,16 @@ interface SignupRequest {
   city?: string;
   whatsappNumber: string;
   bio?: string;
-  password?: string;
-  whatsappCountryCode?: string;
-  whatsappLocalNumber?: string;
+  password: string;
 }
 
-// Simple password hashing for development
-function hashPassword(password: string): string {
-  return crypto.createHash("sha256").update(password).digest("hex");
-}
+const JWT_SECRET = process.env.JWT_SECRET || "meamart-jwt-secret-change-in-production";
 
 export async function POST({ request }: { request: Request }): Promise<Response> {
-  // Only accept POST requests
   if (request.method !== "POST") {
     return new Response(JSON.stringify({ message: "Method not allowed" }), {
       status: 405,
+      headers: { "Content-Type": "application/json" },
     });
   }
 
@@ -52,9 +48,7 @@ export async function POST({ request }: { request: Request }): Promise<Response>
     // Validate username format
     if (!/^[a-z0-9_-]{3,20}$/.test(data.username)) {
       return new Response(
-        JSON.stringify({
-          message: "Invalid username format (3-20 chars, lowercase, numbers, dash)",
-        }),
+        JSON.stringify({ message: "Invalid username format" }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
@@ -62,16 +56,17 @@ export async function POST({ request }: { request: Request }): Promise<Response>
     // Check username availability
     const users = await getCollection("users");
     if (users.some((u) => u.data.username === data.username)) {
-      return new Response(JSON.stringify({ message: "Username already taken" }), {
-        status: 409,
-      });
+      return new Response(
+        JSON.stringify({ message: "Username already taken" }),
+        { status: 409, headers: { "Content-Type": "application/json" } }
+      );
     }
 
     // Validate email format
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
       return new Response(
         JSON.stringify({ message: "Invalid email format" }),
-        { status: 400 }
+        { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
@@ -79,9 +74,12 @@ export async function POST({ request }: { request: Request }): Promise<Response>
     if (!/^[0-9]{10,15}$/.test(data.whatsappNumber)) {
       return new Response(
         JSON.stringify({ message: "Invalid WhatsApp number" }),
-        { status: 400 }
+        { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
+
+    // Hash password with bcrypt
+    const hashedPassword = await bcrypt.hash(data.password, 10);
 
     // Create new user object
     const newUser = {
@@ -121,71 +119,56 @@ export async function POST({ request }: { request: Request }): Promise<Response>
       createdAt: new Date().toISOString(),
     };
 
-    // Validate against schema (password not in schema, will be stored separately)
+    // Validate against schema
     const validatedUser = userSchema.parse(newUser);
 
-    // Add password hash to the data to be saved (not validated by schema)
+    // Add hashed password
     const userWithAuth = {
       ...validatedUser,
-      password: hashPassword(data.password),
+      password: hashedPassword,
     };
 
     // Save to JSON file
     const usersDir = path.join(process.cwd(), "src/data/users");
     const filePath = path.join(usersDir, `@${data.username}.json`);
 
-    // Create users directory if it doesn't exist
-    try {
-      await fs.mkdir(usersDir, { recursive: true });
-    } catch (err) {
-      console.error("Failed to create users directory:", err);
-    }
-
-    // Write user data to file
+    await fs.mkdir(usersDir, { recursive: true });
     await fs.writeFile(filePath, JSON.stringify(userWithAuth, null, 2));
 
-    // Generate a mock JWT token for development
-    const mockToken = Buffer.from(
-      JSON.stringify({
+    // Generate JWT token
+    const token = jwt.sign(
+      {
         username: data.username,
         displayName: data.displayName,
         email: data.email,
-        iat: Math.floor(Date.now() / 1000),
-        exp: Math.floor(Date.now() / 1000) + (7 * 24 * 60 * 60), // 7 days
-      })
-    ).toString("base64");
+      },
+      JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
     return new Response(
       JSON.stringify({
         message: "Signup successful",
         username: data.username,
         profile: `/@${data.username}`,
-        token: mockToken,
+        token,
       }),
-      {
-        status: 201,
-        headers: { "Content-Type": "application/json" },
-      }
+      { status: 201, headers: { "Content-Type": "application/json" } }
     );
+
   } catch (error: any) {
     console.error("Signup error:", error);
 
-    // Check if it's a validation error
     if (error.name === "ZodError") {
       return new Response(
-        JSON.stringify({
-          message: "Validation error",
-          errors: error.errors,
-        }),
-        { status: 400 }
+        JSON.stringify({ message: "Validation error", errors: error.errors }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
     return new Response(
-      JSON.stringify({
-        message: error.message || "Failed to create account",
-      }),
-      { status: 500 }
+      JSON.stringify({ message: error.message || "Failed to create account" }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
 }
