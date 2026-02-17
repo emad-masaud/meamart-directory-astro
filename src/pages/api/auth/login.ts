@@ -75,12 +75,22 @@ export async function POST({ request }: { request: Request }): Promise<Response>
       );
     }
 
-    // NOTE: For development mode, we're not actually verifying the password
-    // In production, the Cloudflare Worker handles proper password hashing/verification
-    // For dev purposes, we accept any password if user exists
-    
-    // Validate password length (minimum requirement)
-    if (data.password.length < 8) {
+    // Verify password
+    // If the user was created before password support was added, they won't have a password field
+    if (!userData.password) {
+      return new Response(
+        JSON.stringify({ 
+          message: "Account created before authentication was enabled. Please contact support." 
+        }),
+        { 
+          status: 401,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    const hashedInputPassword = hashPassword(data.password);
+    if (hashedInputPassword !== userData.password) {
       return new Response(
         JSON.stringify({ message: "Invalid username or password" }),
         { 
