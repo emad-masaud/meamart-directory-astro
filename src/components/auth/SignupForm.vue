@@ -246,9 +246,9 @@
     <!-- Login Link -->
     <p class="text-center text-sm text-gray-600 dark:text-gray-400">
       {{ ui.loginPrompt }}
-      <span class="font-semibold text-gray-500 dark:text-gray-400">
-        {{ ui.loginComingSoon }}
-      </span>
+      <a href="/login" class="font-semibold text-blue-600 hover:underline dark:text-blue-400">
+        {{ ui.loginLink || 'Log in' }}
+      </a>
     </p>
   </form>
 </template>
@@ -371,6 +371,15 @@ const validateUsername = async (username: string) => {
       usernameWarning.value = ui.value.usernameCheckFailed;
       return;
     }
+    
+    // Check if response is JSON
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      usernameError.value = "";
+      usernameWarning.value = ui.value.usernameCheckFailed;
+      return;
+    }
+    
     const data = await response.json();
 
     if (data.available === false) {
@@ -437,6 +446,12 @@ const handleSignup = async () => {
         password: form.value.password,
       }),
     });
+
+    // Check if response is JSON
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      throw new Error(ui.value.errorGeneric || "Server error. Please try again later.");
+    }
 
     const data = await response.json();
 

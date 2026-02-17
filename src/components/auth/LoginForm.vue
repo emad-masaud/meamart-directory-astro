@@ -125,6 +125,12 @@ const handleLogin = async () => {
       }),
     });
 
+    // Check if response is JSON
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      throw new Error(ui.value.errorGeneric || "Server error. Please try again later.");
+    }
+
     const data = await response.json();
 
     if (!response.ok) {

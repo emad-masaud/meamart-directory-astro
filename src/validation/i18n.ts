@@ -109,7 +109,7 @@ export const localeSchema = z.object({
     submitLoading: z.string(),
     errorGeneric: z.string(),
     loginPrompt: z.string(),
-    loginComingSoon: z.string(),
+    loginLink: z.string(),
   }),
 });
 

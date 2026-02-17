@@ -100,7 +100,7 @@ submitLabel = "إنشاء المتجر الآن"
 submitLoading = "جاري الإنشاء..."
 errorGeneric = "حدث خطأ ما. حاول مجدداً"
 loginPrompt = "هل لديك متجر بالفعل؟"
-loginComingSoon = "تسجيل الدخول قريبًا"
+loginLink = "سجّل دخولك"
 
 [login]
 usernameLabel = "اسم المستخدم"
