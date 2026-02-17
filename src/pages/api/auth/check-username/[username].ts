@@ -1,11 +1,10 @@
 import { promises as fs } from "fs";
 import path from "path";
 
-export async function GET({ request, url }: { request: Request; url: URL }) {
-  const requestUrl = request.url ? new URL(request.url) : url;
-  const username =
-    url.searchParams.get("username")?.trim().toLowerCase() ||
-    requestUrl.searchParams.get("username")?.trim().toLowerCase();
+export const prerender = false;
+
+export async function GET({ params }: { params: { username?: string } }) {
+  const username = params.username?.trim().toLowerCase();
 
   if (!username) {
     return new Response(
@@ -34,10 +33,7 @@ export async function GET({ request, url }: { request: Request; url: URL }) {
         username,
         reason: exists ? "taken" : "available",
       }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }
+      { status: 200, headers: { "Content-Type": "application/json" } }
     );
   } catch (error) {
     return new Response(

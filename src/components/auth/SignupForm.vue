@@ -312,7 +312,7 @@ const validateUsername = async (username: string) => {
 
   // Check availability on server
   try {
-    const response = await fetch(`/api/auth/check-username?username=${encodeURIComponent(username)}`);
+    const response = await fetch(`/api/auth/check-username/${encodeURIComponent(username)}`);
     if (!response.ok) {
       usernameError.value = "";
       usernameWarning.value = ui.value.usernameCheckFailed;
