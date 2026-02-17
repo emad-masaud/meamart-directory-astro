@@ -1,7 +1,7 @@
 import { promises as fs } from "fs";
 import path from "path";
 import bcrypt from "bcryptjs";
-import { sendPasswordResetConfirmationEmail } from "../../lib/passwordReset";
+import { sendPasswordResetConfirmationEmail } from "../../../lib/passwordReset";
 
 export const prerender = false;
 

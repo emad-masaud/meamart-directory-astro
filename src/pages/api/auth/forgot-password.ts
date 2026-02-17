@@ -1,7 +1,7 @@
 import { promises as fs } from "fs";
 import path from "path";
-import { generateVerificationCode, sendEmail } from "../../lib/email";
-import { sendResetCodeEmail } from "../../lib/passwordReset";
+import { generateVerificationCode, sendEmail } from "../../../lib/email";
+import { sendResetCodeEmail } from "../../../lib/passwordReset";
 
 export const prerender = false;
 

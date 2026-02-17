@@ -1,4 +1,4 @@
-import { generateGoogleAuthUrl } from "../../../lib/googleOAuth";
+import { generateGoogleAuthUrl } from "../../../../lib/googleOAuth";
 
 export const prerender = false;
 
