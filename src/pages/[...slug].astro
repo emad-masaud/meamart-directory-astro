@@ -1,6 +1,6 @@
 ---
 import Listing from "@layouts/Listing.astro";
-import { render } from "astro:content";
+import { render, getEntry } from "astro:content";
 import Landing from "@layouts/Landing.astro";
 import { getRootPages } from "@lib/getRootPages";
 
@@ -8,7 +8,20 @@ export const prerender = false;
 
 // Fetch all listings and pages
 const { slug } = Astro.params;
-const { entry } = Astro.props;
+
+// Get the entry from the collection
+let entry = Astro.props.entry;
+
+// If no entry in props (SSR mode), fetch from collection
+if (!entry && slug) {
+  // Try pages collection first
+  entry = await getEntry("pages", slug);
+  
+  // If not found in pages, try directory
+  if (!entry) {
+    entry = await getEntry("directory", slug);
+  }
+}
 
 if (!entry) {
   return Astro.redirect("/404");
@@ -20,7 +33,7 @@ export async function getStaticPaths() {
   return await getRootPages();
 }
 
-const landingView = !slug || slug === "blog";
+const landingView = !slug || slug === "blog" || slug === "categories" || slug === "about";
 ---
 
 {

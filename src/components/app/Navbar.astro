@@ -24,10 +24,18 @@ const actionButtonText = resolveI18nString(
   config?.header?.actionButton?.text,
   t,
 );
+
+// Trustpilot-style navigation links
+const trustpilotLinks = [
+  { name: "الرئيسية", href: "/", target: "" },
+  { name: "الأعمال", href: "/#directory", target: "" },
+  { name: "الفئات", href: "/categories", target: "" },
+  { name: "من نحن", href: "/about", target: "" },
+];
 ---
 
 <nav
-  class="bg-white dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600"
+  class="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm dark:bg-gray-700 dark:border-gray-600"
 >
   <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
     <div class="relative flex h-16 justify-between">
@@ -55,31 +63,20 @@ const actionButtonText = resolveI18nString(
         <div class="flex flex-shrink-0 items-center">
           <Logo />
         </div>
-        <div class="hidden sm:ms-6 sm:flex sm:space-x-8">
+        <div class="hidden sm:ms-6 sm:flex sm:gap-1">
           {
-            config.header.navbar.links.map((navItem) =>
-              navItem.target !== "_blank" ? (
-                <a
-                  href={navItem.href}
-                  class={`inline-flex gap-2 items-center border-b-2 px-1 pt-1 text-sm font-medium ${
-                    isActive(navItem.href, currentPath)
-                      ? "border-primary-500 text-gray-900 dark:text-gray-50"
-                      : "border-transparent hover:border-gray-300 dark:hover:border-gray-500 hover:text-gray-700 text-gray-500 dark:text-gray-200"
-                  }`}
-                >
-                  {getNavName(navItem.name)}
-                </a>
-              ) : (
-                <a
-                  href={navItem.href}
-                  target="_blank"
-                  class="inline-flex gap-2 items-center border-b-2 px-1 pt-1 text-sm font-medium border-transparent hover:border-gray-300 hover:text-gray-700 dark:hover:border-gray-500 text-gray-500 dark:text-gray-200"
-                >
-                  {getNavName(navItem.name)}
-                  <Icon name="tabler:external-link" />
-                </a>
-              ),
-            )
+            trustpilotLinks.map((navItem) => (
+              <a
+                href={navItem.href}
+                class={`inline-flex items-center rounded-lg px-4 py-2 text-sm font-medium transition ${
+                  isActive(navItem.href, currentPath)
+                    ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300"
+                    : "text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
+                }`}
+              >
+                {navItem.name}
+              </a>
+            ))
           }
         </div>
       </div>
@@ -98,10 +95,16 @@ const actionButtonText = resolveI18nString(
             )
           }
           <a
-            href={config?.header.actionButton?.href}
-            class="hidden md:block text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+            href="/login"
+            class="hidden rounded-lg border-2 border-gray-300 bg-transparent px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-emerald-500 hover:text-emerald-700 md:block dark:border-gray-500 dark:text-gray-200 dark:hover:border-emerald-500"
           >
-            {actionButtonText}
+            تسجيل الدخول
+          </a>
+          <a
+            href="/signup"
+            class="hidden rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700 md:block dark:bg-emerald-700 dark:hover:bg-emerald-800"
+          >
+            سجّل عملك مجاناً
           </a>
         </div>
       </div>
