@@ -1,0 +1,128 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+
+export const prerender = false;
+---
+
+<BaseLayout>
+  <div class="container mx-auto max-w-md p-4">
+    <h1 class="mb-4 text-2xl font-bold">🧪 اختبار التوثيق</h1>
+    
+    <div id="test-result" class="mb-4 rounded bg-gray-100 p-4 dark:bg-gray-900">
+      <p class="text-sm text-gray-600 dark:text-gray-400">انقر على الزر البيضاء للبدء</p>
+    </div>
+
+    <button
+      id="test-signup"
+      class="mb-2 w-full rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700"
+    >
+      ✓ اختبار التسجيل
+    </button>
+
+    <button
+      id="test-login"
+      class="mb-2 w-full rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+    >
+      ✓ اختبار تسجيل الدخول
+    </button>
+
+    <button
+      id="test-check-username"
+      class="w-full rounded bg-purple-600 px-4 py-2 text-white hover:bg-purple-700"
+    >
+      ✓ التحقق من اسم المستخدم
+    </button>
+  </div>
+
+  <script>
+    const resultDiv = document.getElementById("test-result");
+
+    async function signupTest() {
+      if (!resultDiv) return;
+      
+      const testUser = `user_${Date.now()}`;
+      const payload = {
+        username: testUser,
+        displayName: "Test User " + testUser,
+        email: `${testUser}@example.com`,
+        country: "AE",
+        whatsappNumber: "971987654321",
+        bio: "Test user",
+        password: "password123",
+      };
+
+      try {
+        const response = await fetch("/api/auth/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await response.json();
+        resultDiv.innerHTML = `
+          <h2 class="mb-2 font-bold">نتيجة التسجيل (${response.status}):</h2>
+          <pre class="overflow-auto text-xs">${JSON.stringify(data, null, 2)}</pre>
+        `;
+        
+        if (response.ok) {
+          localStorage.setItem("test_token", data.token);
+          localStorage.setItem("test_username", data.username);
+        }
+      } catch (error: any) {
+        resultDiv.innerHTML = `<p class="text-red-600">❌ خطأ: ${error?.message || String(error)}</p>`;
+      }
+    }
+
+    async function loginTest() {
+      if (!resultDiv) return;
+      
+      const testUsername = localStorage.getItem("test_username") || "user_test";
+      const payload = {
+        username: testUsername,
+        password: "password123",
+      };
+
+      try {
+        const response = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await response.json();
+        resultDiv.innerHTML = `
+          <h2 class="mb-2 font-bold">نتيجة تسجيل الدخول (${response.status}):</h2>
+          <pre class="overflow-auto text-xs">${JSON.stringify(data, null, 2)}</pre>
+        `;
+      } catch (error: any) {
+        resultDiv.innerHTML = `<p class="text-red-600">❌ خطأ: ${error?.message || String(error)}</p>`;
+      }
+    }
+
+    async function checkUsername() {
+      if (!resultDiv) return;
+      
+      const username = prompt("أدخل اسم المستخدم للتحقق:");
+      if (!username) return;
+
+      try {
+        const response = await fetch(`/api/auth/check-username?username=${username}`);
+        const data = await response.json();
+        resultDiv.innerHTML = `
+          <h2 class="mb-2 font-bold">نتيجة التحقق:</h2>
+          <pre class="overflow-auto text-xs">${JSON.stringify(data, null, 2)}</pre>
+        `;
+      } catch (error: any) {
+        resultDiv.innerHTML = `<p class="text-red-600">❌ خطأ: ${error?.message || String(error)}</p>`;
+      }
+    }
+
+    const signupBtn = document.getElementById("test-signup");
+    const loginBtn = document.getElementById("test-login");
+    const checkBtn = document.getElementById("test-check-username");
+
+    if (signupBtn) signupBtn.addEventListener("click", signupTest);
+    if (loginBtn) loginBtn.addEventListener("click", loginTest);
+    if (checkBtn) checkBtn.addEventListener("click", checkUsername);
+  </script>
+</BaseLayout>

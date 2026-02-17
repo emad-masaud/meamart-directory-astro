@@ -95,36 +95,36 @@ export async function POST({ request }: { request: Request }): Promise<Response>
 
     // Create new user object
     const newUser = {
-      username: data.username,
+      username: username,
       displayName: data.displayName,
       email: data.email,
       country: data.country,
       city: data.city?.trim() || undefined,
       phoneNumber: data.whatsappNumber,
       whatsappNumber: data.whatsappNumber,
-      bio: data.bio || "",
-      website: "",
-      avatar: "",
+      bio: data.bio || undefined,
+      website: undefined,
+      avatar: undefined,
       social: {
-        instagram: "",
-        twitter: "",
-        facebook: "",
+        instagram: undefined,
+        twitter: undefined,
+        facebook: undefined,
       },
       meachat: {
         enabled: false,
-        businessAccountId: "",
-        catalogId: "",
-        apiToken: "",
+        businessAccountId: undefined,
+        catalogId: undefined,
+        apiToken: undefined,
       },
       googleSheet: {
         enabled: false,
-        sheetId: "",
-        sheetName: "Sheet1",
+        sheetId: undefined,
+        sheetName: "Products",
         syncInterval: 3600,
       },
       googleMerchant: {
         enabled: false,
-        merchantId: "",
+        merchantId: undefined,
         currency: "AED",
         autoSync: false,
       },
@@ -140,17 +140,14 @@ export async function POST({ request }: { request: Request }): Promise<Response>
       password: hashedPassword,
     };
 
-    // Save to JSON file
-    const usersDir = path.join(process.cwd(), "src/data/users");
-    const filePath = path.join(usersDir, `@${data.username}.json`);
-
+    // Save to JSON file - using already retrieved usersDir and filePath
     await fs.mkdir(usersDir, { recursive: true });
     await fs.writeFile(filePath, JSON.stringify(userWithAuth, null, 2));
 
     // Generate JWT token
     const token = jwt.sign(
       {
-        username: data.username,
+        username: username,
         displayName: data.displayName,
         email: data.email,
       },
@@ -161,17 +158,18 @@ export async function POST({ request }: { request: Request }): Promise<Response>
     return new Response(
       JSON.stringify({
         message: "Signup successful",
-        username: data.username,
-        profile: `/@${data.username}`,
+        username: username,
+        profile: `/@${username}`,
         token,
       }),
       { status: 201, headers: { "Content-Type": "application/json" } }
     );
 
   } catch (error: any) {
-    console.error("Signup error:", error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("Signup error:", errorMessage);
 
-    if (error.name === "ZodError") {
+    if (error?.name === "ZodError") {
       return new Response(
         JSON.stringify({ message: "Validation error", errors: error.errors }),
         { status: 400, headers: { "Content-Type": "application/json" } }
@@ -179,7 +177,7 @@ export async function POST({ request }: { request: Request }): Promise<Response>
     }
 
     return new Response(
-      JSON.stringify({ message: error.message || "Failed to create account" }),
+      JSON.stringify({ message: errorMessage || "Failed to create account" }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }

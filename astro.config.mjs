@@ -4,13 +4,17 @@ import vue from '@astrojs/vue';
 import mdx from '@astrojs/mdx';
 import icon from 'astro-icon';
 import sitemap from '@astrojs/sitemap';
+import node from '@astrojs/node';
 import { ViteToml } from 'vite-plugin-toml';
 import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://bestmeditationapps.com",
-  output: "static",
+  output: "server",
+  adapter: node({
+    mode: 'standalone',
+  }),
   integrations: [
     vue(),
     mdx(),
@@ -19,6 +23,9 @@ export default defineConfig({
   ],
   vite: {
     plugins: [tailwindcss(), ViteToml()]
+  },
+  experimental: {
+    session: true,
   },
   env: {
     schema: {

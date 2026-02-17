@@ -1,0 +1,25 @@
+{
+  "username": "testuser7",
+  "displayName": "Test User Seven",
+  "email": "test7@example.com",
+  "country": "AE",
+  "phoneNumber": "971987654321",
+  "whatsappNumber": "971987654321",
+  "googleSheet": {
+    "enabled": false,
+    "sheetName": "Products",
+    "syncInterval": 3600
+  },
+  "googleMerchant": {
+    "enabled": false,
+    "currency": "AED",
+    "autoSync": false
+  },
+  "meachat": {
+    "enabled": false
+  },
+  "social": {},
+  "createdAt": "2026-02-17T15:34:07.174Z",
+  "featured": false,
+  "password": "$2b$10$1GlpSL4zXZOUVl6QiVs0fuEI6PEb6L7/8nEp07ha1MvRaSr02BLm2"
+}
