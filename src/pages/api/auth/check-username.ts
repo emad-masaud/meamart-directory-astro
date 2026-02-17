@@ -1,6 +1,8 @@
 import { promises as fs } from "fs";
 import path from "path";
 
+export const prerender = false;
+
 export async function GET({ request, url }: { request: Request; url: URL }) {
   const requestUrl = request.url ? new URL(request.url) : url;
   const username =

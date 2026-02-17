@@ -3,6 +3,8 @@ import path from "path";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
+export const prerender = false;
+
 interface LoginRequest {
   username: string;
   password: string;

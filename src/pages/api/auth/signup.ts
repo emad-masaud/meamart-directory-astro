@@ -1,9 +1,10 @@
-import { getCollection } from "astro:content";
 import { userSchema } from "@validation/user";
 import { promises as fs } from "fs";
 import path from "path";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+
+export const prerender = false;
 
 interface SignupRequest {
   username: string;
@@ -37,6 +38,9 @@ export async function POST({ request }: { request: Request }): Promise<Response>
       );
     }
 
+    // Normalize username
+    const username = data.username.trim().toLowerCase();
+
     // Validate password
     if (data.password.length < 8) {
       return new Response(
@@ -46,20 +50,28 @@ export async function POST({ request }: { request: Request }): Promise<Response>
     }
 
     // Validate username format
-    if (!/^[a-z0-9_-]{3,20}$/.test(data.username)) {
+    if (!/^[a-z0-9_-]{3,20}$/.test(username)) {
       return new Response(
         JSON.stringify({ message: "Invalid username format" }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    // Check username availability
-    const users = await getCollection("users");
-    if (users.some((u) => u.data.username === data.username)) {
+    // Check username availability by checking file system
+    const usersDir = path.join(process.cwd(), "src/data/users");
+    const filePath = path.join(usersDir, `@${username}.json`);
+    try {
+      await fs.access(filePath);
+      // File exists, username is taken
       return new Response(
         JSON.stringify({ message: "Username already taken" }),
         { status: 409, headers: { "Content-Type": "application/json" } }
       );
+    } catch (err: any) {
+      if (err?.code !== "ENOENT") {
+        throw err;
+      }
+      // File doesn't exist, username is available - continue
     }
 
     // Validate email format
