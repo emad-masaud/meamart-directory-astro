@@ -246,9 +246,9 @@
     <!-- Login Link -->
     <p class="text-center text-sm text-gray-600 dark:text-gray-400">
       {{ ui.loginPrompt }}
-      <a href="/login" class="font-semibold text-blue-600 hover:underline dark:text-blue-400">
-        {{ ui.loginLink || 'Log in' }}
-      </a>
+      <span class="font-semibold text-gray-500 dark:text-gray-400">
+        {{ ui.loginComingSoon }}
+      </span>
     </p>
   </form>
 </template>

@@ -100,7 +100,7 @@ submitLabel = "Create store now"
 submitLoading = "Creating..."
 errorGeneric = "Something went wrong. Please try again"
 loginPrompt = "Already have a store?"
-loginLink = "Log in"
+loginComingSoon = "Login coming soon"
 
 [login]
 usernameLabel = "Username"
