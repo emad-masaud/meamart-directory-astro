@@ -11,10 +11,7 @@ import tailwindcss from '@tailwindcss/vite';
 // https://astro.build/config
 export default defineConfig({
   site: "https://bestmeditationapps.com",
-  output: "server",
-  adapter: node({
-    mode: 'standalone',
-  }),
+  output: "static", // Changed to static for Cloudflare Pages deployment
   integrations: [
     vue(),
     mdx(),
@@ -24,14 +21,12 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss(), ViteToml()]
   },
-  experimental: {
-    session: true,
-  },
   env: {
     schema: {
       POSTHOG_API_KEY: envField.string({ context: "client", access: "public", optional: true }),
       POSTHOG_API_HOST: envField.string({ context: "client", access: "public", optional: true }),
-      NOTION_TOKEN: envField.string({ context: "server", access: "secret", optional: true })
+      NOTION_TOKEN: envField.string({ context: "server", access: "secret", optional: true }),
+      PUBLIC_DASHBOARD_API_URL: envField.string({ context: "client", access: "public", optional: true })
     }
   }
 });

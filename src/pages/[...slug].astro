@@ -3,14 +3,15 @@ import Listing from "@layouts/Listing.astro";
 import { render, getEntry } from "astro:content";
 import Landing from "@layouts/Landing.astro";
 import { getRootPages } from "@lib/getRootPages";
+import type { AllContent } from "../types/content";
 
-export const prerender = false;
+export const prerender = true;
 
 // Fetch all listings and pages
 const { slug } = Astro.params;
 
 // Get the entry from the collection
-let entry = Astro.props.entry;
+let entry: AllContent | undefined = Astro.props.entry;
 
 // If no entry in props (SSR mode), fetch from collection
 if (!entry && slug) {
