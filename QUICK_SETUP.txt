@@ -1,0 +1,40 @@
+===  Google OAuth الجديد - ملخص سريع ===
+
+ خطوات عاجلة:
+
+1 اذهب إلى: https://console.cloud.google.com/apis/credentials
+   
+2 احذف OAuth القديم (الذي يبدأ بـ: 1087979039854-...)
+   
+3 أنشئ OAuth جديد بـ Web Application
+   
+4 أضف هذه الروابط:
+   - https://a55f440a.meamart-dashboard.pages.dev/api/auth/google/callback
+   - http://localhost:3000/api/auth/google/callback
+
+5 احفظ:
+   - CLIENT_ID الجديد
+   - CLIENT_SECRET الجديد
+
+6 وليّد JWT_SECRET:
+   -join ((65..90) + (97..122) + (48..57) | Get-Random -Count 64 | % {[char]})
+
+7 اذهب إلى: https://dash.cloudflare.com
+   - Pages > meamart-dashboard > Settings > Environment variables
+   - حدّث: GOOGLE_CLIENT_ID و GOOGLE_CLIENT_SECRET و JWT_SECRET
+
+=== المفاتيح القديمة المكشوفة ===
+
+CLIENT_ID: 1087979039854-haa33086opu7q165qrpoac1s6anso15a.apps.googleusercontent.com
+SECRET: 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
+JWT_SECRET: meamart-jwt-secret-change-in-production
+
+ هذه يجب أن تُحذف من Google Cloud فوراً!
+
+=== نصائح  ===
+
+ لا تشارك المفاتيح أبداً
+ احفظها في 1Password أو LastPass
+ استخدم مفاتيح منفصلة للـ dev والـ production
+ تحديث المفاتيح كل 3-6 أشهر
+
