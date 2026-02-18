@@ -114,7 +114,7 @@ target = "_blank"
 
 [header.actionButton]
 text = "أضف إعلان"
-href = "https://a55f440a.meamart-dashboard.pages.dev/signup.html"
+href = "https://cd155f50.meamart-dashboard.pages.dev/signup.html"
 
 [footer]
 description = "i18n.footer.description"
