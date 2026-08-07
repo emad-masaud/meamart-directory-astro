@@ -34,12 +34,13 @@ export async function onRequestPost(context) {
       tags: data.tags ? data.tags.split(",").map(t => t.trim()) : []
     };
 
-    // If city or address are provided, automatically add them to tags so they become clickable filters!
+    // If city or area are provided, automatically add them to tags so they become clickable filters!
     if (fileContent.city && !fileContent.tags.includes(fileContent.city)) {
       fileContent.tags.push(fileContent.city);
     }
-    if (fileContent.address && !fileContent.tags.includes(fileContent.address)) {
-      fileContent.tags.push(fileContent.address);
+    // We use "area" for neighborhood/landmark to keep "address" free for exact GPS/Street addresses in the future
+    if (data.area && !fileContent.tags.includes(data.area)) {
+      fileContent.tags.push(data.area);
     }
 
     // 4. Convert the JSON object to Base64 (Required by GitHub API)
