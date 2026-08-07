@@ -7,7 +7,7 @@
 
 @theme {
   --font-*: initial;
-  --font-sans: 'Gabarito Variable', 'Noto Kufi Arabic', sans-serif;
+  --font-sans: 'Noto Kufi Arabic', 'Gabarito Variable', sans-serif;
   --font-mono: 'Source Code Pro', monospace;
 
   --color-gray-50: var(--color-neutral-50);
