@@ -1,121 +1,135 @@
 ---
 import AppLogo from "./Logo.astro";
 import { Icon } from "astro-icon/components";
-import config from "@util/themeConfig";
 
-const socials = Object.values(config.footer.socials);
-const socialNames = Object.keys(config.footer.socials);
+const currentPath = new URL(Astro.request.url).pathname;
+const isArabic = currentPath.startsWith('/ar');
+const lang = isArabic ? "ar" : "en";
 
-const navigation = [
+const socials = [
+  { name: "Twitter", link: "https://twitter.com/meamart", icon: "tabler:brand-twitter" },
+  { name: "Instagram", link: "https://instagram.com/meamart", icon: "tabler:brand-instagram" },
+];
+
+const navigation = isArabic ? [
   {
-    title: "Directory",
+    title: "الدليل",
     links: [
-      { title: "Submit", link: "/submit" },
-      { title: "Advertise", link: "/advertise" },
+      { title: "تصفح الأقسام", link: "/ar/categories" },
+      { title: "أضف إعلانك", link: "/ar/ads/create" },
     ],
   },
   {
-    title: "Categories",
-    links: config.directoryData.tags
-      ?.filter((e) => e && e.name)
-      .map((e) => ({
-        title: e.name,
-        link: `/tags/${e.key}`,
-      }))
-      .slice(0, 4),
+    title: "ميمارت",
+    links: [
+      { title: "من نحن", link: "#" },
+      { title: "تواصل معنا", link: "#" },
+    ],
   },
   {
-    title: "Blog",
-    links: [{ title: "Articles", link: "/blog" }],
+    title: "الشروط والأحكام",
+    links: [
+      { title: "سياسات الإعلان", link: "/ar/policies" },
+      { title: "سياسة الخصوصية", link: "/ar/policies" },
+    ],
+  }
+] : [
+  {
+    title: "Directory",
+    links: [
+      { title: "Browse Categories", link: "/en/categories" },
+      { title: "Post an Ad", link: "/en/ads/create" },
+    ],
+  },
+  {
+    title: "MeaMart",
+    links: [
+      { title: "About Us", link: "#" },
+      { title: "Contact Us", link: "#" },
+    ],
   },
   {
     title: "Legal",
     links: [
-      { title: "Privacy Policy", link: "/legal/terms-of-service" },
-      { title: "Terms of Service", link: "/legal/privacy-policy" },
+      { title: "Advertising Policies", link: "/en/policies" },
+      { title: "Privacy Policy", link: "/en/policies" },
     ],
-  },
+  }
 ];
 ---
 
-<footer
-  class="border-t border-gray-200 dark:border-gray-600 font-display"
-  aria-labelledby="footer-heading"
->
+<footer class="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900" aria-labelledby="footer-heading">
   <h2 id="footer-heading" class="sr-only">Footer</h2>
   <div class="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
     <div class="xl:grid xl:grid-cols-3 xl:gap-8">
       <div class="space-y-8">
         <AppLogo />
-        <div class="flex space-x-6">
-          {
-            socials.map((item, index) => (
-              <a href={item?.link} class="text-gray-400 hover:text-gray-500">
-                <span class="sr-only">{item}</span>
-                <Icon
-                  name={
-                    config.ui.icons[
-                      socialNames[index] as keyof typeof config.ui.icons
-                    ]
-                  }
-                  class="h-6 w-6"
-                  aria-hidden="true"
-                />
-              </a>
-            ))
-          }
+        <p class="text-sm leading-6 text-gray-600 dark:text-gray-400 max-w-xs">
+          {isArabic 
+            ? "دليلك الأول لبيع وشراء كل ما تحتاجه بكل سهولة وموثوقية." 
+            : "Your primary directory to buy and sell everything you need easily and reliably."}
+        </p>
+        <div class="flex space-x-6 rtl:space-x-reverse">
+          {socials.map((item) => (
+            <a href={item.link} class="text-gray-400 hover:text-primary-500 transition-colors">
+              <span class="sr-only">{item.name}</span>
+              <Icon name={item.icon} class="h-6 w-6" aria-hidden="true" />
+            </a>
+          ))}
         </div>
       </div>
       <div class="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
-        {
-          [...Array(2).keys()].map((count) => (
-            <div class="md:grid md:grid-cols-2 md:gap-8">
-              <div>
-                <h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase">
-                  {navigation[count].title}
-                </h3>
-                <ul role="list" class="mt-6 space-y-4">
-                  {navigation[count].links.map((item) => (
-                    <li>
-                      <a
-                        href={item.link}
-                        class="text-sm leading-6 text-gray-600 dark:text-gray-300 hover:dark:text-gray-400 hover:text-gray-900"
-                      >
-                        {item.title}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div class="mt-10 md:mt-0">
-                <h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase">
-                  {navigation[count + 2].title}
-                </h3>
-                <ul role="list" class="mt-6 space-y-4">
-                  {navigation[count + 2].links.map((item) => (
-                    <li>
-                      <a
-                        href={item.link}
-                        class="text-sm leading-6 text-gray-600 dark:text-gray-300 hover:dark:text-gray-400 hover:text-gray-900"
-                      >
-                        {item.title}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          ))
-        }
+        <div class="md:grid md:grid-cols-2 md:gap-8">
+          <div>
+            <h3 class="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">
+              {navigation[0].title}
+            </h3>
+            <ul role="list" class="mt-6 space-y-4">
+              {navigation[0].links.map((item) => (
+                <li>
+                  <a href={item.link} class="text-sm leading-6 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400">
+                    {item.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div class="mt-10 md:mt-0">
+            <h3 class="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">
+              {navigation[1].title}
+            </h3>
+            <ul role="list" class="mt-6 space-y-4">
+              {navigation[1].links.map((item) => (
+                <li>
+                  <a href={item.link} class="text-sm leading-6 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400">
+                    {item.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+        <div class="md:grid md:grid-cols-2 md:gap-8">
+          <div>
+            <h3 class="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">
+              {navigation[2].title}
+            </h3>
+            <ul role="list" class="mt-6 space-y-4">
+              {navigation[2].links.map((item) => (
+                <li>
+                  <a href={item.link} class="text-sm leading-6 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400">
+                    {item.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
-    <div
-      class="mt-16 border-t border-gray-900/10 dark:border-gray-600 pt-8 sm:mt-20 lg:mt-24"
-    >
-      <p class="text-xs leading-5 text-gray-500">
-        &copy; {new Date().getFullYear()}
-        {config.general.title} All rights reserved.
+    <div class="mt-16 border-t border-gray-900/10 dark:border-gray-800 pt-8 sm:mt-20 lg:mt-24">
+      <p class="text-xs leading-5 text-gray-500 text-center md:text-start">
+        &copy; {new Date().getFullYear()} MeaMart. {isArabic ? "جميع الحقوق محفوظة." : "All rights reserved."}
       </p>
     </div>
   </div>

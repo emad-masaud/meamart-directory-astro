@@ -1,0 +1,104 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+
+export async function getStaticPaths() {
+  return [
+    { params: { lang: "ar" } },
+    { params: { lang: "en" } },
+  ];
+}
+
+const { lang } = Astro.params;
+const isArabic = lang === "ar";
+
+const title = isArabic ? "سياسات الإعلان والاستخدام" : "Advertising & Usage Policies";
+const description = isArabic ? "الشروط والسياسات الخاصة بنشر الإعلانات واستخدام المنصة." : "Terms and policies for posting ads and using the platform.";
+---
+
+<BaseLayout title={title} description={description} lang={lang}>
+  <div class="container mx-auto px-4 py-12 max-w-4xl">
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-8 md:p-12">
+      <h1 class="text-3xl font-bold mb-8 text-primary-600 dark:text-primary-400">{title}</h1>
+      
+      {isArabic ? (
+        <div class="prose dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 space-y-6">
+          <p>
+            نحرص في منصتنا على توفير بيئة آمنة وموثوقة للجميع، ولضمان جودة الإعلانات وحفظ حقوق البائع والمشتري، نرجو الالتزام بالسياسات التالية عند نشر أي إعلان:
+          </p>
+
+          <h3 class="text-xl font-bold text-gray-900 dark:text-white mt-8 mb-4">1. المصداقية والوضوح</h3>
+          <ul class="list-disc ltr:pl-5 rtl:pr-5 space-y-2">
+            <li>يجب أن تكون تفاصيل الإعلان دقيقة، واضحة، وخالية من أي تظليل أو خداع للمشتري.</li>
+            <li>يُمنع استخدام صور غير حقيقية أو مسروقة؛ نوصي دائماً بإرفاق صور فعلية للسلعة أو الخدمة.</li>
+            <li>يجب توضيح حالة السلعة (جديدة، مستعملة، بها عيوب) بشكل شفاف.</li>
+          </ul>
+
+          <h3 class="text-xl font-bold text-gray-900 dark:text-white mt-8 mb-4">2. السلع والخدمات الممنوعة</h3>
+          <p>يُمنع منعاً باتاً الإعلان عن السلع والخدمات التالية:</p>
+          <ul class="list-disc ltr:pl-5 rtl:pr-5 space-y-2">
+            <li>الأسلحة والذخائر والمفرقعات بكافة أنواعها.</li>
+            <li>الأدوية، المنتجات الطبية، والمكملات الغذائية غير المرخصة.</li>
+            <li>السلع المقلدة، والمغشوشة، أو التي تنتهك حقوق الملكية الفكرية.</li>
+            <li>المواد الخطرة، والممنوعة قانونياً، والخدمات التي تخالف الذوق العام.</li>
+            <li>العملات الرقمية غير المرخصة وخدمات التسويق الهرمي.</li>
+          </ul>
+
+          <h3 class="text-xl font-bold text-gray-900 dark:text-white mt-8 mb-4">3. التراخيص والتصاريح</h3>
+          <ul class="list-disc ltr:pl-5 rtl:pr-5 space-y-2">
+            <li>في حال كان الإعلان يخص نشاطاً تجارياً، يجب أن تمتلك التراخيص النظامية اللازمة لمزاولة هذا النشاط.</li>
+            <li>إعلانات العقارات تتطلب توفر التراخيص اللازمة للإعلان العقاري لضمان حقوق كافة الأطراف.</li>
+          </ul>
+
+          <h3 class="text-xl font-bold text-gray-900 dark:text-white mt-8 mb-4">4. الخصوصية وبيانات التواصل</h3>
+          <ul class="list-disc ltr:pl-5 rtl:pr-5 space-y-2">
+            <li>المنصة غير مسؤولة عن أي تعاملات مالية تتم خارج إطارها، نوصي دائماً بالتأكد من هوية البائع والمشتري قبل إتمام أي حوالة مالية.</li>
+            <li>يُمنع جمع أو استغلال بيانات المستخدمين الآخرين لأغراض تسويقية خارجية.</li>
+          </ul>
+
+          <div class="mt-10 p-6 bg-primary-50 dark:bg-gray-800 rounded-xl border border-primary-100 dark:border-gray-700">
+            <p class="font-bold mb-0">تحتفظ إدارة المنصة بالحق في إزالة أي إعلان يخالف هذه الشروط دون سابق إنذار، وحظر الحسابات المخالفة بشكل نهائي.</p>
+          </div>
+        </div>
+      ) : (
+        <div class="prose dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 space-y-6">
+          <p>
+            We strive to provide a safe and reliable environment for everyone. To ensure the quality of ads and protect the rights of both buyers and sellers, please adhere to the following policies when posting an ad:
+          </p>
+
+          <h3 class="text-xl font-bold text-gray-900 dark:text-white mt-8 mb-4">1. Transparency and Accuracy</h3>
+          <ul class="list-disc ltr:pl-5 rtl:pr-5 space-y-2">
+            <li>Ad details must be accurate, clear, and free from any misleading information.</li>
+            <li>The use of fake or stolen images is prohibited; we always recommend attaching actual photos of the item or service.</li>
+            <li>The condition of the item (new, used, defective) must be stated transparently.</li>
+          </ul>
+
+          <h3 class="text-xl font-bold text-gray-900 dark:text-white mt-8 mb-4">2. Prohibited Goods and Services</h3>
+          <p>It is strictly prohibited to advertise the following:</p>
+          <ul class="list-disc ltr:pl-5 rtl:pr-5 space-y-2">
+            <li>Weapons, ammunition, and explosives of all kinds.</li>
+            <li>Unlicensed medicines, medical products, and dietary supplements.</li>
+            <li>Counterfeit, fraudulent goods, or items that violate intellectual property rights.</li>
+            <li>Hazardous materials, legally prohibited items, and services that violate public decency.</li>
+            <li>Unlicensed cryptocurrencies and pyramid marketing services.</li>
+          </ul>
+
+          <h3 class="text-xl font-bold text-gray-900 dark:text-white mt-8 mb-4">3. Licenses and Permits</h3>
+          <ul class="list-disc ltr:pl-5 rtl:pr-5 space-y-2">
+            <li>If the ad is for a commercial activity, you must have the necessary legal licenses to practice this activity.</li>
+            <li>Real estate ads require the necessary real estate advertising licenses to ensure the rights of all parties.</li>
+          </ul>
+
+          <h3 class="text-xl font-bold text-gray-900 dark:text-white mt-8 mb-4">4. Privacy and Communication</h3>
+          <ul class="list-disc ltr:pl-5 rtl:pr-5 space-y-2">
+            <li>The platform is not responsible for any financial transactions conducted outside its framework. We always recommend verifying the identity of the buyer and seller before completing any financial transfer.</li>
+            <li>Collecting or exploiting other users' data for external marketing purposes is prohibited.</li>
+          </ul>
+
+          <div class="mt-10 p-6 bg-primary-50 dark:bg-gray-800 rounded-xl border border-primary-100 dark:border-gray-700">
+            <p class="font-bold mb-0">The platform administration reserves the right to remove any ad that violates these terms without prior notice and to permanently ban violating accounts.</p>
+          </div>
+        </div>
+      )}
+    </div>
+  </div>
+</BaseLayout>
