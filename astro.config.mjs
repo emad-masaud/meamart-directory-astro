@@ -10,7 +10,7 @@ import remarkEmoji from 'remark-emoji';
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://bestmeditationapps.com",
+  site: "https://meamart.com",
   markdown: {
     remarkPlugins: [remarkEmoji],
   },
