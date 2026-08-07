@@ -2,7 +2,7 @@
 import { getCollection } from "astro:content";
 import PureGrid from "../directory/PureGrid.astro";
 
-const allListings = await getCollection("blog");
+const allListings: any[] = [];
 const blogListings = allListings.map((value) => ({
   ...value,
   id: `blog/${value.id}`,

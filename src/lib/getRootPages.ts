@@ -2,12 +2,11 @@ import type { AllContent } from "../types/content";
 import { getCollection } from "astro:content";
 
 export async function getBlogPages() {
-  const allPosts = await getCollection("blog");
-  return allPosts.map((entry) => ({params: {slug: entry.id }, props: { entry }}));
+  return [] as any;
 }
 
 export async function getRootPages(remapIndex: boolean = true) {
-  const allListings = await getCollection("directory");
+  const allListings: any[] = [];
   const allPages = await getCollection("pages");
 
   // Combine listings and pages

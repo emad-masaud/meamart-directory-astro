@@ -13,7 +13,7 @@ async function getSearchPlaceholder() {
     config.directoryData.search?.placeholder &&
     config.directoryData.search.placeholder.includes("{0}")
   ) {
-    const count = (await getCollection("directory")).length;
+    const count = 0;
     return formatString(
       config.directoryData.search?.placeholder ?? "Search among {0} listings",
       count,
