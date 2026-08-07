@@ -28,6 +28,7 @@ export async function onRequestPost(context) {
       city: data.city || "Riyadh",
       phone: data.phone || data.whatsapp || "",
       whatsapp: data.whatsapp || data.phone || "",
+      coverImage: data.image || data.photo || "",
       published: true, // Automatically publish the ad
       featured: false,
       tags: data.tags ? data.tags.split(",").map(t => t.trim()) : []
