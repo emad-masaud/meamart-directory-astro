@@ -44,6 +44,7 @@ const businesses = defineCollection({
     published: z.boolean().default(true),
     seoTitle: z.string().optional(),
     seoDescription: z.string().optional(),
+    tags: z.array(z.string()).optional(),
   }),
 });
 

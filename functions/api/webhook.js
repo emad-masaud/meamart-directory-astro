@@ -10,10 +10,10 @@ export async function onRequestPost(context) {
       return new Response(JSON.stringify({ error: "Missing GITHUB_TOKEN" }), { status: 500 });
     }
 
-    // 3. Prepare the new Ad (Business) details
-    // We generate a unique slug based on the current timestamp
-    const uniqueId = Date.now().toString();
-    const slug = `ad-${uniqueId}`;
+    // We use the ID generated from your WhatsApp Flow (if provided), otherwise generate a unique one
+    const uniqueId = data.id || data.code || Date.now().toString();
+    // Format it safely for URLs (lowercase, no spaces)
+    const slug = uniqueId.toString().toLowerCase().replace(/\s+/g, '-');
     
     // Map the WhatsApp data to our JSON structure
     // If the WhatsApp flow sends different keys, you can adjust them here
@@ -29,8 +29,17 @@ export async function onRequestPost(context) {
       phone: data.phone || data.whatsapp || "",
       whatsapp: data.whatsapp || data.phone || "",
       published: true, // Automatically publish the ad
-      featured: false
+      featured: false,
+      tags: data.tags ? data.tags.split(",").map(t => t.trim()) : []
     };
+
+    // If city or address are provided, automatically add them to tags so they become clickable filters!
+    if (fileContent.city && !fileContent.tags.includes(fileContent.city)) {
+      fileContent.tags.push(fileContent.city);
+    }
+    if (fileContent.address && !fileContent.tags.includes(fileContent.address)) {
+      fileContent.tags.push(fileContent.address);
+    }
 
     // 4. Convert the JSON object to Base64 (Required by GitHub API)
     // We use unescape(encodeURIComponent()) to handle Arabic text correctly
