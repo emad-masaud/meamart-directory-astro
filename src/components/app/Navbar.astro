@@ -5,36 +5,40 @@ import ColorSelector from "./header/ColorSelector.astro";
 import Logo from "./Logo.astro";
 
 const currentPath = new URL(Astro.request.url).pathname;
-const isArabic = !currentPath.startsWith('/en');
+const isArabic = !currentPath.startsWith("/en");
 
-const links = isArabic ? [
-  { name: "سيارات ومركبات", href: "/categories/vehicles" },
-  { name: "عقار", href: "/categories/real-estate" },
-  { name: "بيع وشراء", href: "/categories/buy-and-sell" },
-  { name: "خدمات", href: "/categories/services" },
-  { name: "مجتمع", href: "/categories/community" },
-  { name: "وظائف", href: "/categories/jobs" },
-] : [
-  { name: "Vehicles", href: "/en/categories/vehicles" },
-  { name: "Real Estate", href: "/en/categories/real-estate" },
-  { name: "Buy & Sell", href: "/en/categories/buy-and-sell" },
-  { name: "Services", href: "/en/categories/services" },
-  { name: "Community", href: "/en/categories/community" },
-  { name: "Jobs", href: "/en/categories/jobs" },
-];
+const links = isArabic
+  ? [
+      { name: "سيارات ومركبات", href: "/categories/vehicles" },
+      { name: "عقار", href: "/categories/real-estate" },
+      { name: "بيع وشراء", href: "/categories/buy-and-sell" },
+      { name: "خدمات", href: "/categories/services" },
+      { name: "مجتمع", href: "/categories/community" },
+      { name: "وظائف", href: "/categories/jobs" },
+    ]
+  : [
+      { name: "Vehicles", href: "/en/categories/vehicles" },
+      { name: "Real Estate", href: "/en/categories/real-estate" },
+      { name: "Buy & Sell", href: "/en/categories/buy-and-sell" },
+      { name: "Services", href: "/en/categories/services" },
+      { name: "Community", href: "/en/categories/community" },
+      { name: "Jobs", href: "/en/categories/jobs" },
+    ];
 
 const langLink = isArabic ? "/en/" : "/";
 const langText = isArabic ? "English" : "العربية";
 const actionText = isArabic ? "أضف إعلانك" : "Post an Ad";
 const waNumber = "15559607109";
-const waTextAr = "يا هلا، بغيت أضيف إعلان";
+const waTextAr = "يا هلا، أبي أضيف إعلان";
 const waTextEn = "I want to post an ad";
 const actionLink = `https://wa.me/${waNumber}?text=${isArabic ? waTextAr : waTextEn}`;
 
 const isActive = (path: string) => currentPath === path;
 ---
 
-<nav class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+<nav
+  class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800"
+>
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <div class="flex h-16 justify-between items-center">
       <!-- Mobile menu button -->
@@ -44,35 +48,48 @@ const isActive = (path: string) => currentPath === path;
           class="inline-flex items-center justify-center rounded-md p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:outline-none dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
           aria-label="Open main menu"
         >
-          <Icon id="mobile-menu-icon" name="tabler:baseline-density-medium" class="h-6 w-6" />
+          <Icon
+            id="mobile-menu-icon"
+            name="tabler:baseline-density-medium"
+            class="h-6 w-6"
+          />
         </button>
       </div>
 
       <!-- Logo and desktop menu -->
-      <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+      <div
+        class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start"
+      >
         <div class="flex flex-shrink-0 items-center">
           <Logo />
         </div>
         <div class="hidden sm:ml-8 sm:flex sm:space-x-8 rtl:space-x-reverse">
-          {links.map((navItem) => (
-            <a
-              href={navItem.href}
-              class={`inline-flex items-center border-b-2 px-1 pt-1 text-sm font-bold ${
-                isActive(navItem.href)
-                  ? "border-primary-500 text-primary-600 dark:text-primary-400"
-                  : "border-transparent text-gray-700 hover:border-gray-300 hover:text-gray-900 dark:text-gray-300 dark:hover:border-gray-700 dark:hover:text-white"
-              }`}
-            >
-              {navItem.name}
-            </a>
-          ))}
+          {
+            links.map((navItem) => (
+              <a
+                href={navItem.href}
+                class={`inline-flex items-center border-b-2 px-1 pt-1 text-sm font-bold ${
+                  isActive(navItem.href)
+                    ? "border-primary-500 text-primary-600 dark:text-primary-400"
+                    : "border-transparent text-gray-700 hover:border-gray-300 hover:text-gray-900 dark:text-gray-300 dark:hover:border-gray-700 dark:hover:text-white"
+                }`}
+              >
+                {navItem.name}
+              </a>
+            ))
+          }
         </div>
       </div>
 
       <!-- Action buttons -->
-      <div class="flex items-center gap-3 md:gap-4 ml-auto rtl:ml-0 rtl:mr-auto">
+      <div
+        class="flex items-center gap-3 md:gap-4 ml-auto rtl:ml-0 rtl:mr-auto"
+      >
         <!-- Language Switcher -->
-        <a href={langLink} class="text-sm font-bold uppercase text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition">
+        <a
+          href={langLink}
+          class="text-sm font-bold uppercase text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition"
+        >
           {langText}
         </a>
 
@@ -93,18 +110,20 @@ const isActive = (path: string) => currentPath === path;
   <!-- Mobile menu -->
   <div id="mobile-menu" class="hidden sm:hidden">
     <div class="space-y-1 pb-4 pt-2">
-      {links.map((item) => (
-        <a
-          href={item.href}
-          class={`block border-l-4 rtl:border-r-4 rtl:border-l-0 py-2 pl-3 rtl:pr-3 rtl:pl-4 text-base font-bold ${
-            isActive(item.href)
-              ? "bg-primary-50 border-primary-500 text-primary-700 dark:bg-gray-800 dark:text-primary-400"
-              : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
-          }`}
-        >
-          {item.name}
-        </a>
-      ))}
+      {
+        links.map((item) => (
+          <a
+            href={item.href}
+            class={`block border-l-4 rtl:border-r-4 rtl:border-l-0 py-2 pl-3 rtl:pr-3 rtl:pl-4 text-base font-bold ${
+              isActive(item.href)
+                ? "bg-primary-50 border-primary-500 text-primary-700 dark:bg-gray-800 dark:text-primary-400"
+                : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
+            }`}
+          >
+            {item.name}
+          </a>
+        ))
+      }
     </div>
     <div class="border-t border-gray-200 dark:border-gray-800 pb-4 pt-4 px-4">
       <a
