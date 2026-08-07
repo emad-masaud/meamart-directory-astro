@@ -3,10 +3,12 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@import url('https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@300;400;500;700;800;900&display=swap');
+
 @theme {
   --font-*: initial;
-  --font-sans: 'Gabarito Variable', sans-serif;
-  --font-mono: 'Source Code Pro' monospace;
+  --font-sans: 'Gabarito Variable', 'Noto Kufi Arabic', sans-serif;
+  --font-mono: 'Source Code Pro', monospace;
 
   --color-gray-50: var(--color-neutral-50);
   --color-gray-100: var(--color-neutral-100);
@@ -20,17 +22,28 @@
   --color-gray-900: var(--color-neutral-900);
   --color-gray-950: var(--color-neutral-950);
 
-  --color-primary-50: var(--color-sky-50);
-  --color-primary-100: var(--color-sky-100);
-  --color-primary-200: var(--color-sky-200);
-  --color-primary-300: var(--color-sky-300);
-  --color-primary-400: var(--color-sky-400);
-  --color-primary-500: var(--color-sky-500);
-  --color-primary-600: var(--color-sky-600);
-  --color-primary-700: var(--color-sky-700);
-  --color-primary-800: var(--color-sky-800);
-  --color-primary-900: var(--color-sky-900);
-  --color-primary-950: var(--color-sky-950);
+  --color-primary-50: #e6e6f9;
+  --color-primary-100: #ccccf4;
+  --color-primary-200: #9999e9;
+  --color-primary-300: #6666df;
+  --color-primary-400: #3333d4;
+  --color-primary-500: #00008B;
+  --color-primary-600: #000070;
+  --color-primary-700: #000053;
+  --color-primary-800: #000038;
+  --color-primary-900: #00001c;
+  --color-primary-950: #00000e;
+}
+
+@layer base {
+  :root {
+    --background: #ffffff;
+    --foreground: #09090b;
+  }
+  .dark {
+    --background: #09090b;
+    --foreground: #fafafa;
+  }
 }
 
 

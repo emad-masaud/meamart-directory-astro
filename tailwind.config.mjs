@@ -7,11 +7,25 @@ export default {
 	theme: {
 		extend: {
 			fontFamily: {
-        sans: ['Gabarito'],
+        sans: ['Gabarito', 'Noto Kufi Arabic', 'sans-serif'],
       },
 			colors: {
-				primary: colors.sky,
+				primary: {
+					DEFAULT: '#00008B',
+					50: '#e6e6f9',
+					100: '#ccccf4',
+					200: '#9999e9',
+					300: '#6666df',
+					400: '#3333d4',
+					500: '#00008B',
+					600: '#000070',
+					700: '#000053',
+					800: '#000038',
+					900: '#00001c',
+				},
 				gray: colors.zinc,
+				background: 'var(--background)',
+				foreground: 'var(--foreground)',
 			}
 		},
 	},

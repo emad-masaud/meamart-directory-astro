@@ -1,26 +1,10 @@
 ---
-import { Icon } from "astro-icon/components";
-import config from "@util/themeConfig";
+// Logo.astro
 ---
 
-<a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
-  {
-    config.general.logo ? (
-      <img
-        sizes="32px"
-        src={config.general.logo}
-        class="h-8"
-        alt={config?.general.title + " Logo"}
-      />
-    ) : (
-      <Icon
-        class="w-7 h-7 text-gray-600 dark:text-white"
-        name={config?.general?.iconLogo}
-      />
-    )
-  }
-  <span
-    class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
-    >{config.general.title}</span
-  >
+<a href="/" class="flex items-center gap-3 text-xl font-bold tracking-tight text-primary-500 dark:text-white group">
+  <img src="/logo.svg" alt="MeaMart Logo" width="32" height="32" class="h-8 w-auto rounded-lg group-hover:rotate-6 transition-transform duration-300 dark:hidden block">
+  <img src="/logo-dark.svg" alt="MeaMart Logo" width="32" height="32" class="h-8 w-auto rounded-lg group-hover:rotate-6 transition-transform duration-300 hidden dark:block">
+  <span class="hidden md:inline font-bold">MeaMart</span>
+  <span class="hidden lg:inline text-xs text-gray-500 border-l border-gray-200 pl-3 ml-3 rtl:border-r rtl:border-l-0 rtl:pr-3 rtl:mr-3 font-normal"> طلباتك أوامر </span>
 </a>

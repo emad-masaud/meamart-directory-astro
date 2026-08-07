@@ -6,10 +6,14 @@ import icon from 'astro-icon';
 import sitemap from '@astrojs/sitemap';
 import { ViteToml } from 'vite-plugin-toml';
 import tailwindcss from '@tailwindcss/vite';
+import remarkEmoji from 'remark-emoji';
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://bestmeditationapps.com",
+  markdown: {
+    remarkPlugins: [remarkEmoji],
+  },
   integrations: [
     vue(),
     mdx(),

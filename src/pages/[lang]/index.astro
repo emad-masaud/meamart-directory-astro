@@ -1,0 +1,84 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import CategoryCard from "@components/directory/cards/CategoryCard.astro";
+import BusinessCard from "@components/directory/cards/BusinessCard.astro";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  return [
+    { params: { lang: "ar" } },
+    { params: { lang: "en" } },
+  ];
+}
+
+const { lang } = Astro.params;
+const isArabic = lang === "ar";
+
+const categories = await getCollection("categories");
+const businesses = await getCollection("businesses");
+
+const title = isArabic ? "ماذا تريد أن تبيع؟" : "What do you want to sell?";
+const description = isArabic ? "تصفح آلاف الإعلانات أو أضف إعلانك بسهولة على ميمارت" : "Browse thousands of ads or post yours easily on MeaMart";
+const type = "website";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "MeaMart",
+  "url": `https://meamart.com/${lang}/`
+};
+---
+
+<BaseLayout title={title} description={description} lang={lang} type={type} jsonLd={jsonLd}>
+  <!-- Hero Section -->
+  <section class="min-h-[60vh] flex flex-col items-center justify-center relative overflow-hidden pt-20 pb-10">
+    <div class="absolute inset-0 z-0 opacity-40">
+      <div class="absolute top-[20%] ltr:left-[20%] rtl:right-[20%] w-[500px] h-[500px] bg-primary-900/20 rounded-full blur-[128px] animate-pulse"></div>
+    </div>
+    
+    <div class="container mx-auto px-6 relative z-10 text-center">
+      <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
+        {title}
+      </h1>
+      <p class="text-xl text-gray-600 dark:text-gray-400 mb-10 max-w-2xl mx-auto">
+        {description}
+      </p>
+      
+      <!-- Search Input -->
+      <div class="max-w-xl mx-auto relative group">
+        <input 
+          type="text" 
+          placeholder={isArabic ? "ابحث هنا..." : "Search here..."}
+          class="w-full px-6 py-4 rounded-full border border-gray-300 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 text-lg transition-all"
+        />
+        <button class="absolute ltr:right-2 rtl:left-2 top-2 bottom-2 bg-primary-500 hover:bg-primary-600 text-white rounded-full px-6 transition-colors font-bold">
+          {isArabic ? "بحث" : "Search"}
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories Section -->
+  <section class="py-12 bg-white dark:bg-gray-900">
+    <div class="container mx-auto px-4 max-w-7xl">
+      <h2 class="text-2xl font-bold mb-8 text-center">{isArabic ? "تصفح الأقسام" : "Browse Categories"}</h2>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        {categories.map((category) => (
+          <CategoryCard category={category.data} lang={lang} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Businesses Section -->
+  <section class="py-16 bg-gray-50 dark:bg-gray-800/50">
+    <div class="container mx-auto px-4 max-w-7xl">
+      <h2 class="text-2xl font-bold mb-8">{isArabic ? "أحدث الإعلانات" : "Latest Ads"}</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {businesses.map((business) => (
+          <BusinessCard business={business.data} lang={lang} />
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

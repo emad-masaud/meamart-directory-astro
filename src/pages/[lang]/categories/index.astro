@@ -1,0 +1,42 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import CategoryCard from "@components/directory/cards/CategoryCard.astro";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  return [
+    { params: { lang: "ar" } },
+    { params: { lang: "en" } },
+  ];
+}
+
+const { lang } = Astro.params;
+const isArabic = lang === "ar";
+
+const categories = await getCollection("categories");
+
+const title = isArabic ? "جميع الأقسام" : "All Categories";
+const description = isArabic ? "تصفح جميع الأقسام المتاحة في ميمارت" : "Browse all available categories on MeaMart";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": title,
+  "description": description
+};
+---
+
+<BaseLayout title={title} description={description} lang={lang} type="website" jsonLd={jsonLd}>
+  <div class="container mx-auto px-4 max-w-7xl py-12">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold mb-2">{title}</h1>
+      <p class="text-gray-500">{description}</p>
+    </div>
+    
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {categories.map((category) => (
+        <CategoryCard category={category.data} lang={lang} />
+      ))}
+    </div>
+  </div>
+</BaseLayout>

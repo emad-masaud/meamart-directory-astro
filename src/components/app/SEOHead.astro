@@ -1,0 +1,86 @@
+---
+// src/components/app/SEOHead.astro
+export interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  canonical?: string;
+  type?: "website" | "article" | "profile" | "product" | "LocalBusiness";
+  jsonLd?: any;
+}
+
+const {
+  title,
+  description,
+  image = "/og-image.webp",
+  canonical = new URL(Astro.url.pathname, Astro.site || "https://meamart.com").toString(),
+  type = "website",
+  jsonLd
+} = Astro.props;
+
+const siteName = "MeaMart | طلباتك أوامر";
+const fullTitle = `${title} | ${siteName}`;
+const currentPath = Astro.url.pathname;
+const isArabic = currentPath.startsWith('/ar');
+
+// Construct hreflang alternates
+const origin = Astro.site ? Astro.site.origin : "https://meamart.com";
+const enUrl = isArabic ? `${origin}${currentPath.replace('/ar', '/en')}` : `${origin}${currentPath}`;
+const arUrl = isArabic ? `${origin}${currentPath}` : `${origin}${currentPath.replace('/en', '/ar')}`;
+---
+
+<title>{fullTitle}</title>
+<meta name="title" content={fullTitle} />
+<meta name="description" content={description} />
+<meta name="keywords" content="ميمارت, طلباتك أوامر, مساعد ذكي, سوق الإعلانات, سيارات, عقارات, خدمات, مجتمع" />
+<meta name="author" content="MeaMart Team" />
+
+<!-- Canonical -->
+<link rel="canonical" href={canonical} />
+
+<!-- hreflang alternates -->
+<link rel="alternate" hreflang="en" href={enUrl} />
+<link rel="alternate" hreflang="ar" href={arUrl} />
+<link rel="alternate" hreflang="x-default" href={enUrl} />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content={type} />
+<meta property="og:url" content={canonical} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={new URL(image, origin).toString()} />
+<meta property="og:site_name" content={siteName} />
+<meta property="og:locale" content={isArabic ? "ar_SA" : "en_US"} />
+<meta property="og:locale:alternate" content={isArabic ? "en_US" : "ar_SA"} />
+<meta property="og:logo" content={new URL("/logo.svg", origin).toString()} />
+
+<!-- Twitter / X Card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content={canonical} />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={new URL(image, origin).toString()} />
+<meta name="twitter:site" content="@meamart" />
+
+<!-- JSON-LD -->
+{jsonLd && (
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+)}
+
+<!-- Default Organization Schema -->
+{!jsonLd && (
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "MeaMart",
+  "url": "https://meamart.com/",
+  "logo": "https://meamart.com/logo.svg",
+  "sameAs": [
+    "https://twitter.com/meamart",
+    "https://linkedin.com/company/meamart",
+    "https://facebook.com/meamart"
+  ]
+}
+</script>
+)}

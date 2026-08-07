@@ -1,0 +1,156 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import { Icon } from "astro-icon/components";
+
+export async function getStaticPaths() {
+  const businesses = await getCollection("businesses");
+  
+  const paths: any[] = [];
+  businesses.forEach((business) => {
+    paths.push({
+      params: { lang: "ar", slug: business.data.slug },
+      props: { business },
+    });
+    paths.push({
+      params: { lang: "en", slug: business.data.slug },
+      props: { business },
+    });
+  });
+  
+  return paths;
+}
+
+const { lang } = Astro.params;
+const { business } = Astro.props;
+const isArabic = lang === "ar";
+
+const name = isArabic ? business.data.nameAr : business.data.nameEn;
+const description = isArabic ? business.data.descriptionAr : business.data.descriptionEn;
+const seoTitle = business.data.seoTitle || name;
+const seoDesc = business.data.seoDescription || description;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": name,
+  "description": description,
+  "image": business.data.logo || business.data.coverImage,
+  "telephone": business.data.phone,
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": business.data.address,
+    "addressLocality": business.data.city,
+    "addressRegion": "SA"
+  }
+};
+---
+
+<BaseLayout title={seoTitle} description={seoDesc} lang={lang} image={business.data.coverImage} type="LocalBusiness" jsonLd={jsonLd}>
+  <!-- Cover Image -->
+  <div class="h-64 md:h-80 w-full relative bg-gray-200 dark:bg-gray-800">
+    {business.data.coverImage && (
+      <img src={business.data.coverImage} alt={name} class="w-full h-full object-cover" />
+    )}
+    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+  </div>
+  
+  <div class="container mx-auto px-4 max-w-5xl -mt-20 relative z-10 mb-20">
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-6 md:p-8 border border-gray-100 dark:border-gray-800">
+      <div class="flex flex-col md:flex-row gap-6 items-start">
+        <!-- Logo -->
+        {business.data.logo ? (
+          <div class="w-24 h-24 md:w-32 md:h-32 shrink-0 bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden -mt-16 md:-mt-12">
+            <img src={business.data.logo} alt={name} class="w-full h-full object-contain p-2" />
+          </div>
+        ) : (
+          <div class="w-24 h-24 md:w-32 md:h-32 shrink-0 bg-gray-100 dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 flex items-center justify-center -mt-16 md:-mt-12 text-gray-400">
+            <Icon name="tabler:photo" class="w-10 h-10" />
+          </div>
+        )}
+        
+        <!-- Info -->
+        <div class="flex-1">
+          <div class="flex flex-wrap items-center gap-3 mb-2">
+            <h1 class="text-3xl font-bold">{name}</h1>
+            {business.data.category && (
+              <a href={`/${lang}/categories/${business.data.category}`} class="bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 text-xs font-bold px-3 py-1 rounded-full">
+                {business.data.category}
+              </a>
+            )}
+          </div>
+          
+          <div class="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400 mt-3">
+            {business.data.city && (
+              <div class="flex items-center gap-1.5">
+                <Icon name="tabler:map-pin" class="w-4 h-4" />
+                <span>{business.data.city}</span>
+              </div>
+            )}
+            {business.data.address && (
+              <div class="flex items-center gap-1.5">
+                <Icon name="tabler:location" class="w-4 h-4" />
+                <span>{business.data.address}</span>
+              </div>
+            )}
+            {business.data.phone && (
+              <div class="flex items-center gap-1.5">
+                <Icon name="tabler:phone" class="w-4 h-4" />
+                <span dir="ltr">{business.data.phone}</span>
+              </div>
+            )}
+          </div>
+        </div>
+        
+        <!-- Actions -->
+        <div class="w-full md:w-auto flex flex-col gap-3 shrink-0">
+          {business.data.whatsapp && (
+            <a href={`https://wa.me/${business.data.whatsapp.replace(/[^0-9]/g, '')}`} target="_blank" class="flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white font-bold py-2.5 px-6 rounded-xl transition-colors">
+              <Icon name="tabler:brand-whatsapp" class="w-5 h-5" />
+              {isArabic ? "تواصل واتساب" : "WhatsApp"}
+            </a>
+          )}
+          {business.data.phone && (
+            <a href={`tel:${business.data.phone}`} class="flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-900 dark:text-white font-bold py-2.5 px-6 rounded-xl transition-colors border border-gray-200 dark:border-gray-700">
+              <Icon name="tabler:phone" class="w-5 h-5" />
+              {isArabic ? "اتصال" : "Call"}
+            </a>
+          )}
+        </div>
+      </div>
+      
+      <hr class="my-8 border-gray-200 dark:border-gray-800" />
+      
+      <div class="prose dark:prose-invert max-w-none">
+        <h2 class="text-xl font-bold mb-4">{isArabic ? "الوصف" : "Description"}</h2>
+        <p class="whitespace-pre-line text-gray-700 dark:text-gray-300 leading-relaxed">
+          {description}
+        </p>
+      </div>
+      
+      <!-- Social Media -->
+      {(business.data.instagram || business.data.facebook || business.data.website) && (
+        <div class="mt-10">
+          <h3 class="text-lg font-bold mb-4">{isArabic ? "روابط إضافية" : "Links"}</h3>
+          <div class="flex gap-4">
+            {business.data.website && (
+              <a href={business.data.website} target="_blank" class="w-10 h-10 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-primary-50 dark:hover:bg-primary-900/50 hover:text-primary-600 transition-colors">
+                <Icon name="tabler:world" class="w-5 h-5" />
+              </a>
+            )}
+            {business.data.instagram && (
+              <a href={business.data.instagram} target="_blank" class="w-10 h-10 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-pink-50 hover:text-pink-600 transition-colors">
+                <Icon name="tabler:brand-instagram" class="w-5 h-5" />
+              </a>
+            )}
+            {business.data.facebook && (
+              <a href={business.data.facebook} target="_blank" class="w-10 h-10 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                <Icon name="tabler:brand-facebook" class="w-5 h-5" />
+              </a>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  </div>
+</BaseLayout>

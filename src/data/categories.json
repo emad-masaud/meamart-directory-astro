@@ -1,0 +1,56 @@
+[
+  {
+    "id": "vehicles",
+    "slug": "vehicles",
+    "nameAr": "سيارات ومركبات",
+    "nameEn": "Vehicles",
+    "descriptionAr": "بيع وشراء جميع أنواع السيارات والمركبات",
+    "descriptionEn": "Buy and sell all types of vehicles",
+    "icon": "tabler:car"
+  },
+  {
+    "id": "real-estate",
+    "slug": "real-estate",
+    "nameAr": "عقار",
+    "nameEn": "Real Estate",
+    "descriptionAr": "شقق، فلل، أراضي للبيع والإيجار",
+    "descriptionEn": "Apartments, villas, land for sale and rent",
+    "icon": "tabler:home"
+  },
+  {
+    "id": "buy-and-sell",
+    "slug": "buy-and-sell",
+    "nameAr": "بيع وشراء",
+    "nameEn": "Buy & Sell",
+    "descriptionAr": "إلكترونيات، أثاث، وكل ما تبحث عنه",
+    "descriptionEn": "Electronics, furniture, and more",
+    "icon": "tabler:shopping-cart"
+  },
+  {
+    "id": "services",
+    "slug": "services",
+    "nameAr": "خدمات",
+    "nameEn": "Services",
+    "descriptionAr": "صيانة، مقاولات، ونقل عفش",
+    "descriptionEn": "Maintenance, contracting, and moving",
+    "icon": "tabler:briefcase"
+  },
+  {
+    "id": "community",
+    "slug": "community",
+    "nameAr": "مجتمع",
+    "nameEn": "Community",
+    "descriptionAr": "تعارف، ترفيه، وكل ما يخص المجتمع",
+    "descriptionEn": "Networking, entertainment, and community events",
+    "icon": "tabler:users"
+  },
+  {
+    "id": "jobs",
+    "slug": "jobs",
+    "nameAr": "وظائف",
+    "nameEn": "Jobs",
+    "descriptionAr": "ابحث عن وظيفتك القادمة",
+    "descriptionEn": "Find your next job",
+    "icon": "tabler:tie"
+  }
+]

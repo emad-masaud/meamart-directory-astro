@@ -1,54 +1,62 @@
 ---
 import "@fontsource-variable/gabarito";
-import themeConfig from "@util/themeConfig";
 import "../styles/global.css";
-import Posthog from "@components/analytics/Posthog.astro";
 import { ClientRouter } from "astro:transitions";
-import { getOGImage } from "@util/getOGImage";
+import SEOHead from "@components/app/SEOHead.astro";
+import Navbar from "@components/app/Navbar.astro";
+import Footer from "@components/app/Footer.astro";
 
-const { title, slug } = Astro.props;
-const siteTitle = themeConfig.general.title;
+const { title, description, image, canonical, type, jsonLd, lang = "ar" } = Astro.props;
 
-const calculatedTitle = title || siteTitle;
+const dir = lang === "ar" ? "rtl" : "ltr";
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang} dir={dir} class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content="Astro description" />
-    <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <meta name="generator" content={Astro.generator} />
-
-    <title>{calculatedTitle}</title>
-    <meta name="description" content={themeConfig.general.seo.description} />
-
-    <!-- Facebook Meta Tags -->
-    <meta property="og:url" content={themeConfig.general.seo.url} />
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content={calculatedTitle} />
-    <meta
-      property="og:description"
-      content={themeConfig.general.seo.description}
+    
+    <SEOHead
+      title={title}
+      description={description}
+      image={image}
+      canonical={canonical}
+      type={type}
+      jsonLd={jsonLd}
     />
-    <meta property="og:image" content={getOGImage(slug)} />
-
-    <!-- Twitter Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta property="twitter:domain" content="codeagents.dev" />
-    <meta property="twitter:url" content={themeConfig.general.seo.url} />
-    <meta name="twitter:title" content={themeConfig.general.seo.name} />
-    <meta
-      name="twitter:description"
-      content={themeConfig.general.seo.description}
-    />
-    <meta name="twitter:image" content={getOGImage(slug)} />
+    
     <ClientRouter />
+    
+    <!-- Initialize Theme -->
+    <script is:inline>
+      const theme = (() => {
+        if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+          return localStorage.getItem('theme');
+        }
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          return 'dark';
+        }
+        return 'light';
+      })();
+      if (theme === 'light') {
+        document.documentElement.classList.remove('dark');
+      } else {
+        document.documentElement.classList.add('dark');
+      }
+      window.localStorage.setItem('theme', theme);
+    </script>
   </head>
-  <body class="bg-white dark:bg-gray-900">
-    <slot />
-    <Posthog />
+  <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col font-sans antialiased">
+    <Navbar />
+    
+    <main class="flex-grow">
+      <slot />
+    </main>
+    
+    <Footer />
   </body>
 </html>
