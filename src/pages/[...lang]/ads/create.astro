@@ -3,12 +3,12 @@ import BaseLayout from "@layouts/BaseLayout.astro";
 
 export async function getStaticPaths() {
   return [
-    { params: { lang: "ar" } },
+    { params: { lang: undefined } },
     { params: { lang: "en" } },
   ];
 }
 
-const { lang } = Astro.params;
+const lang = Astro.params.lang || "ar";
 const isArabic = lang === "ar";
 
 const title = isArabic ? "أضف إعلانك" : "Post an Ad";
@@ -24,7 +24,7 @@ const description = isArabic ? "أضف إعلانك الجديد في ميمار
           ? "هذه الصفحة تحت الإنشاء. قريباً ستتمكن من إضافة إعلاناتك مباشرة." 
           : "This page is under construction. Soon you will be able to post ads directly."}
       </p>
-      <a href={`/${lang}/`} class="inline-flex items-center justify-center rounded-full bg-primary-500 text-white px-8 py-3 font-bold hover:bg-primary-600 transition-all shadow-sm">
+      <a href={lang === "ar" ? "/" : `/${lang}/`} class="inline-flex items-center justify-center rounded-full bg-primary-500 text-white px-8 py-3 font-bold hover:bg-primary-600 transition-all shadow-sm">
         {isArabic ? "العودة للرئيسية" : "Back to Home"}
       </a>
     </div>

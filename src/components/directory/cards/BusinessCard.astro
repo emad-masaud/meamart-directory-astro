@@ -5,7 +5,7 @@ const { business, lang = "ar" } = Astro.props;
 const isArabic = lang === "ar";
 const title = isArabic ? business.nameAr : business.nameEn;
 const description = isArabic ? business.descriptionAr : business.descriptionEn;
-const href = `/${lang}/businesses/${business.slug}`;
+const href = lang === "ar" ? `/businesses/${business.slug}` : `/${lang}/businesses/${business.slug}`;
 ---
 
 <a href={href} class="block border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group relative">

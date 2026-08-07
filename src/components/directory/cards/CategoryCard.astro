@@ -5,7 +5,7 @@ const { category, lang = "ar" } = Astro.props;
 const isArabic = lang === "ar";
 const name = isArabic ? category.nameAr : category.nameEn;
 const description = isArabic ? category.descriptionAr : category.descriptionEn;
-const href = `/${lang}/categories/${category.slug}`;
+const href = lang === "ar" ? `/categories/${category.slug}` : `/${lang}/categories/${category.slug}`;
 ---
 
 <a href={href} class="flex flex-col items-center justify-center p-6 text-center border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-xl hover:shadow-md hover:border-primary-500 dark:hover:border-primary-500 transition-all group">

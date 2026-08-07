@@ -3,7 +3,7 @@ import AppLogo from "./Logo.astro";
 import { Icon } from "astro-icon/components";
 
 const currentPath = new URL(Astro.request.url).pathname;
-const isArabic = currentPath.startsWith('/ar');
+const isArabic = !currentPath.startsWith('/en');
 const lang = isArabic ? "ar" : "en";
 
 const socials = [
@@ -15,8 +15,8 @@ const navigation = isArabic ? [
   {
     title: "الدليل",
     links: [
-      { title: "تصفح الأقسام", link: "/ar/categories" },
-      { title: "أضف إعلانك", link: "/ar/ads/create" },
+      { title: "تصفح الأقسام", link: "/categories" },
+      { title: "أضف إعلانك", link: "/ads/create" },
     ],
   },
   {
@@ -29,8 +29,8 @@ const navigation = isArabic ? [
   {
     title: "الشروط والأحكام",
     links: [
-      { title: "سياسات الإعلان", link: "/ar/policies" },
-      { title: "سياسة الخصوصية", link: "/ar/policies" },
+      { title: "سياسات الإعلان", link: "/policies" },
+      { title: "سياسة الخصوصية", link: "/policies" },
     ],
   }
 ] : [

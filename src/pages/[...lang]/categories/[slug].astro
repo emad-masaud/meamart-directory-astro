@@ -9,7 +9,7 @@ export async function getStaticPaths() {
   const paths: any[] = [];
   categories.forEach((category) => {
     paths.push({
-      params: { lang: "ar", slug: category.data.slug },
+      params: { lang: undefined, slug: category.data.slug },
       props: { category },
     });
     paths.push({
@@ -21,7 +21,7 @@ export async function getStaticPaths() {
   return paths;
 }
 
-const { lang } = Astro.params;
+const lang = Astro.params.lang || "ar";
 const { category } = Astro.props;
 const isArabic = lang === "ar";
 
@@ -59,7 +59,7 @@ const jsonLd = {
     ) : (
       <div class="text-center py-20">
         <h3 class="text-xl font-bold text-gray-400 mb-2">{isArabic ? "لا توجد إعلانات هنا بعد" : "No ads found here yet"}</h3>
-        <a href={`/${lang}/ads/create`} class="text-primary-600 hover:underline">{isArabic ? "كن أول من يعلن!" : "Be the first to post!"}</a>
+        <a href={lang === "ar" ? "/ads/create" : `/${lang}/ads/create`} class="text-primary-600 hover:underline">{isArabic ? "كن أول من يعلن!" : "Be the first to post!"}</a>
       </div>
     )}
   </div>

@@ -5,15 +5,15 @@ import ColorSelector from "./header/ColorSelector.astro";
 import Logo from "./Logo.astro";
 
 const currentPath = new URL(Astro.request.url).pathname;
-const isArabic = currentPath.startsWith('/ar');
+const isArabic = !currentPath.startsWith('/en');
 
 const links = isArabic ? [
-  { name: "سيارات ومركبات", href: "/ar/categories/vehicles" },
-  { name: "عقار", href: "/ar/categories/real-estate" },
-  { name: "بيع وشراء", href: "/ar/categories/buy-and-sell" },
-  { name: "خدمات", href: "/ar/categories/services" },
-  { name: "مجتمع", href: "/ar/categories/community" },
-  { name: "وظائف", href: "/ar/categories/jobs" },
+  { name: "سيارات ومركبات", href: "/categories/vehicles" },
+  { name: "عقار", href: "/categories/real-estate" },
+  { name: "بيع وشراء", href: "/categories/buy-and-sell" },
+  { name: "خدمات", href: "/categories/services" },
+  { name: "مجتمع", href: "/categories/community" },
+  { name: "وظائف", href: "/categories/jobs" },
 ] : [
   { name: "Vehicles", href: "/en/categories/vehicles" },
   { name: "Real Estate", href: "/en/categories/real-estate" },
@@ -23,7 +23,7 @@ const links = isArabic ? [
   { name: "Jobs", href: "/en/categories/jobs" },
 ];
 
-const langLink = isArabic ? "/en" : "/ar";
+const langLink = isArabic ? "/en/" : "/";
 const langText = isArabic ? "English" : "العربية";
 const actionText = isArabic ? "أضف إعلانك" : "Post an Ad";
 const waNumber = "15559607109";
