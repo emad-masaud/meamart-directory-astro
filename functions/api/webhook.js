@@ -39,7 +39,7 @@ export async function onRequestPost(context) {
     // 5. GitHub API settings
     // Replace with your exact GitHub username and repository name
     const githubRepo = "emad-masaud/meamart-directory-astro";
-    const filePath = `src/content/businesses/${slug}.json`;
+    const filePath = `src/data/businesses/${slug}.json`;
     
     // 6. Send the file to GitHub
     const response = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${filePath}`, {

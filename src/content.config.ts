@@ -17,7 +17,7 @@ const categories = defineCollection({
 
 // Define the schema for Businesses
 const businesses = defineCollection({
-  loader: file("src/data/businesses.json"),
+  loader: glob({ pattern: '**/[^_]*.json', base: "./src/data/businesses" }),
   schema: z.object({
     id: z.string(),
     slug: z.string(),
