@@ -23,8 +23,13 @@ export async function onRequestPost(context) {
     }
     
     if (typeof coverImageUrl === 'object' && coverImageUrl !== null) {
-      // Try to extract URL from common object keys used by chatbots/WhatsApp
-      coverImageUrl = coverImageUrl.url || coverImageUrl.media_url || coverImageUrl.link || coverImageUrl.cdn_url || coverImageUrl.media_id || "";
+      // If it has an 'id' (WhatsApp Media ID), reconstruct the MeaChat preview URL
+      if (coverImageUrl.id) {
+        coverImageUrl = `https://app.meachat.com/whatsapp/livechat/conversation/file/preview/${coverImageUrl.id}/image?bot_id=410479`;
+      } else {
+        // Try to extract URL from common object keys used by chatbots/WhatsApp
+        coverImageUrl = coverImageUrl.url || coverImageUrl.media_url || coverImageUrl.link || coverImageUrl.cdn_url || coverImageUrl.media_id || "";
+      }
     }
     
     if (typeof coverImageUrl !== 'string' || coverImageUrl === "[object Object]") {
