@@ -32,8 +32,8 @@ export async function onRequestPost(context) {
     }
 
     // We use the ID generated from your WhatsApp Flow (if provided)
-    // If not provided, we generate a SMART ID using the phone number and timestamp
-    const basePhone = data.phone || data.whatsapp || "unknown";
+    // If not provided, we generate a SMART ID using the WhatsApp number and timestamp
+    const basePhone = data.whatsapp || data.phone || "unknown";
     const uniqueId = data.id || data.code || `${basePhone}-${Date.now()}`;
     // Format it safely for URLs (lowercase, remove any special chars like # or ? that break URLs)
     const slug = uniqueId.toString().toLowerCase().replace(/[^a-z0-9\-_]+/gi, '-').replace(/^-+|-+$/g, '');
