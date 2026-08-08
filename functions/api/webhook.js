@@ -14,8 +14,8 @@ export async function onRequestPost(context) {
     // If not provided, we generate a SMART ID using the phone number and timestamp
     const basePhone = data.phone || data.whatsapp || "unknown";
     const uniqueId = data.id || data.code || `${basePhone}-${Date.now()}`;
-    // Format it safely for URLs (lowercase, no spaces)
-    const slug = uniqueId.toString().toLowerCase().replace(/\s+/g, '-');
+    // Format it safely for URLs (lowercase, remove any special chars like # or ? that break URLs)
+    const slug = uniqueId.toString().toLowerCase().replace(/[^a-z0-9\-_]+/gi, '-').replace(/^-+|-+$/g, '');
     
     // Handle photo which might be an array or object from MeaChat PhotoPicker
     let coverImageUrl = data.image || data.photo || "";
