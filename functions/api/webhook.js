@@ -1,7 +1,28 @@
 export async function onRequestPost(context) {
   try {
     // 1. Get the data from the webhook (MeaChat WhatsApp Flow)
-    const data = await context.request.json();
+    let data = {};
+    const contentType = context.request.headers.get("content-type") || "";
+    
+    try {
+      if (contentType.includes("application/json")) {
+        data = await context.request.json();
+      } else if (contentType.includes("form-data") || contentType.includes("x-www-form-urlencoded")) {
+        const formData = await context.request.formData();
+        data = Object.fromEntries(formData.entries());
+      } else {
+        const text = await context.request.text();
+        try {
+          data = JSON.parse(text);
+        } catch (e) {
+          // If it's URL-encoded string like phone=test...
+          const searchParams = new URLSearchParams(text);
+          data = Object.fromEntries(searchParams.entries());
+        }
+      }
+    } catch (e) {
+      return new Response(JSON.stringify({ error: "Failed to parse incoming data", details: e.message }), { status: 400 });
+    }
     
     // 2. Get the GitHub Token from Cloudflare Environment Variables
     const githubToken = context.env.GITHUB_TOKEN;
