@@ -10,8 +10,10 @@ export async function onRequestPost(context) {
       return new Response(JSON.stringify({ error: "Missing GITHUB_TOKEN" }), { status: 500 });
     }
 
-    // We use the ID generated from your WhatsApp Flow (if provided), otherwise generate a unique one
-    const uniqueId = data.id || data.code || Date.now().toString();
+    // We use the ID generated from your WhatsApp Flow (if provided)
+    // If not provided, we generate a SMART ID using the phone number and timestamp
+    const basePhone = data.phone || data.whatsapp || "unknown";
+    const uniqueId = data.id || data.code || `${basePhone}-${Date.now()}`;
     // Format it safely for URLs (lowercase, no spaces)
     const slug = uniqueId.toString().toLowerCase().replace(/\s+/g, '-');
     
@@ -120,6 +122,7 @@ export async function onRequestPost(context) {
       slug: slug,
       nameAr: data.title || "إعلان جديد",
       nameEn: data.title || "New Ad",
+      advertiser_name: data.advertiser_name || "",
       descriptionAr: data.description || "",
       descriptionEn: data.description || "",
       category: data.category || "other",
@@ -163,6 +166,35 @@ export async function onRequestPost(context) {
     if (getResponse.ok) {
       const fileData = await getResponse.json();
       fileSha = fileData.sha;
+    }
+
+    // Handle Deletion
+    if (data.action === "delete") {
+      if (!fileSha) {
+         return new Response(JSON.stringify({ error: "Ad not found or already deleted." }), { status: 404, headers: { "Content-Type": "application/json" } });
+      }
+      
+      const delResponse = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${filePath}`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${githubToken}`,
+          "User-Agent": "MeaMart-Webhook",
+          "Accept": "application/vnd.github.v3+json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          message: `Delete ad: ${slug} via WhatsApp`,
+          sha: fileSha,
+          branch: "main"
+        })
+      });
+
+      if (!delResponse.ok) {
+        const errorText = await delResponse.text();
+        return new Response(JSON.stringify({ error: "Failed to delete ad", details: errorText }), { status: 500, headers: { "Content-Type": "application/json" } });
+      }
+
+      return new Response(JSON.stringify({ success: true, message: "تم حذف الإعلان بنجاح" }), { headers: { "Content-Type": "application/json" } });
     }
 
     // 6. Send the file to GitHub (Create or Update)
