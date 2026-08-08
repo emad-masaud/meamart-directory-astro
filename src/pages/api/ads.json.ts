@@ -5,9 +5,13 @@ export async function GET() {
   const allAds = await getCollection('businesses', ({ data }) => {
     return data.published === true;
   });
+  // Sort by newest first (since id is a timestamp) and limit to 10 (BotSailor requirement for interactive lists)
+  const sortedAds = allAds
+    .sort((a, b) => Number(b.data.id) - Number(a.data.id))
+    .slice(0, 10);
 
   // Map the ads to a clean JSON structure
-  const adsApiData = allAds.map(ad => ({
+  const adsApiData = sortedAds.map(ad => ({
     id: ad.data.id,
     title_ar: ad.data.nameAr,
     title_en: ad.data.nameEn,
