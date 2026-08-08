@@ -21,7 +21,8 @@ export async function GET() {
     phone: ad.data.phone,
     coverImage: ad.data.coverImage,
     url: `https://meamart.com/businesses/${ad.data.slug}`,
-    tags: ad.data.tags || []
+    tags: ad.data.tags || [],
+    tags_text: (ad.data.tags || []).join('، ')
   }));
 
   // Return as a JSON API response
