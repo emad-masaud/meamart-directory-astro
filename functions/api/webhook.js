@@ -223,7 +223,9 @@ export async function onRequestPost(context) {
     return new Response(JSON.stringify({ 
       success: true, 
       message: "تم رفع الإعلان بنجاح!", 
-      url: `https://meamart.com/businesses/${slug}`
+      url: `https://meamart.com/businesses/${slug}`,
+      id: slug,
+      advertiser_name: fileContent.advertiser_name
     }), {
       headers: { "Content-Type": "application/json" }
     });
