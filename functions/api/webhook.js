@@ -42,7 +42,10 @@ export async function onRequestPost(context) {
       const meachatToken = context.env.MEACHAT_TOKEN || "20125|yU5zzzgWj1uD7WZsJURufELzF6paa60g7uEe0xGb9c1bc37a";
       try {
         const imageRes = await fetch(coverImageUrl, {
-          headers: { "Authorization": `Bearer ${meachatToken}` }
+          headers: { 
+              "Authorization": `Bearer ${meachatToken}`,
+              "X-Meamart-Bypass": "meamart-secret-key-2024" // Custom header to bypass Cloudflare
+          }
         });
         
         if (imageRes.ok) {
