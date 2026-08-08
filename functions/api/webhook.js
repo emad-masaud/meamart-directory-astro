@@ -52,7 +52,22 @@ export async function onRequestPost(context) {
     const githubRepo = "emad-masaud/meamart-directory-astro";
     const filePath = `src/data/businesses/${slug}.json`;
     
-    // 6. Send the file to GitHub
+    // 5.5 Check if file already exists to get its SHA (required for updating files)
+    let fileSha = null;
+    const getResponse = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${filePath}`, {
+      headers: {
+        "Authorization": `Bearer ${githubToken}`,
+        "User-Agent": "MeaMart-Webhook",
+        "Accept": "application/vnd.github.v3+json"
+      }
+    });
+    
+    if (getResponse.ok) {
+      const fileData = await getResponse.json();
+      fileSha = fileData.sha;
+    }
+
+    // 6. Send the file to GitHub (Create or Update)
     const response = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${filePath}`, {
       method: "PUT",
       headers: {
@@ -62,9 +77,10 @@ export async function onRequestPost(context) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        message: `Add new ad: ${fileContent.nameAr} via WhatsApp`,
+        message: fileSha ? `Update ad: ${fileContent.nameAr} via WhatsApp` : `Add new ad: ${fileContent.nameAr} via WhatsApp`,
         content: contentBase64,
-        branch: "main" // Change to "master" if your default branch is master
+        branch: "main",
+        ...(fileSha && { sha: fileSha }) // Include SHA if we are updating an existing file
       })
     });
 
