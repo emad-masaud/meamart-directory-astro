@@ -8,6 +8,8 @@ import { ViteToml } from 'vite-plugin-toml';
 import tailwindcss from '@tailwindcss/vite';
 import remarkEmoji from 'remark-emoji';
 
+import keystatic from '@keystatic/astro';
+
 // https://astro.build/config
 export default defineConfig({
   site: "https://meamart.com",
@@ -18,7 +20,8 @@ export default defineConfig({
     vue(),
     mdx(),
     icon(),
-    sitemap()
+    sitemap(),
+    keystatic()
   ],
   vite: {
     plugins: [tailwindcss(), ViteToml()]
