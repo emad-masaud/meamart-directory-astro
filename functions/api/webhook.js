@@ -15,20 +15,25 @@ export async function onRequestPost(context) {
     // Format it safely for URLs (lowercase, no spaces)
     const slug = uniqueId.toString().toLowerCase().replace(/\s+/g, '-');
     
-    // Map the WhatsApp data to our JSON structure
-    // If the WhatsApp flow sends different keys, you can adjust them here
+    // Handle photo which might be an array from MeaChat PhotoPicker
+    let coverImageUrl = data.image || data.photo || "";
+    if (Array.isArray(coverImageUrl)) {
+      coverImageUrl = coverImageUrl.length > 0 ? coverImageUrl[0] : "";
+    }
+
+    // 3. Map WhatsApp data to our Astro JSON schema
     const fileContent = {
-      id: slug,
+      id: uniqueId,
       slug: slug,
-      nameAr: data.title || data.name || "إعلان جديد",
-      nameEn: data.title || data.name || "New Ad",
-      descriptionAr: data.description || "لا يوجد وصف",
-      descriptionEn: data.description || "No description",
-      category: data.category || "services", // default category
-      city: data.city || "Riyadh",
+      nameAr: data.title || "إعلان جديد",
+      nameEn: data.title || "New Ad",
+      descriptionAr: data.description || "",
+      descriptionEn: data.description || "",
+      category: data.category || "other",
+      city: data.city || "",
       phone: data.phone || data.whatsapp || "",
-      whatsapp: data.whatsapp || data.phone || "",
-      coverImage: data.image || data.photo || "",
+      whatsapp: data.phone || data.whatsapp || "",
+      coverImage: coverImageUrl,
       published: true, // Automatically publish the ad
       featured: false,
       tags: data.tags ? data.tags.split(",").map(t => t.trim()) : []
