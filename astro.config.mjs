@@ -21,6 +21,7 @@ export default defineConfig({
     sitemap()
   ],
   vite: {
+    // @ts-ignore - ignore tailwindcss vite plugin type mismatch
     plugins: [tailwindcss(), ViteToml()]
   },
   env: {
