@@ -1,0 +1,17 @@
+{
+  "id": "test_value-1786228617009",
+  "slug": "test_value-1786228617009",
+  "nameAr": "test_value",
+  "nameEn": "test_value",
+  "advertiser_name": "test_value",
+  "descriptionAr": "test_value",
+  "descriptionEn": "test_value",
+  "category": "test_value",
+  "city": "",
+  "phone": "test_value",
+  "whatsapp": "test_value",
+  "coverImage": "test_value",
+  "published": true,
+  "featured": false,
+  "tags": []
+}
