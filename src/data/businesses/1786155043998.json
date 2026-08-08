@@ -1,0 +1,26 @@
+{
+  "id": "1786155043998",
+  "slug": "1786155043998",
+  "nameAr": "نينبن",
+  "nameEn": "نينبن",
+  "descriptionAr": "وثوبووث",
+  "descriptionEn": "وثوبووث",
+  "category": "services",
+  "city": "الخبر",
+  "phone": "٩١٩٨٢٧٧٣٨٢",
+  "whatsapp": "٩١٩٨٢٧٧٣٨٢",
+  "coverImage": [
+    {
+      "id": 1359648782955134,
+      "mime_type": "image/jpeg",
+      "sha256": "tJH/N44zISqldHGV5XEf8S1Z2bCk1NjpTGg5nLCaBEE=",
+      "file_name": "77aec7b3-74c3-4896-be68-5a2963687885.jpg"
+    }
+  ],
+  "published": true,
+  "featured": false,
+  "tags": [
+    "ضنسزنين",
+    "الخبر"
+  ]
+}
