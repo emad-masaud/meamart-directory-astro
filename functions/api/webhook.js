@@ -15,10 +15,20 @@ export async function onRequestPost(context) {
     // Format it safely for URLs (lowercase, no spaces)
     const slug = uniqueId.toString().toLowerCase().replace(/\s+/g, '-');
     
-    // Handle photo which might be an array from MeaChat PhotoPicker
+    // Handle photo which might be an array or object from MeaChat PhotoPicker
     let coverImageUrl = data.image || data.photo || "";
+    
     if (Array.isArray(coverImageUrl)) {
       coverImageUrl = coverImageUrl.length > 0 ? coverImageUrl[0] : "";
+    }
+    
+    if (typeof coverImageUrl === 'object' && coverImageUrl !== null) {
+      // Try to extract URL from common object keys used by chatbots/WhatsApp
+      coverImageUrl = coverImageUrl.url || coverImageUrl.media_url || coverImageUrl.link || coverImageUrl.cdn_url || coverImageUrl.media_id || "";
+    }
+    
+    if (typeof coverImageUrl !== 'string' || coverImageUrl === "[object Object]") {
+      coverImageUrl = "";
     }
 
     // 3. Map WhatsApp data to our Astro JSON schema
