@@ -9,13 +9,10 @@ import tailwindcss from '@tailwindcss/vite';
 import remarkEmoji from 'remark-emoji';
 
 import keystatic from '@keystatic/astro';
-import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://meamart.com",
-  output: "hybrid",
-  adapter: cloudflare(),
   markdown: {
     remarkPlugins: [remarkEmoji],
   },
