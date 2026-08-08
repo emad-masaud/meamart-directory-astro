@@ -31,6 +31,70 @@ export async function onRequestPost(context) {
       coverImageUrl = "";
     }
 
+    // 2.5 Fetch image from MeaChat and upload to GitHub if it's a MeaChat URL
+    let finalCoverImagePath = coverImageUrl;
+    if (coverImageUrl.startsWith("https://app.meachat.com/")) {
+      const meachatToken = context.env.MEACHAT_TOKEN || "20125|yU5zzzgWj1uD7WZsJURufELzF6paa60g7uEe0xGb9c1bc37a";
+      try {
+        const imageRes = await fetch(coverImageUrl, {
+          headers: { "Authorization": `Bearer ${meachatToken}` }
+        });
+        
+        if (imageRes.ok) {
+          const contentType = imageRes.headers.get("content-type") || "";
+          if (contentType.startsWith("image/")) {
+            const arrayBuffer = await imageRes.arrayBuffer();
+            
+            // Convert ArrayBuffer to Base64 safely
+            const bytes = new Uint8Array(arrayBuffer);
+            let binary = '';
+            for (let i = 0; i < bytes.byteLength; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            const base64Image = btoa(binary);
+            
+            // Determine extension and path
+            const ext = contentType.split("/")[1] || "jpg";
+            const imagePath = `public/images/businesses/${slug}.${ext}`;
+            const githubRepo = "emad-masaud/meamart-directory-astro";
+            
+            // Check if image exists to get SHA (for updates)
+            let imageSha = null;
+            const getImgRes = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${imagePath}`, {
+                headers: { "Authorization": `Bearer ${githubToken}`, "User-Agent": "MeaMart-Webhook" }
+            });
+            if (getImgRes.ok) {
+                const imgData = await getImgRes.json();
+                imageSha = imgData.sha;
+            }
+            
+            // Upload image to GitHub
+            const uploadImgRes = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${imagePath}`, {
+                method: "PUT",
+                headers: {
+                    "Authorization": `Bearer ${githubToken}`,
+                    "User-Agent": "MeaMart-Webhook",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    message: `Upload image for ad: ${slug}`,
+                    content: base64Image,
+                    branch: "main",
+                    ...(imageSha && { sha: imageSha })
+                })
+            });
+            
+            if (uploadImgRes.ok) {
+                // If successful, save the relative path in the JSON instead of the private URL
+                finalCoverImagePath = `/images/businesses/${slug}.${ext}`;
+            }
+          }
+        }
+      } catch (e) {
+        console.error("Failed to download or upload image", e);
+      }
+    }
+
     // 3. Map WhatsApp data to our Astro JSON schema
     const fileContent = {
       id: uniqueId,
@@ -43,7 +107,7 @@ export async function onRequestPost(context) {
       city: data.city || "",
       phone: data.phone || data.whatsapp || "",
       whatsapp: data.phone || data.whatsapp || "",
-      coverImage: coverImageUrl,
+      coverImage: finalCoverImagePath,
       published: true, // Automatically publish the ad
       featured: false,
       tags: data.tags ? data.tags.split(",").map(t => t.trim()) : []
