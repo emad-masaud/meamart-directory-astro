@@ -36,70 +36,81 @@ export async function onRequestPost(context) {
       coverImageUrl = "";
     }
 
-    // 2.5 Fetch image from MeaChat and upload to GitHub if it's a MeaChat URL
+    // 2.5 Fetch image from Meta API (bypassing MeaChat Cloudflare)
     let finalCoverImagePath = coverImageUrl;
-    if (coverImageUrl.startsWith("https://app.meachat.com/")) {
-      const meachatToken = context.env.MEACHAT_TOKEN || "20125|yU5zzzgWj1uD7WZsJURufELzF6paa60g7uEe0xGb9c1bc37a";
+    const mediaIdMatch = coverImageUrl.match(/\/preview\/(\d+)\//);
+    
+    if (mediaIdMatch && mediaIdMatch[1]) {
+      const mediaId = mediaIdMatch[1];
+      const metaToken = context.env.META_API_TOKEN || "EAASgaIVMPuUBSGoK1RjkaZAQbqXVej0jpecTg8yT0zu0C04WomLe3UzycjG5p7u3iOtb3uGB6nDhVvtl2iKVNWy5e8rWOA5yZBUZBVHSTFjgCUwZCsjbGm1omPBqsROA5gOU5xfqmPTFCd7DClLpYBY3mg9KYkFGhkuZB5ThFpOWK6wBJp4IanEfDgpFRXnmErgZDZD";
+      
       try {
-        const imageRes = await fetch(coverImageUrl, {
-          headers: { 
-              "Authorization": `Bearer ${meachatToken}`,
-              "X-Meamart-Bypass": "meamart-secret-key-2024" // Custom header to bypass Cloudflare
-          }
+        // Step 1: Get media URL from Meta Graph API
+        const metaRes = await fetch(`https://graph.facebook.com/v18.0/${mediaId}`, {
+          headers: { "Authorization": `Bearer ${metaToken}` }
         });
         
-        if (imageRes.ok) {
-          const contentType = imageRes.headers.get("content-type") || "";
-          if (contentType.startsWith("image/")) {
-            const arrayBuffer = await imageRes.arrayBuffer();
-            
-            // Convert ArrayBuffer to Base64 safely
-            const bytes = new Uint8Array(arrayBuffer);
-            let binary = '';
-            for (let i = 0; i < bytes.byteLength; i++) {
-                binary += String.fromCharCode(bytes[i]);
-            }
-            const base64Image = btoa(binary);
-            
-            // Determine extension and path
-            const ext = contentType.split("/")[1] || "jpg";
-            const imagePath = `public/images/businesses/${slug}.${ext}`;
-            const githubRepo = "emad-masaud/meamart-directory-astro";
-            
-            // Check if image exists to get SHA (for updates)
-            let imageSha = null;
-            const getImgRes = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${imagePath}`, {
-                headers: { "Authorization": `Bearer ${githubToken}`, "User-Agent": "MeaMart-Webhook" }
+        if (metaRes.ok) {
+          const metaData = await metaRes.json();
+          if (metaData.url) {
+            // Step 2: Download the actual image binary
+            const imageRes = await fetch(metaData.url, {
+              headers: { "Authorization": `Bearer ${metaToken}` }
             });
-            if (getImgRes.ok) {
-                const imgData = await getImgRes.json();
-                imageSha = imgData.sha;
-            }
             
-            // Upload image to GitHub
-            const uploadImgRes = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${imagePath}`, {
-                method: "PUT",
-                headers: {
+            if (imageRes.ok) {
+              const contentType = imageRes.headers.get("content-type") || "";
+              if (contentType.startsWith("image/")) {
+                const arrayBuffer = await imageRes.arrayBuffer();
+                
+                // Convert ArrayBuffer to Base64 safely
+                const bytes = new Uint8Array(arrayBuffer);
+                let binary = '';
+                for (let i = 0; i < bytes.byteLength; i++) {
+                    binary += String.fromCharCode(bytes[i]);
+                }
+                const base64Image = btoa(binary);
+                
+                // Determine extension and path
+                const ext = contentType.split("/")[1] || "jpg";
+                const imagePath = `public/images/businesses/${slug}.${ext}`;
+                const githubRepo = "emad-masaud/meamart-directory-astro";
+                
+                // Check if image exists to get SHA (for updates)
+                let imageSha = null;
+                const getImgRes = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${imagePath}`, {
+                    headers: { "Authorization": `Bearer ${githubToken}`, "User-Agent": "MeaMart-Webhook" }
+                });
+                if (getImgRes.ok) {
+                    const imgData = await getImgRes.json();
+                    imageSha = imgData.sha;
+                }
+                
+                // Upload image to GitHub
+                const uploadImgRes = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${imagePath}`, {
+                  method: "PUT",
+                  headers: {
                     "Authorization": `Bearer ${githubToken}`,
-                    "User-Agent": "MeaMart-Webhook",
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
+                    "Content-Type": "application/json",
+                    "User-Agent": "MeaMart-Webhook"
+                  },
+                  body: JSON.stringify({
                     message: `Upload image for ad: ${slug}`,
                     content: base64Image,
                     branch: "main",
                     ...(imageSha && { sha: imageSha })
-                })
-            });
-            
-            if (uploadImgRes.ok) {
-                // If successful, save the relative path in the JSON instead of the private URL
-                finalCoverImagePath = `/images/businesses/${slug}.${ext}`;
+                  })
+                });
+
+                if (uploadImgRes.ok) {
+                  finalCoverImagePath = `/images/businesses/${slug}.${ext}`;
+                }
+              }
             }
           }
         }
-      } catch (e) {
-        console.error("Failed to download or upload image", e);
+      } catch (error) {
+        console.error("Meta Image fetch/upload error:", error);
       }
     }
 
