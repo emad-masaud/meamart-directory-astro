@@ -1,0 +1,19 @@
+{
+  "id": "8801700000000-1786217540753",
+  "slug": "8801700000000-1786217540753",
+  "nameAr": "test_value",
+  "nameEn": "test_value",
+  "advertiser_name": "test_value",
+  "descriptionAr": "test_value",
+  "descriptionEn": "test_value",
+  "category": "test_value",
+  "city": "test_value",
+  "phone": "8801700000000",
+  "whatsapp": "8801700000000",
+  "coverImage": "test_value",
+  "published": true,
+  "featured": false,
+  "tags": [
+    "test_value"
+  ]
+}
