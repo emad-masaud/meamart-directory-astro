@@ -1,25 +1,30 @@
 ---
+export const prerender = false;
 import Layout from "~/layouts/Layout.astro";
 import { Icon } from 'astro-icon/components';
 
-export function getStaticPaths() {
-  return [
-    { params: { lang: undefined } },
-    { params: { lang: "ar" } },
-    { params: { lang: "en" } },
-  ];
+const sessionCookie = Astro.cookies.get('meamart_session');
+if (!sessionCookie) {
+  return Astro.redirect(`/${Astro.params.lang || 'ar'}/login`);
+}
+
+let user = null;
+try {
+  user = JSON.parse(decodeURIComponent(atob(sessionCookie.value)));
+} catch (e) {
+  return Astro.redirect(`/${Astro.params.lang || 'ar'}/login`);
 }
 ---
 
 <Layout title="لوحة التحكم - ميمارت">
-  <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 min-h-[80vh]">
+  <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 min-h-[80vh]" data-user-email={user?.email}>
     <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
       <div>
         <h1 class="text-3xl font-extrabold text-zinc-900 dark:text-white flex items-center gap-3">
           <Icon name="lucide:layout-dashboard" class="w-8 h-8 text-primary" />
           لوحة التحكم
         </h1>
-        <p class="mt-2 text-zinc-600 dark:text-zinc-400">مرحباً بك، <span id="user-name" class="font-bold"></span></p>
+        <p class="mt-2 text-zinc-600 dark:text-zinc-400">مرحباً بك، <span id="user-name" class="font-bold">{user?.name || user?.email}</span></p>
       </div>
       
       <div class="flex gap-3">
@@ -67,30 +72,7 @@ export function getStaticPaths() {
     const userNameSpan = document.getElementById('user-name');
     const logoutBtn = document.getElementById('logout-btn');
     const lang = document.documentElement.lang || 'ar';
-    
-    // Check Auth
-    let userEmail: string | null = null;
-    try {
-      const meRes = await fetch('/api/auth/me');
-      if (meRes.ok) {
-        const data = await meRes.json();
-        if (data.authenticated && data.user) {
-          userEmail = data.user.email;
-          if (userNameSpan) {
-            userNameSpan.textContent = data.user.name || data.user.email;
-          }
-        } else {
-          window.location.href = `/${lang}/login`;
-          return;
-        }
-      } else {
-        window.location.href = `/${lang}/login`;
-        return;
-      }
-    } catch (error) {
-      window.location.href = `/${lang}/login`;
-      return;
-    }
+    const userEmail = document.querySelector('[data-user-email]')?.getAttribute('data-user-email');
 
     if (logoutBtn) {
       logoutBtn.addEventListener('click', async () => {

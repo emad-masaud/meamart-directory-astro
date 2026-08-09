@@ -1,5 +1,5 @@
 ---
-import { Icon } from 'astro-icon/components';
+import { Icon } from "astro-icon/components";
 
 interface Props {
   images: string[];
@@ -8,136 +8,157 @@ interface Props {
 
 const { images, alt } = Astro.props;
 
-const validImages = Array.isArray(images) ? images.filter(img => typeof img === 'string' && img.trim() !== '') : [];
+const validImages = Array.isArray(images)
+  ? images.filter((img) => typeof img === "string" && img.trim() !== "")
+  : [];
 const hasImages = validImages && validImages.length > 0;
-const defaultImage = '/logo.svg';
+const defaultImage = "/logo.svg";
 
-const processedImages = hasImages ? validImages.map(img => img.startsWith('http') || img.startsWith('/') ? img : `/${img}`) : [defaultImage];
+const processedImages = hasImages
+  ? validImages.map((img) =>
+      img.startsWith("http") || img.startsWith("/") ? img : `/${img}`,
+    )
+  : [defaultImage];
 ---
 
-{processedImages.length > 0 && (
-  <div class="ad-slider-container space-y-4" data-images={JSON.stringify(processedImages)}>
-    {/* Main image view */}
-    <div class="relative aspect-video w-full overflow-hidden rounded-3xl bg-zinc-100 shadow-lg dark:bg-zinc-800">
-      <img 
-        id="ad-slider-main-img"
-        src={processedImages[0]}
-        alt={alt}
-        class="h-full w-full object-cover object-center transition-all duration-500"
-      />
+{
+  processedImages.length > 0 && (
+    <div
+      class="ad-slider-container space-y-4"
+      data-images={JSON.stringify(processedImages)}
+    >
+      {/* Main image view */}
+      <div class="relative aspect-video w-full overflow-hidden rounded-3xl bg-zinc-100 shadow-lg dark:bg-zinc-800">
+        <img
+          id="ad-slider-main-img"
+          src={processedImages[0]}
+          alt={alt}
+          class="h-full w-full object-cover object-center transition-all duration-500"
+        />
 
-      {/* Navigation arrows (only if multiple images) */}
+        {/* Navigation arrows (only if multiple images) */}
+        {processedImages.length > 1 && (
+          <>
+            <button
+              id="ad-slider-prev"
+              class="absolute left-4 top-1/2 -translate-y-1/2 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-xs transition hover:bg-black/60 active:scale-95"
+              aria-label="Previous image"
+            >
+              <Icon name="lucide:chevron-left" class="h-6 w-6" />
+            </button>
+            <button
+              id="ad-slider-next"
+              class="absolute right-4 top-1/2 -translate-y-1/2 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-xs transition hover:bg-black/60 active:scale-95"
+              aria-label="Next image"
+            >
+              <Icon name="lucide:chevron-right" class="h-6 w-6" />
+            </button>
+          </>
+        )}
+      </div>
+
+      {/* Thumbnail grid */}
       {processedImages.length > 1 && (
-        <>
-          <button
-            id="ad-slider-prev"
-            class="absolute left-4 top-1/2 -translate-y-1/2 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-xs transition hover:bg-black/60 active:scale-95"
-            aria-label="Previous image"
-          >
-            <Icon name="lucide:chevron-left" class="h-6 w-6" />
-          </button>
-          <button
-            id="ad-slider-next"
-            class="absolute right-4 top-1/2 -translate-y-1/2 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-xs transition hover:bg-black/60 active:scale-95"
-            aria-label="Next image"
-          >
-            <Icon name="lucide:chevron-right" class="h-6 w-6" />
-          </button>
-        </>
+        <div class="grid grid-cols-5 gap-3 sm:gap-4 overflow-x-auto py-2">
+          {processedImages.map((src, index) => (
+            <button
+              class={`ad-slider-thumb relative aspect-square overflow-hidden rounded-xl cursor-pointer ${
+                index === 0
+                  ? "ring-2 ring-primary ring-offset-2 dark:ring-offset-zinc-900"
+                  : "opacity-70 hover:opacity-100"
+              } transition-all duration-200`}
+              data-index={index}
+              aria-label={`View image ${index + 1}`}
+            >
+              <img
+                src={src}
+                alt={`${alt} thumbnail ${index + 1}`}
+                class="h-full w-full object-cover"
+              />
+            </button>
+          ))}
+        </div>
       )}
     </div>
-
-    {/* Thumbnail grid */}
-    {processedImages.length > 1 && (
-      <div class="grid grid-cols-5 gap-3 sm:gap-4 overflow-x-auto pb-2">
-        {processedImages.map((src, index) => (
-          <button
-            class={`ad-slider-thumb relative aspect-square overflow-hidden rounded-xl cursor-pointer ${
-              index === 0 ? 'ring-2 ring-primary ring-offset-2 dark:ring-offset-zinc-900' : 'opacity-70 hover:opacity-100'
-            } transition-all duration-200`}
-            data-index={index}
-            aria-label={`View image ${index + 1}`}
-          >
-            <img 
-              src={src} 
-              alt={`${alt} thumbnail ${index + 1}`}
-              class="h-full w-full object-cover"
-            />
-          </button>
-        ))}
-      </div>
-    )}
-  </div>
-)}
+  )
+}
 
 <script is:inline>
-  document.addEventListener('DOMContentLoaded', () => {
-    const containers = document.querySelectorAll('.ad-slider-container');
-    
-    containers.forEach(container => {
-      const imagesData = container.getAttribute('data-images');
+  document.addEventListener("DOMContentLoaded", () => {
+    const containers = document.querySelectorAll(".ad-slider-container");
+
+    containers.forEach((container) => {
+      const imagesData = container.getAttribute("data-images");
       if (!imagesData) return;
-      
+
       try {
         const images = JSON.parse(imagesData);
         if (images.length <= 1) return;
-        
+
         let currentIndex = 0;
-        const mainImg = container.querySelector('#ad-slider-main-img');
-        const btnPrev = container.querySelector('#ad-slider-prev');
-        const btnNext = container.querySelector('#ad-slider-next');
-        const thumbs = container.querySelectorAll('.ad-slider-thumb');
-        
+        const mainImg = container.querySelector("#ad-slider-main-img");
+        const btnPrev = container.querySelector("#ad-slider-prev");
+        const btnNext = container.querySelector("#ad-slider-next");
+        const thumbs = container.querySelectorAll(".ad-slider-thumb");
+
         const updateSlider = (newIndex) => {
           if (!mainImg) return;
-          
+
           currentIndex = newIndex;
           // Fade effect
-          mainImg.style.opacity = '0.5';
+          mainImg.style.opacity = "0.5";
           setTimeout(() => {
             mainImg.src = images[currentIndex];
-            mainImg.style.opacity = '1';
+            mainImg.style.opacity = "1";
           }, 150);
-          
+
           // Update thumbs
           thumbs.forEach((thumb, idx) => {
             if (idx === currentIndex) {
-              thumb.classList.add('ring-2', 'ring-primary', 'ring-offset-2', 'dark:ring-offset-zinc-900');
-              thumb.classList.remove('opacity-70');
+              thumb.classList.add(
+                "ring-2",
+                "ring-primary",
+                "ring-offset-2",
+                "dark:ring-offset-zinc-900",
+              );
+              thumb.classList.remove("opacity-70");
             } else {
-              thumb.classList.remove('ring-2', 'ring-primary', 'ring-offset-2', 'dark:ring-offset-zinc-900');
-              thumb.classList.add('opacity-70');
+              thumb.classList.remove(
+                "ring-2",
+                "ring-primary",
+                "ring-offset-2",
+                "dark:ring-offset-zinc-900",
+              );
+              thumb.classList.add("opacity-70");
             }
           });
         };
-        
+
         if (btnPrev) {
-          btnPrev.addEventListener('click', () => {
+          btnPrev.addEventListener("click", () => {
             const newIndex = (currentIndex - 1 + images.length) % images.length;
             updateSlider(newIndex);
           });
         }
-        
+
         if (btnNext) {
-          btnNext.addEventListener('click', () => {
+          btnNext.addEventListener("click", () => {
             const newIndex = (currentIndex + 1) % images.length;
             updateSlider(newIndex);
           });
         }
-        
-        thumbs.forEach(thumb => {
-          thumb.addEventListener('click', (e) => {
-            const indexStr = e.currentTarget.getAttribute('data-index');
+
+        thumbs.forEach((thumb) => {
+          thumb.addEventListener("click", (e) => {
+            const indexStr = e.currentTarget.getAttribute("data-index");
             if (indexStr !== null) {
               updateSlider(parseInt(indexStr, 10));
             }
           });
         });
-        
       } catch (e) {
-        console.error('Error initializing ad slider', e);
+        console.error("Error initializing ad slider", e);
       }
     });
   });
 </script>
-

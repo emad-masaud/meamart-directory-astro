@@ -1,14 +1,19 @@
 ---
+export const prerender = false;
 import Layout from "~/layouts/Layout.astro";
 import { Icon } from 'astro-icon/components';
 import { useTranslations } from "~/i18n/utils";
 
-export function getStaticPaths() {
-  return [
-    { params: { lang: undefined } },
-    { params: { lang: "ar" } },
-    { params: { lang: "en" } },
-  ];
+const sessionCookie = Astro.cookies.get('meamart_session');
+if (sessionCookie) {
+  try {
+    const user = JSON.parse(decodeURIComponent(atob(sessionCookie.value)));
+    if (user && user.email) {
+      return Astro.redirect(`/${Astro.params.lang || 'ar'}/dashboard`);
+    }
+  } catch (e) {
+    // invalid cookie, continue to login
+  }
 }
 
 const { lang } = Astro.params as { lang: "ar" | "en" };

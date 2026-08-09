@@ -3,9 +3,9 @@ import Layout from "~/layouts/Layout.astro";
 import Container from "~/components/ui/Container.astro";
 import { useTranslations } from "~/i18n/utils";
 import ProductFilters from "~/components/ui/ProductFilters";
-import { getCityLabel } from '~/utils/cities';
+import { getCityLabel } from "~/utils/cities";
 import PageHeader from "~/components/layout/PageHeader.astro";
-import { getCollection } from 'astro:content';
+import { getCollection } from "astro:content";
 
 export function getStaticPaths() {
   return [
@@ -21,33 +21,37 @@ const seller = null;
 // Fetch products from businesses collection
 let rawProducts: any[] = [];
 try {
-  const businesses = await getCollection('businesses');
-  rawProducts = businesses.filter((b: any) => b.data?.status !== 'sold').slice(0, 200);
+  const businesses = await getCollection("businesses");
+  rawProducts = businesses
+    .filter((b: any) => b.data?.status !== "sold")
+    .slice(0, 200);
 } catch (e) {
-  console.error('Failed to fetch products from collection:', e);
+  console.error("Failed to fetch products from collection:", e);
 }
 
 // Format products with info
 const formattedProducts = rawProducts.map((p: any) => {
-  const productImages = [p.data.image, ...(p.data.images || [])].filter(Boolean);
+  const productImages = [p.data.image, ...(p.data.images || [])].filter(
+    Boolean,
+  );
 
   return {
     id: p.id,
     name: p.data.title,
     price: Number(p.data.price || 0),
-    sku: p.id || '',
+    sku: p.id || "",
     image: productImages[0] || "/logo.svg",
     images: productImages,
-    description: p.data.description || '',
+    description: p.data.description || "",
     categories: p.data.category ? [{ name: p.data.category }] : [],
-    sellerPhone: p.data.phone || p.data.whatsapp || '',
-    sellerName: p.data.contactName || '',
-    city: p.data.city || '',
-    brand: p.data.customFields?.brand || '',
-    brandImage: '',
-    supplier: '',
-    supplierImage: '',
-    attributes: []
+    sellerPhone: p.data.phone || p.data.whatsapp || "",
+    sellerName: p.data.contactName || "",
+    city: p.data.city || "",
+    brand: p.data.customFields?.brand || "",
+    brandImage: "",
+    supplier: "",
+    supplierImage: "",
+    attributes: [],
   };
 });
 
@@ -55,84 +59,144 @@ const formattedProducts = rawProducts.map((p: any) => {
 const trendProducts = formattedProducts.slice(0, 4);
 
 // Seller contact details
-const cleanSellerPhone = '';
+const cleanSellerPhone = "";
 const whatsappUrl = `https://wa.me/?text=Hello`;
 ---
 
 <Layout
-  title={t['gen.isar.index.4'] || "WhatsApp Catalog"}
-  description={t['gen.isar.index.6'] || "Browse WhatsApp catalogs and suppliers"}
+  title={t["gen.isar.index.4"] || "WhatsApp Catalog"}
+  description={t["gen.isar.index.6"] ||
+    "Browse WhatsApp catalogs and suppliers"}
 >
   <div class="relative pt-24 bg-zinc-50 dark:bg-zinc-950">
     <!-- Standard Marketplace Header -->
     <PageHeader
-      title={(t['gen.isar.index.9'])}
-      description={(t['gen.isar.index.10'])}
+      title={t["gen.isar.index.9"]}
+      description={t["gen.isar.index.10"]}
     />
   </div>
 
   <Container class="py-16">
     <!-- Trend products -->
-    {trendProducts.length > 0 && (
-      <div class="mb-16">
-        <h2 class="text-xl font-extrabold text-zinc-900 dark:text-zinc-50 mb-6 flex items-center gap-2">
-          <span class="flex h-7 w-7 items-center justify-center rounded-full bg-amber-500/10 text-amber-500">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 fill-amber-500"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          </span>
-          {(t['gen.isar.index.11'])}
-        </h2>
-        
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-          {trendProducts.map((p: any) => (
-            <div class="group relative rounded-3xl border border-zinc-200/50 bg-white/40 p-4 shadow-md backdrop-blur-md dark:border-zinc-800/50 dark:bg-zinc-900/40 overflow-hidden transition duration-300 hover:-translate-y-1 hover:shadow-lg flex flex-col justify-between h-full">
-              <div>
-                <div class="relative aspect-square w-full rounded-full overflow-hidden bg-zinc-100 dark:bg-zinc-800 mb-4">
-                  <img src={p.image} alt={p.name} class="w-full h-full object-cover transition duration-300 group-hover:scale-105" />
-                  <span class="absolute top-3 left-3 bg-amber-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
-                    {(t['gen.isar.index.12'])}
-                  </span>
+    {
+      trendProducts.length > 0 && (
+        <div class="mb-16">
+          <h2 class="text-xl font-extrabold text-zinc-900 dark:text-zinc-50 mb-6 flex items-center gap-2">
+            <span class="flex h-7 w-7 items-center justify-center rounded-full bg-amber-500/10 text-amber-500">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="h-4 w-4 fill-amber-500"
+              >
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+              </svg>
+            </span>
+            {t["gen.isar.index.11"]}
+          </h2>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {trendProducts.map((p: any) => (
+              <div class="group relative rounded-xl border border-zinc-200/50 bg-white/40 p-4 shadow-md backdrop-blur-md dark:border-zinc-800/50 dark:bg-zinc-900/40 overflow-hidden transition duration-300 hover:-translate-y-1 hover:shadow-lg flex flex-col justify-between h-full">
+                <div>
+                  <div class="relative aspect-square w-full rounded-full overflow-hidden bg-zinc-100 dark:bg-zinc-800 mb-4">
+                    <img
+                      src={p.image}
+                      alt={p.name}
+                      class="w-full h-full object-cover transition duration-300 group-hover:scale-105"
+                    />
+                    <span class="absolute top-3 left-3 bg-amber-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                      {t["gen.isar.index.12"]}
+                    </span>
+                  </div>
+
+                  <div class="space-y-2">
+                    <span class="text-[10px] font-semibold text-zinc-400 dark:text-zinc-500 block">
+                      SKU: {p.sku || "N/A"}
+                    </span>
+                    <h3 class="text-sm font-bold text-zinc-900 dark:text-zinc-100 line-clamp-2 min-h-10">
+                      <a
+                        href={`/${lang}/catalog/${p.id}`}
+                        class="hover:text-primary transition-colors"
+                      >
+                        {p.name}
+                      </a>
+                    </h3>
+                  </div>
                 </div>
-                
-                <div class="space-y-2">
-                  <span class="text-[10px] font-semibold text-zinc-400 dark:text-zinc-500 block">
-                    SKU: {p.sku || "N/A"}
+
+                <div class="pt-4 mt-4 border-t border-zinc-150 dark:border-zinc-800/50 flex items-center justify-between">
+                  <span class="text-base font-extrabold text-primary">
+                    {t["ads.card.price.format"]
+                      .replace("{price}", String(p.price))
+                      .replace("{symbol}", t["gen.isar.index.13"])}
                   </span>
-                  <h3 class="text-sm font-bold text-zinc-900 dark:text-zinc-100 line-clamp-2 min-h-10">
-                    <a href={`/${lang}/catalog/${p.id}`} class="hover:text-primary transition-colors">
-                      {p.name}
-                    </a>
-                  </h3>
+                  <a
+                    href={`/${lang}/catalog/${p.id}`}
+                    class="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary transition hover:bg-primary hover:text-white"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="h-4 w-4"
+                    >
+                      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg>
+                  </a>
                 </div>
               </div>
-              
-              <div class="pt-4 mt-4 border-t border-zinc-150 dark:border-zinc-800/50 flex items-center justify-between">
-                <span class="text-base font-extrabold text-primary">
-                  {t['ads.card.price.format'].replace('{price}', String(p.price)).replace('{symbol}', t['gen.isar.index.13'])}
-                </span>
-                <a href={`/${lang}/catalog/${p.id}`} class="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary transition hover:bg-primary hover:text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                </a>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
-    )}
+      )
+    }
 
     <!-- Dynamic Products Grid with Filters -->
     <div class="space-y-6">
-      <h2 class="text-xl font-extrabold text-zinc-900 dark:text-zinc-50 flex items-center gap-2">
-        <span class="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      <h2
+        class="text-xl font-extrabold text-zinc-900 dark:text-zinc-50 flex items-center gap-2"
+      >
+        <span
+          class="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="h-4 w-4"
+            ><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"
+            ></path><path d="M3 6h18"></path><path d="M16 10a4 4 0 0 1-8 0"
+            ></path></svg
+          >
         </span>
-        {t['gen.isar.index.14']}
+        {t["gen.isar.index.14"]}
       </h2>
 
-      <ProductFilters 
-        products={formattedProducts as any} 
-        lang={lang} 
-        sellerResolved={false} 
-        client:load 
+      <ProductFilters
+        products={formattedProducts as any}
+        lang={lang}
+        sellerResolved={false}
+        client:load
       />
     </div>
   </Container>
