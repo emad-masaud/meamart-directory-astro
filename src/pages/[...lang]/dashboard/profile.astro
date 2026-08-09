@@ -1,0 +1,277 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import { Icon } from "astro-icon/components";
+import { getLangFromUrl, useTranslations } from "~/i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const isRtl = lang === "ar";
+---
+
+<Layout title="إعدادات الملف الشخصي | MeaMart" description="قم بتعديل بيانات حسابك وصورتك الشخصية" lang={lang}>
+  <!-- Session Validation Gate -->
+  <div id="auth-gate" class="fixed inset-0 bg-white dark:bg-zinc-950 z-[100] flex flex-col items-center justify-center transition-opacity duration-500">
+    <div class="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+    <p class="text-zinc-500 font-medium animate-pulse">جاري التحقق من الجلسة...</p>
+  </div>
+
+  <div class="container mx-auto px-4 py-8 lg:py-12 max-w-4xl opacity-0 transition-opacity duration-500" id="main-content">
+    
+    <div class="mb-8">
+      <h1 class="text-3xl font-black text-zinc-900 dark:text-white mb-2">الملف الشخصي للمعلن</h1>
+      <p class="text-zinc-500 dark:text-zinc-400 font-medium">قم بتخصيص صفحتك الشخصية التي ستظهر للزبائن</p>
+    </div>
+
+    <div class="bg-white dark:bg-zinc-900 rounded-3xl p-6 lg:p-10 shadow-xl border border-zinc-100 dark:border-zinc-800 relative overflow-hidden">
+      
+      <!-- Decorative element -->
+      <div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+      
+      <form id="profile-form" class="relative z-10 space-y-10" enctype="multipart/form-data">
+        
+        <!-- Header Image Upload -->
+        <div>
+          <label class="block text-sm font-bold mb-3 text-zinc-800 dark:text-zinc-200">صورة الغلاف (الترويسة)</label>
+          <div class="relative w-full h-40 lg:h-56 bg-zinc-100 dark:bg-zinc-800 rounded-2xl overflow-hidden group border-2 border-dashed border-zinc-300 dark:border-zinc-700 hover:border-primary transition-colors cursor-pointer" id="header-upload-container">
+            <input type="file" name="header" id="header-upload" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" />
+            
+            <img id="header-preview" src="" class="absolute inset-0 w-full h-full object-cover hidden z-10" alt="Cover" />
+            
+            <div class="absolute inset-0 flex flex-col items-center justify-center gap-2 z-0">
+              <div class="w-12 h-12 bg-white dark:bg-zinc-900 rounded-full flex items-center justify-center text-zinc-400 group-hover:text-primary transition-colors shadow-sm">
+                <Icon name="lucide:image" class="w-6 h-6" />
+              </div>
+              <span class="text-sm font-medium text-zinc-500">انقر لرفع صورة الغلاف</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Avatar Upload -->
+        <div class="flex items-end gap-6 -mt-16 lg:-mt-24 relative z-20 px-6">
+          <div class="relative w-28 h-28 lg:w-32 lg:h-32 rounded-full border-4 border-white dark:border-zinc-900 bg-zinc-100 dark:bg-zinc-800 overflow-hidden group shadow-lg cursor-pointer" id="avatar-upload-container">
+            <input type="file" name="avatar" id="avatar-upload" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" />
+            
+            <img id="avatar-preview" src="" class="absolute inset-0 w-full h-full object-cover hidden z-10" alt="Avatar" />
+            
+            <div class="absolute inset-0 flex flex-col items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity z-15">
+              <Icon name="lucide:camera" class="w-8 h-8 text-white" />
+            </div>
+            <div class="absolute inset-0 flex items-center justify-center z-0" id="avatar-placeholder">
+              <Icon name="lucide:user" class="w-12 h-12 text-zinc-400" />
+            </div>
+          </div>
+          <div class="pb-2">
+            <p class="text-sm font-bold text-zinc-800 dark:text-zinc-200">الصورة الشخصية</p>
+            <p class="text-xs text-zinc-500">يفضل أن تكون مربعة</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Username -->
+          <div>
+            <label class="block text-sm font-bold mb-2 text-zinc-800 dark:text-zinc-200">اسم المستخدم (Username) <span class="text-red-500">*</span></label>
+            <div class="relative flex items-center">
+              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-zinc-400 font-bold" dir="ltr">@</div>
+              <input type="text" name="username" id="username-input" required dir="ltr" placeholder="store_name" class="w-full pl-10 pr-5 py-3.5 rounded-xl border-2 border-zinc-200 dark:border-zinc-800 bg-transparent focus:border-primary focus:ring-0 outline-none transition-all placeholder:text-zinc-400" />
+            </div>
+            <p class="text-xs text-zinc-500 mt-2">سيتم استخدامه لإنشاء رابط متجرك: meamart.com/seller/@<span id="username-preview">username</span></p>
+          </div>
+
+          <!-- Display Name -->
+          <div>
+            <label class="block text-sm font-bold mb-2 text-zinc-800 dark:text-zinc-200">اسم العرض <span class="text-red-500">*</span></label>
+            <input type="text" name="name" id="name-input" required placeholder="اسمك أو اسم معرضك" class="w-full px-5 py-3.5 rounded-xl border-2 border-zinc-200 dark:border-zinc-800 bg-transparent focus:border-primary focus:ring-0 outline-none transition-all placeholder:text-zinc-400" />
+          </div>
+
+          <!-- Contact Phone -->
+          <div class="md:col-span-2">
+            <label class="block text-sm font-bold mb-2 text-zinc-800 dark:text-zinc-200">رقم التواصل للزبائن</label>
+            <div class="flex items-center gap-2" dir="ltr">
+              <select name="countryCode" id="country-code" class="w-28 px-3 py-3.5 rounded-xl border-2 border-zinc-200 dark:border-zinc-800 bg-transparent focus:border-primary focus:ring-0 outline-none transition-all cursor-pointer">
+                <option value="+966">+966 🇸🇦</option>
+                <option value="+971">+971 🇦🇪</option>
+                <option value="+974">+974 🇶🇦</option>
+                <option value="+965">+965 🇰🇼</option>
+                <option value="+973">+973 🇧🇭</option>
+                <option value="+968">+968 🇴🇲</option>
+                <option value="+20">+20 🇪🇬</option>
+                <option value="+962">+962 🇯🇴</option>
+              </select>
+              <input type="tel" name="phone" id="phone-input" placeholder="5XXXXXXXX" class="flex-1 px-5 py-3.5 rounded-xl border-2 border-zinc-200 dark:border-zinc-800 bg-transparent focus:border-primary focus:ring-0 outline-none transition-all text-left placeholder:text-zinc-400" />
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="md:col-span-2">
+            <label class="block text-sm font-bold mb-2 text-zinc-800 dark:text-zinc-200">نبذة عنك / عن متجرك</label>
+            <textarea name="description" id="description-input" rows="4" placeholder="اكتب نبذة مختصرة تظهر في صفحتك الشخصية..." class="w-full px-5 py-3.5 rounded-xl border-2 border-zinc-200 dark:border-zinc-800 bg-transparent focus:border-primary focus:ring-0 outline-none transition-all resize-none placeholder:text-zinc-400"></textarea>
+          </div>
+        </div>
+
+        <div class="pt-6 border-t border-zinc-100 dark:border-zinc-800 flex justify-end gap-4">
+          <a href={`/${lang}/dashboard`} class="px-8 py-3.5 rounded-xl font-bold text-zinc-600 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">
+            إلغاء
+          </a>
+          <button type="submit" id="submit-btn" class="px-10 py-3.5 rounded-xl font-bold text-white bg-primary hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 shadow-lg shadow-primary/25">
+            <span id="submit-text">حفظ التغييرات</span>
+            <span id="submit-spinner" class="hidden w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const authGate = document.getElementById('auth-gate');
+      const mainContent = document.getElementById('main-content');
+      
+      // Elements
+      const usernameInput = document.getElementById('username-input') as HTMLInputElement;
+      const usernamePreview = document.getElementById('username-preview');
+      const nameInput = document.getElementById('name-input') as HTMLInputElement;
+      const descInput = document.getElementById('description-input') as HTMLTextAreaElement;
+      const phoneInput = document.getElementById('phone-input') as HTMLInputElement;
+      const avatarPreview = document.getElementById('avatar-preview') as HTMLImageElement;
+      const avatarPlaceholder = document.getElementById('avatar-placeholder');
+      const headerPreview = document.getElementById('header-preview') as HTMLImageElement;
+      
+      // Image Preview Handlers
+      document.getElementById('avatar-upload')?.addEventListener('change', function(e) {
+        const file = (this as HTMLInputElement).files?.[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            if (avatarPreview && avatarPlaceholder && e.target?.result) {
+              avatarPreview.src = e.target.result as string;
+              avatarPreview.classList.remove('hidden');
+              avatarPlaceholder.classList.add('hidden');
+            }
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      document.getElementById('header-upload')?.addEventListener('change', function(e) {
+        const file = (this as HTMLInputElement).files?.[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            if (headerPreview && e.target?.result) {
+              headerPreview.src = e.target.result as string;
+              headerPreview.classList.remove('hidden');
+            }
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      // Live username preview
+      usernameInput?.addEventListener('input', (e) => {
+        let val = (e.target as HTMLInputElement).value.toLowerCase().replace(/[^a-z0-9_]/g, '');
+        (e.target as HTMLInputElement).value = val;
+        if(usernamePreview) usernamePreview.textContent = val || 'username';
+      });
+
+      try {
+        // Validate session
+        const response = await fetch('/api/auth/me');
+        if (!response.ok) throw new Error('Not authenticated');
+        
+        const data = await response.json();
+        if (!data.authenticated || !data.user) throw new Error('Invalid session');
+        
+        // Hide gate, show content
+        if (authGate) {
+          authGate.classList.add('opacity-0');
+          setTimeout(() => authGate.classList.add('hidden'), 500);
+        }
+        if (mainContent) {
+          mainContent.classList.remove('opacity-0');
+        }
+        
+        // Pre-fill user data (basic info from Google)
+        if (data.user.name && nameInput) nameInput.value = data.user.name;
+        if (data.user.picture && avatarPreview && avatarPlaceholder) {
+          avatarPreview.src = data.user.picture;
+          avatarPreview.classList.remove('hidden');
+          avatarPlaceholder.classList.add('hidden');
+        }
+        
+        // Attempt to fetch existing profile if exists
+        const userId = btoa(data.user.email).replace(/=/g, '').toLowerCase();
+        try {
+          const profileRes = await fetch(`https://raw.githubusercontent.com/emad-masaud/meamart-directory-astro/main/src/data/users/${userId}.json`);
+          if (profileRes.ok) {
+            const profileData = await profileRes.json();
+            if (profileData.username && usernameInput) {
+              usernameInput.value = profileData.username;
+              if(usernamePreview) usernamePreview.textContent = profileData.username;
+            }
+            if (profileData.name && nameInput) nameInput.value = profileData.name;
+            if (profileData.description && descInput) descInput.value = profileData.description;
+            if (profileData.phone && phoneInput) phoneInput.value = profileData.phone;
+            
+            if (profileData.avatar && avatarPreview && avatarPlaceholder) {
+              avatarPreview.src = profileData.avatar;
+              avatarPreview.classList.remove('hidden');
+              avatarPlaceholder.classList.add('hidden');
+            }
+            if (profileData.header && headerPreview) {
+              headerPreview.src = profileData.header;
+              headerPreview.classList.remove('hidden');
+            }
+          }
+        } catch (e) {
+          // No existing profile, that's fine
+        }
+
+      } catch (error) {
+        // Redirect to login if not authenticated
+        window.location.href = `/${document.documentElement.lang}/login?redirect=/dashboard/profile`;
+      }
+      
+      // Form submission
+      document.getElementById('profile-form')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const form = e.target as HTMLFormElement;
+        const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+        const submitTextEl = document.getElementById('submit-text');
+        const submitSpinnerEl = document.getElementById('submit-spinner');
+        
+        if (submitBtn) submitBtn.disabled = true;
+        if (submitTextEl) submitTextEl.textContent = 'جاري الحفظ...';
+        if (submitSpinnerEl) submitSpinnerEl.classList.remove('hidden');
+        
+        const formData = new FormData(form);
+        
+        try {
+          const response = await fetch('/api/submit-profile', {
+            method: 'POST',
+            body: formData
+          });
+          
+          const result = await response.json();
+          
+          if (response.ok && result.success) {
+            alert('تم حفظ الملف الشخصي بنجاح!');
+            // Redirect to dashboard or profile
+            window.location.href = `/${document.documentElement.lang}/dashboard`;
+          } else {
+            alert('حدث خطأ أثناء الحفظ: ' + (result.error || 'خطأ غير معروف'));
+            if (submitBtn) submitBtn.disabled = false;
+            if (submitTextEl) submitTextEl.textContent = 'حفظ التغييرات';
+            if (submitSpinnerEl) submitSpinnerEl.classList.add('hidden');
+          }
+        } catch (error) {
+          alert('حدث خطأ في الاتصال بالخادم. يرجى المحاولة لاحقاً.');
+          if (submitBtn) submitBtn.disabled = false;
+          if (submitTextEl) submitTextEl.textContent = 'حفظ التغييرات';
+          if (submitSpinnerEl) submitSpinnerEl.classList.add('hidden');
+        }
+      });
+    });
+  </script>
+</Layout>

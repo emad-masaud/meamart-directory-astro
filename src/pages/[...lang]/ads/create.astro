@@ -487,7 +487,7 @@ const description = isArabic ? "أضف تفاصيل إعلانك الجديد ل
             });
             
             const adTitle = formData.get('title') || 'إعلان جديد';
-            const adminPhone = "+15559607109".replace(/[^0-9]/g, '');
+            const adminPhone = "15559607109";
             const message = encodeURIComponent(`مرحباً، قمت بنشر إعلان جديد بعنوان "${adTitle}". أرجو مراجعته واعتماده.\nالرابط: ${window.location.origin}${result.url}`);
             
             whatsappBtn.href = `https://wa.me/${adminPhone}?text=${message}`;
