@@ -146,14 +146,12 @@ const popularLinks = await getPopularLinks(lang);
             />
           ))
       }
-      <span class="hidden md:inline font-bold"
-        >{t["brand.name"] || siteConfig.name}</span
-      >
-      <span
-        class="hidden lg:inline text-xs text-muted-foreground/80 border-l border-foreground/10 pl-3 ml-3 rtl:border-r rtl:border-l-0 rtl:pr-3 rtl:mr-3 font-normal"
-      >
-        {lang === "ar" ? "Ø·Ù„Ø¨Ø§ØªÙƒ Ø£ÙˆØ§Ù…Ø±" : "Your Wishes Are Commands"}
-      </span>
+      <div class="hidden md:flex flex-col items-start justify-center">
+        <span class="font-bold leading-tight text-lg">{t["brand.name"] || siteConfig.name}</span>
+        <span class="text-[11px] text-muted-foreground/80 leading-tight mt-0.5 font-medium">
+          {lang === "ar" ? "دليل أعمال المنطقة" : "Regional Business Directory"}
+        </span>
+      </div>
     </a>
     <div class="flex-1 flex justify-center mx-4 lg:mx-8">
       <div class="flex gap-4">{links.map((link: any) => (<a href={link.href} class="text-sm font-bold">{link.label}</a>))}</div>

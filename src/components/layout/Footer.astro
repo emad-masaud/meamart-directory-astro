@@ -21,7 +21,12 @@ const t = useTranslations(lang);
                 <img src={siteConfig.logo.srcDark || siteConfig.logo.src} alt={siteConfig.logo.alt} class="h-8 w-auto rounded-lg hidden dark:block" />
               </>
             )}
-            <span class="text-xl font-bold font-display tracking-tight">{siteConfig.name}</span>
+            <div class="flex flex-col items-start justify-center">
+              <span class="text-xl font-bold font-display tracking-tight leading-tight">{siteConfig.name}</span>
+              <span class="text-xs text-muted-foreground/80 leading-tight mt-0.5 font-medium">
+                {lang === "ar" ? "دليل أعمال المنطقة" : "Regional Business Directory"}
+              </span>
+            </div>
           </div>
           <p class="text-sm text-muted-foreground/80 max-w-xs mt-2">
             {t['footer.quote']}
