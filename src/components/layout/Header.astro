@@ -26,7 +26,7 @@ import { useTranslations } from "~/i18n/utils";
 
 
 // Get session from middleware or fallback to cookie parsing
-let userSession = null;
+let userSession: any = null;
 
 const url = new URL(Astro.request.url);
 if (url.pathname.includes("/seller") || url.pathname.includes("/login")) {
@@ -465,5 +465,6 @@ const popularLinks = await getPopularLinks(lang);
     });
   }
 </script>
+
 
 
