@@ -334,14 +334,18 @@ export default function AdFilters({ ads, lang }: AdFiltersProps) {
             >
               {/* Image Container */}
               <div className="relative aspect-video w-full overflow-hidden rounded-2x1 bg-zinc-100 dark:bg-zinc-850">
-                {ad.image && ad.image.trim() !== '' ? (
-                  <img 
-                    src={ad.image.startsWith('http') ? ad.image : `/${ad.image}`}
-                    alt={isAr ? (ad.titleAr || ad.title) : (ad.titleEn || ad.title)}
-                    className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
-                  />
-                ) : (() => {
+                {(() => {
+                  const rawImage = Array.isArray(ad.image) ? ad.image[0] : ad.image;
+                  if (rawImage && rawImage.trim() !== '') {
+                    return (
+                      <img 
+                        src={rawImage.startsWith('http') ? rawImage : `/${rawImage}`}
+                        alt={isAr ? (ad.titleAr || ad.title) : (ad.titleEn || ad.title)}
+                        className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                    );
+                  }
                   const Icon = getCategoryIcon(ad.categoryKey);
                   const gradient = getCategoryGradient(ad.categoryKey);
                   return (

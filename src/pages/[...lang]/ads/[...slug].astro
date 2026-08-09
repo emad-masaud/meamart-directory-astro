@@ -2,7 +2,7 @@
 import Layout from '~/layouts/Layout.astro';
 import Container from '~/components/ui/Container.astro';
 import Button from '~/components/ui/Button.astro';
-import AdSlider from '~/components/ui/AdSlider';
+import AdSlider from '~/components/ui/AdSlider.astro';
 import Schema from '~/components/layout/Schema.astro';
 import { siteConfig } from '~/site.config';
 import { getCollection } from 'astro:content';
@@ -41,25 +41,25 @@ try {
       data: {
         listing_title: business.data.title || 'بدون عنوان',
         listing_description: business.data.description || '',
-        listing_price: 0,
-        listing_currency: 'SAR',
-        listing_condition: 'used',
+        listing_price: business.data.price || 0,
+        listing_currency: business.data.currency || 'SAR',
+        listing_condition: business.data.condition || 'used',
         listing_city: business.data.city || '',
-        listing_district: '',
-        listing_address: '',
+        listing_district: business.data.district || '',
+        listing_address: business.data.address || '',
         contact_name: business.data.advertiser_name || '',
         contact_phone: business.data.phone || '',
         contact_whatsapp: business.data.whatsapp || business.data.phone || '',
         contact_method: 'whatsapp',
         image: business.data.image,
         images: Array.isArray(business.data.image) ? business.data.image : [business.data.image],
-        custom_fields: {} as any,
+        custom_fields: business.data.custom_fields || {},
         categoryKey: business.data.category || 'other',
         pubDate: new Date(),
         user_id: null as string | null,
         seller_username: null as string | null,
         expires_at: null as string | null,
-        listing_negotiable: false,
+        listing_negotiable: business.data.negotiable || false,
         short_id: business.data.id?.replace('ad-', ''),
         ad_number: business.data.id?.replace('ad-', ''),
         listing_country: 'Saudi Arabia',
@@ -339,7 +339,7 @@ const hasNoImages = !ad.data.image || ad.data.image === '' || ad.data.image === 
         )}
 
         {!hasNoImages && !(ad.data.video_url && ad.data.video_primary) && (
-          <AdSlider images={ad.data.images} alt={title} client:load />
+          <AdSlider images={ad.data.images} alt={title} />
         )}
 
         <!-- Description block -->

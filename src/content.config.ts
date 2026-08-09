@@ -21,11 +21,16 @@ const businesses = defineCollection({
     slug: z.string(),
     title: z.string(),
     description: z.string(),
+    price: z.number().optional(),
+    currency: z.string().optional(),
+    condition: z.string().optional(),
+    negotiable: z.boolean().optional(),
     advertiser_name: z.string().optional(),
     logo: z.string().optional(),
     image: z.union([z.string(), z.array(z.string())]).optional(),
     category: z.string(), // reference to category slug
     city: z.string().optional(),
+    district: z.string().optional(),
     address: z.string().optional(),
     phone: z.string().optional(),
     whatsapp: z.string().optional(),
@@ -40,6 +45,7 @@ const businesses = defineCollection({
     seoTitle: z.string().optional(),
     seoDescription: z.string().optional(),
     tags: z.array(z.string()).optional(),
+    custom_fields: z.record(z.any()).optional(),
   }),
 });
 

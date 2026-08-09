@@ -8,7 +8,7 @@ interface Props {
   price: number;
   category: string;
   city: string;
-  image: string;
+  image: string | string[];
   sellerPhone: string;
   slug: string;
   lang: string;
@@ -54,19 +54,21 @@ const whatsappBotNumber = siteConfig.chatbot.phoneNumber;
 const whatsappText = t["ad.whatsapp.msg"].replace("{id}", shortId);
 const whatsappUrl = `https://wa.me/${whatsappBotNumber}?text=${encodeURIComponent(whatsappText)}`;
 
+const rawImage = Array.isArray(image) ? image[0] : image;
 const hasValidImage =
-  image &&
-  image.trim() !== "" &&
-  image !== "/" &&
-  image !== "undefined" &&
-  image !== "null";
+  rawImage &&
+  rawImage.trim() !== "" &&
+  rawImage !== "/" &&
+  rawImage !== "undefined" &&
+  rawImage !== "null";
 const displayImage = hasValidImage
-  ? image.startsWith("http")
-    ? image
-    : image.startsWith("/")
-      ? image
-      : `/${image}`
+  ? rawImage.startsWith("http")
+    ? rawImage
+    : rawImage.startsWith("/")
+      ? rawImage
+      : `/${rawImage}`
   : "/og-image.webp";
+
 ---
 
 <div

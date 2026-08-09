@@ -8,7 +8,15 @@
   "city": "الخبر",
   "phone": "0575934833",
   "whatsapp": "0575934833",
-  "image": "/images/businesses/ad-mslmwq2h-hj1d.jpeg",
+  "price": 25000,
+  "currency": "SAR",
+  "condition": "used",
+  "negotiable": true,
+  "district": "العقربية",
+  "image": [
+    "/images/businesses/ad-mslmwq2h-hj1d.jpeg",
+    "/logo.svg"
+  ],
   "published": true,
   "featured": false,
   "tags": [
