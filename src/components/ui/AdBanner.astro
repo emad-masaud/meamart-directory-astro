@@ -4,18 +4,16 @@ import { useTranslations } from "~/i18n/utils";
 
 interface Props {
   position: "belowCategories" | "afterSliders" | "inFeedMarketplace";
-  titleAr?: string;
-  titleEn?: string;
   lang: string;
   class?: string;
 }
 
-const { position, lang, class: className = "", titleAr: propTitleAr, titleEn: propTitleEn } = Astro.props;
+const { position, lang, class: className = "" } = Astro.props;
 const isAr = lang === "ar";
 const t = useTranslations(lang);
 
 // الحصول على بيانات البنر من التكوين المركزي
-const bannerConfig: any = siteConfig.banners?.[position];
+const bannerConfig = siteConfig.banners?.[position];
 const bannersEnabled = siteConfig.banners?.enabled;
 
 if (!bannersEnabled || !bannerConfig) {
@@ -23,7 +21,7 @@ if (!bannersEnabled || !bannerConfig) {
 }
 
 const { type, imageAr, imageEn, titleAr, titleEn, link, html, adsense } =
-  bannerConfig;
+  bannerConfig as any;
 let image = imageEn;
 let title = titleEn;
 
