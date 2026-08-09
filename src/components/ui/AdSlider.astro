@@ -28,12 +28,12 @@ const processedImages = hasImages
       data-images={JSON.stringify(processedImages)}
     >
       {/* Main image view */}
-      <div class="relative aspect-video w-full overflow-hidden rounded-3xl bg-zinc-100 shadow-lg dark:bg-zinc-800">
+      <div class="relative aspect-video w-full overflow-hidden rounded-3xl bg-zinc-100 shadow-lg dark:bg-zinc-800/80 backdrop-blur flex items-center justify-center">
         <img
           id="ad-slider-main-img"
           src={processedImages[0]}
           alt={alt}
-          class="h-full w-full object-cover object-center transition-all duration-500"
+          class="max-h-full w-full object-contain object-center transition-all duration-500"
         />
 
         {/* Navigation arrows (only if multiple images) */}

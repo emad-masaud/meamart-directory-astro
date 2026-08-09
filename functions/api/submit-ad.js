@@ -62,6 +62,11 @@ export async function onRequestPost(context) {
         if (uploadImgRes.ok) {
           finalImagePaths.push(`/images/businesses/${imgFileName}`);
         }
+        
+        // Wait 1 second before the next image to avoid GitHub API 409 Conflict (parallel commits)
+        if (i < images.length - 1) {
+          await new Promise(r => setTimeout(r, 1000));
+        }
       }
     }
 
