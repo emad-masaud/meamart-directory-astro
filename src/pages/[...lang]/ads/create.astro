@@ -1,15 +1,13 @@
 ---
+export const prerender = false;
 import Layout from "~/layouts/Layout.astro";
 import { languages } from "~/i18n/ui";
 import { useTranslations } from "~/i18n/utils";
 import { Icon } from "astro-icon/components";
 
-export async function getStaticPaths() {
-  return [
-    { params: { lang: undefined } },
-    { params: { lang: "ar" } },
-    { params: { lang: "en" } },
-  ];
+const sessionCookie = Astro.cookies.get('meamart_session');
+if (!sessionCookie) {
+  return Astro.redirect(`/${Astro.params.lang || 'ar'}/login`);
 }
 
 const lang = Astro.params.lang || "ar";
