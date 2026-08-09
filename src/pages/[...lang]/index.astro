@@ -15,6 +15,7 @@ import Container from '~/components/ui/Container.astro';
 export async function getStaticPaths() {
   return [
     { params: { lang: undefined } },
+    { params: { lang: "ar" } },
     { params: { lang: "en" } },
   ];
 }
