@@ -25,8 +25,9 @@ const lang = Astro.params.lang || "ar";
 const { category } = Astro.props;
 const isArabic = lang === "ar";
 
-const name = isArabic ? category.data.nameAr : category.data.nameEn;
-const description = isArabic ? category.data.descriptionAr : category.data.descriptionEn;
+const title = category.data.title;
+const seoTitle = `${title} | MeaMart Directory`;
+const description = category.data.description || "";
 
 const allBusinesses = await getCollection("businesses");
 const categoryBusinesses = allBusinesses.filter(
@@ -36,15 +37,15 @@ const categoryBusinesses = allBusinesses.filter(
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
-  "name": name,
+  "name": title,
   "description": description
 };
 ---
 
-<BaseLayout title={name} description={description} lang={lang} type="website" jsonLd={jsonLd}>
+<BaseLayout title={seoTitle} description={description} lang={lang} type="website" jsonLd={jsonLd}>
   <div class="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700 py-12">
     <div class="container mx-auto px-4 max-w-7xl text-center">
-      <h1 class="text-3xl md:text-4xl font-bold mb-4">{name}</h1>
+      <h1 class="text-3xl md:text-4xl font-bold mb-4">{title}</h1>
       <p class="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">{description}</p>
     </div>
   </div>
@@ -58,6 +59,7 @@ const jsonLd = {
       </div>
     ) : (
       <div class="text-center py-20">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">{title}</h1>
         <h3 class="text-xl font-bold text-gray-400 mb-2">{isArabic ? "لا توجد إعلانات هنا بعد" : "No ads found here yet"}</h3>
         <a href={lang === "ar" ? "/ads/create" : `/${lang}/ads/create`} class="text-primary-600 hover:underline">{isArabic ? "كن أول من يعلن!" : "Be the first to post!"}</a>
       </div>

@@ -7,10 +7,8 @@ const categories = defineCollection({
   schema: z.object({
     id: z.string(),
     slug: z.string(),
-    nameAr: z.string(),
-    nameEn: z.string(),
-    descriptionAr: z.string().optional(),
-    descriptionEn: z.string().optional(),
+    title: z.string(),
+    description: z.string().optional(),
     icon: z.string().optional(),
   }),
 });
@@ -21,14 +19,11 @@ const businesses = defineCollection({
   schema: z.object({
     id: z.string(),
     slug: z.string(),
-    name: z.string().optional(), // fallback
-    nameAr: z.string(),
-    nameEn: z.string(),
-    description: z.string().optional(), // fallback
-    descriptionAr: z.string(),
-    descriptionEn: z.string(),
+    title: z.string(),
+    description: z.string(),
+    advertiser_name: z.string().optional(),
     logo: z.string().optional(),
-    coverImage: z.string().optional(),
+    image: z.union([z.string(), z.array(z.string())]).optional(),
     category: z.string(), // reference to category slug
     city: z.string().optional(),
     address: z.string().optional(),

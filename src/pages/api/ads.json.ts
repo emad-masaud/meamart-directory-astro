@@ -13,13 +13,12 @@ export async function GET() {
   // Map the ads to a clean JSON structure
   const adsApiData = sortedAds.map(ad => ({
     id: ad.data.id,
-    title_ar: ad.data.nameAr,
-    title_en: ad.data.nameEn,
-    description: ad.data.descriptionAr,
+    title: ad.data.title,
+    description: ad.data.description,
     category: ad.data.category,
     city: ad.data.city,
     phone: ad.data.phone,
-    coverImage: ad.data.coverImage,
+    image: ad.data.image,
     url: `https://meamart.com/businesses/${ad.data.slug}`,
     tags: ad.data.tags || [],
     tags_text: (ad.data.tags || []).join('، ')

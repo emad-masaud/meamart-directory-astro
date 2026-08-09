@@ -3,15 +3,15 @@ import { Icon } from "astro-icon/components";
 const { business, lang = "ar" } = Astro.props;
 
 const isArabic = lang === "ar";
-const title = isArabic ? business.nameAr : business.nameEn;
-const description = isArabic ? business.descriptionAr : business.descriptionEn;
+const title = business.title;
+const description = business.description || "";
 const href = lang === "ar" ? `/businesses/${business.slug}` : `/${lang}/businesses/${business.slug}`;
 ---
 
 <a href={href} class="block border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group relative">
   <div class="relative h-48 w-full bg-gray-100 dark:bg-gray-700">
-    {business.coverImage ? (
-      <img src={business.coverImage} alt={title} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+    {business.image ? (
+      <img src={Array.isArray(business.image) ? business.image[0] : business.image} alt={title} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
     ) : (
       <div class="w-full h-full flex items-center justify-center text-gray-400">
         <Icon name="tabler:photo" class="w-12 h-12" />

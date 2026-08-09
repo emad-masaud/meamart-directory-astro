@@ -146,16 +146,14 @@ export async function onRequestPost(context) {
     const fileContent = {
       id: uniqueId,
       slug: slug,
-      nameAr: data.title || data?.form_data?.title || "إعلان جديد",
-      nameEn: JSON.stringify(data),
+      title: data.title || data?.form_data?.title || "إعلان جديد",
       advertiser_name: data.advertiser_name || data.name || data?.form_data?.name || "",
-      descriptionAr: data.description || data?.form_data?.description || "",
-      descriptionEn: data.description || data?.form_data?.description || "",
+      description: data.description || data?.form_data?.description || "",
       category: data.category || data?.form_data?.category || "other",
       city: data.city || data?.form_data?.city || "",
       phone: data.phone || data?.form_data?.phone || "",
       whatsapp: data.whatsapp || data.phone || data?.form_data?.whatsapp || "",
-      coverImage: finalCoverImagePath,
+      image: finalCoverImagePath,
       published: true, // Automatically publish the ad
       featured: false,
       tags: data.tags ? data.tags.split(",").map(t => t.trim()) : []

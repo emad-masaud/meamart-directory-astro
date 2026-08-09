@@ -25,17 +25,17 @@ const lang = Astro.params.lang || "ar";
 const { business } = Astro.props;
 const isArabic = lang === "ar";
 
-const name = isArabic ? business.data.nameAr : business.data.nameEn;
-const description = isArabic ? business.data.descriptionAr : business.data.descriptionEn;
-const seoTitle = business.data.seoTitle || name;
+const title = business.data.title;
+const description = business.data.description || "";
+const seoTitle = business.data.seoTitle || title;
 const seoDesc = business.data.seoDescription || description;
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  "name": name,
+  "name": title,
   "description": description,
-  "image": business.data.logo || business.data.coverImage,
+  "image": business.data.logo || business.data.image || "",
   "telephone": business.data.phone,
   "address": {
     "@type": "PostalAddress",
@@ -46,11 +46,11 @@ const jsonLd = {
 };
 ---
 
-<BaseLayout title={seoTitle} description={seoDesc} lang={lang} image={business.data.coverImage} type="LocalBusiness" jsonLd={jsonLd}>
+<BaseLayout title={seoTitle} description={seoDesc} lang={lang} image={business.data.image} type="LocalBusiness" jsonLd={jsonLd}>
   <!-- Cover Image -->
   <div class="h-64 md:h-80 w-full relative bg-gray-200 dark:bg-gray-800">
-    {business.data.coverImage && (
-      <img src={business.data.coverImage} alt={name} class="w-full h-full object-cover" />
+    {business.data.image && (
+      <img src={Array.isArray(business.data.image) ? business.data.image[0] : business.data.image} alt={title} class="w-full h-full object-cover" />
     )}
     <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
   </div>
@@ -61,7 +61,7 @@ const jsonLd = {
         <!-- Logo -->
         {business.data.logo ? (
           <div class="w-24 h-24 md:w-32 md:h-32 shrink-0 bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden -mt-16 md:-mt-12">
-            <img src={business.data.logo} alt={name} class="w-full h-full object-contain p-2" />
+            <img src={business.data.logo} alt={title} class="w-full h-full object-contain p-2" />
           </div>
         ) : (
           <div class="w-24 h-24 md:w-32 md:h-32 shrink-0 bg-gray-100 dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 flex items-center justify-center -mt-16 md:-mt-12 text-gray-400">
@@ -72,7 +72,7 @@ const jsonLd = {
         <!-- Info -->
         <div class="flex-1">
           <div class="flex flex-wrap items-center gap-3 mb-2">
-            <h1 class="text-3xl font-bold">{name}</h1>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">{title}</h1>
             {business.data.category && (
               <a href={lang === "ar" ? `/categories/${business.data.category}` : `/${lang}/categories/${business.data.category}`} class="bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 text-xs font-bold px-3 py-1 rounded-full">
                 {business.data.category}

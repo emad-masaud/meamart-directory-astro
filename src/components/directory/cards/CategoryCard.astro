@@ -3,8 +3,8 @@ import { Icon } from "astro-icon/components";
 const { category, lang = "ar" } = Astro.props;
 
 const isArabic = lang === "ar";
-const name = isArabic ? category.nameAr : category.nameEn;
-const description = isArabic ? category.descriptionAr : category.descriptionEn;
+const title = category.title;
+const description = category.description || "";
 const href = lang === "ar" ? `/categories/${category.slug}` : `/${lang}/categories/${category.slug}`;
 ---
 
@@ -12,9 +12,7 @@ const href = lang === "ar" ? `/categories/${category.slug}` : `/${lang}/categori
   <div class="w-16 h-16 flex items-center justify-center bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 rounded-full mb-4 group-hover:scale-110 transition-transform">
     <Icon name={category.icon || "tabler:category"} class="w-8 h-8" />
   </div>
-  <h3 class="font-bold text-lg text-gray-900 dark:text-white mb-1 group-hover:text-primary-600 transition-colors">
-    {name}
-  </h3>
+  <h3 class="font-bold text-gray-900 group-hover:text-primary-600 transition-colors">{title}</h3>
   {description && (
     <p class="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">
       {description}
