@@ -177,8 +177,7 @@ export async function onRequestPost(context) {
     const contentBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(fileContent, null, 2))));
     
     // 5. GitHub API settings
-    // Replace with your exact GitHub username and repository name
-    const githubRepo = "emad-masaud/meamart-directory-astro";
+    // githubRepo already declared above in image upload section
     const filePath = `src/data/businesses/${slug}.json`;
     
     // 5.5 Check if file already exists to get its SHA (required for updating files)
