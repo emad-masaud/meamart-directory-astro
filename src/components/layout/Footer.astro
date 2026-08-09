@@ -1,6 +1,6 @@
 ---
 import { siteConfig, NAV_LINKS, ACTION_LINKS, FOOTER_LINKS } from '~/site.config';
-import { Github, Facebook, Linkedin, Youtube } from 'lucide-react';
+import { Icon } from 'astro-icon/components';
 import { ui, defaultLang } from '~/i18n/ui';
 import { useTranslations } from '~/i18n/utils';
 
@@ -87,16 +87,16 @@ const t = useTranslations(lang);
       
       <div class="flex gap-4">
         <a href={ACTION_LINKS.social.linkedin} target="_blank" rel="noopener noreferrer" class="text-muted-foreground hover:text-foreground transition-colors" aria-label="LinkedIn">
-          <Linkedin className="w-5 h-5" strokeWidth={1.5} />
+          <Icon name="tabler:brand-linkedin" class="w-5 h-5 text-muted-foreground hover:text-foreground transition-colors" />
         </a>
         <a href={ACTION_LINKS.social.youtube} target="_blank" rel="noopener noreferrer" class="text-muted-foreground hover:text-foreground transition-colors" aria-label="YouTube">
-          <Youtube className="w-5 h-5" strokeWidth={1.5} />
+          <Icon name="tabler:brand-youtube" class="w-5 h-5 text-muted-foreground hover:text-foreground transition-colors" />
         </a>
-        <a href={ACTION_LINKS.social.github} target="_blank" rel="noopener noreferrer" class="text-muted-foreground hover:text-foreground transition-colors" aria-label="GitHub">
-          <Github className="w-5 h-5" strokeWidth={1.5} />
+        <a href={(ACTION_LINKS.social as any).github || '#'} target="_blank" rel="noopener noreferrer" class="text-muted-foreground hover:text-foreground transition-colors" aria-label="GitHub">
+          <Icon name="tabler:brand-github" class="w-5 h-5 text-muted-foreground hover:text-foreground transition-colors" />
         </a>
         <a href={ACTION_LINKS.social.facebook} target="_blank" rel="noopener noreferrer" class="text-muted-foreground hover:text-foreground transition-colors" aria-label="Facebook">
-          <Facebook className="w-5 h-5" strokeWidth={1.5} />
+          <Icon name="tabler:brand-facebook" class="w-5 h-5 text-muted-foreground hover:text-foreground transition-colors" />
         </a>
         <a href={ACTION_LINKS.social.tiktok} target="_blank" rel="noopener noreferrer" class="text-muted-foreground hover:text-foreground transition-colors" aria-label="TikTok">
           <svg viewBox="0 0 24 24" class="w-5 h-5" fill="currentColor" xmlns="http://www.w3.org/2000/svg">

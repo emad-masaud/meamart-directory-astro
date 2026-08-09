@@ -1,6 +1,6 @@
 ---
 import {
-  Github,
+  
   User,
   LogOut,
   LayoutGrid,
@@ -10,26 +10,23 @@ import {
   QrCode,
 } from "lucide-react";
 import ThemeToggle from "~/components/common/ThemeToggle.astro";
-import MobileMenu from "~/components/islands/MobileMenu";
-import DesktopNav from "~/components/islands/DesktopNav";
+
+
 import LanguagePicker from "~/components/common/LanguagePicker.astro";
 import CurrencyPicker from "~/components/common/CurrencyPicker.astro";
 import { getPopularLinks } from "~/utils/popularLinks";
-import Search from "~/components/islands/Search";
+
 import { getCollection } from "astro:content";
 import { categoriesMap } from "~/utils/categories";
 import { resolveCity } from "~/utils/cities";
 import { NAV_LINKS, ACTION_LINKS, siteConfig } from "~/site.config";
 import { defaultLang, languages } from "~/i18n/ui";
 import { useTranslations } from "~/i18n/utils";
-import { getMeamartSession } from "~/utils/session";
-import AuthDropdown from "~/components/auth/AuthDropdown";
+
+
 
 // Get session from middleware or fallback to cookie parsing
-let userSession = Astro.locals.userSession;
-if (!userSession) {
-  userSession = await getMeamartSession(Astro);
-}
+let userSession = null;
 
 const url = new URL(Astro.request.url);
 if (url.pathname.includes("/seller") || url.pathname.includes("/login")) {
@@ -168,25 +165,14 @@ const popularLinks = await getPopularLinks(lang);
       </span>
     </a>
     <div class="flex-1 flex justify-center mx-4 lg:mx-8">
-      <DesktopNav client:idle links={links} currentPath={Astro.url.pathname} />
+      <div class="flex gap-4">{links.map((link: any) => (<a href={link.href} class="text-sm font-bold">{link.label}</a>))}</div>
     </div>
 
     {/* Mobile/Flyout Menu */}
     <div class="flex items-center gap-2 shrink-0">
       {
         siteConfig.features.search && (
-          <Search
-            client:load
-            placeholder={t["search.placeholder"]}
-            devModalLabels={{
-              title: t["dev.search.title"],
-              description: t["dev.search.description"],
-              gotIt: t["dev.search.button.gotIt"],
-              doc: t["dev.search.button.docs"],
-            }}
-            lang={lang}
-            popularLinks={popularLinks}
-          />
+          <!-- Search Removed -->
         )
       }
       <LanguagePicker availableLangs={availableLangs} />
@@ -351,25 +337,7 @@ const popularLinks = await getPopularLinks(lang);
 
 
       <div class="md:hidden">
-        <MobileMenu
-          client:idle
-          links={links}
-          currentPath={Astro.url.pathname}
-          labels={{
-            menu: t["nav.menu"],
-            getStarted: t["hero.getStarted"] || ACTION_LINKS.primary.label,
-          }}
-          userSession={userSession}
-          lang={lang}
-          availableLangs={availableLangs && availableLangs.length > 1
-            ? availableLangs
-            : Object.keys(languages)}
-        >
-          <div class="flex items-center justify-center gap-8 mt-2">
-            <LanguagePicker availableLangs={availableLangs} />
-            <ThemeToggle />
-          </div>
-        </MobileMenu>
+        <!-- Mobile Menu Removed -->
       </div>
     </div>
   </div>
@@ -497,3 +465,5 @@ const popularLinks = await getPopularLinks(lang);
     });
   }
 </script>
+
+
