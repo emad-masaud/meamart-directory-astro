@@ -1,27 +1,25 @@
 ---
-export const prerender = false;
 import Layout from "~/layouts/Layout.astro";
-import { Icon } from 'astro-icon/components';
 import { useTranslations } from "~/i18n/utils";
+import { Icon } from "astro-icon/components";
 
-const sessionCookie = Astro.cookies.get('meamart_session');
-if (sessionCookie) {
-  try {
-    const user = JSON.parse(decodeURIComponent(atob(sessionCookie.value)));
-    if (user && user.email) {
-      return Astro.redirect(`/${Astro.params.lang || 'ar'}/dashboard`);
-    }
-  } catch (e) {
-    // invalid cookie, continue to login
-  }
+export function getStaticPaths() {
+  return [
+    { params: { lang: undefined } },
+    { params: { lang: "ar" } },
+    { params: { lang: "en" } },
+  ];
 }
 
-const { lang } = Astro.params as { lang: "ar" | "en" };
+const lang = Astro.params.lang || "ar";
 const t = useTranslations(lang);
+const isArabic = lang === "ar";
 const googleClientId = import.meta.env.PUBLIC_GOOGLE_CLIENT_ID || '845217154240-h0eufomg31l04o71focig5v74pqu7v5d.apps.googleusercontent.com';
 ---
 
-<Layout title="تسجيل الدخول - ميمارت">
+<Layout title={isArabic ? "تسجيل الدخول - ميمارت" : "Login - MeaMart"}>
+  <!-- Login Gate Wrapper -->
+  <div id="login-gate" class="opacity-0 transition-opacity duration-300">
   <div class="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full space-y-8 bg-white dark:bg-zinc-900 p-8 rounded-3xl shadow-xl border border-zinc-100 dark:border-zinc-800">
       <div class="text-center">
@@ -29,10 +27,10 @@ const googleClientId = import.meta.env.PUBLIC_GOOGLE_CLIENT_ID || '845217154240-
           <Icon name="lucide:user" class="w-8 h-8" />
         </div>
         <h2 class="text-3xl font-extrabold text-zinc-900 dark:text-white">
-          تسجيل الدخول
+          {isArabic ? "تسجيل الدخول" : "Sign In"}
         </h2>
         <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-          استخدم حساب جوجل الخاص بك للدخول إلى لوحة التحكم
+          {isArabic ? "استخدم حساب جوجل الخاص بك للدخول إلى لوحة التحكم" : "Use your Google account to sign in to the dashboard"}
         </p>
       </div>
       
@@ -59,7 +57,32 @@ const googleClientId = import.meta.env.PUBLIC_GOOGLE_CLIENT_ID || '845217154240-
       </div>
     </div>
   </div>
+  </div>
 </Layout>
+
+<script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    const lang = document.documentElement.lang || "ar";
+    const loginGate = document.getElementById('login-gate');
+
+    // Check if already authenticated
+    try {
+      const meRes = await fetch('/api/auth/me');
+      if (meRes.ok) {
+        const data = await meRes.json();
+        if (data.authenticated && data.user) {
+          window.location.replace(`/${lang}/dashboard`);
+          return;
+        }
+      }
+    } catch (e) {
+      // ignore
+    }
+    
+    // Show login page if not authenticated
+    if (loginGate) loginGate.classList.remove('opacity-0');
+  });
+</script>
 
 <script is:inline src="https://accounts.google.com/gsi/client" async defer></script>
 <script is:inline>

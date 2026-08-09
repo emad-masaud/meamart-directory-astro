@@ -14,6 +14,7 @@
     "@ascorbic/csv-loader": "^2.0.3",
     "@ascorbic/mock-loader": "^2.0.2",
     "@astrojs/check": "^0.9.4",
+    "@astrojs/cloudflare": "^14.2.0",
     "@astrojs/mdx": "^4.2.0",
     "@astrojs/sitemap": "^3.2.1",
     "@astrojs/vue": "^5.0.7",
@@ -54,6 +55,7 @@
     "tom-select": "^2.6.2",
     "typescript": "^5.6.2",
     "vue": "^3.5.11",
+    "wrangler": "^4.120.0",
     "zod": "^3.24.2"
   },
   "devDependencies": {

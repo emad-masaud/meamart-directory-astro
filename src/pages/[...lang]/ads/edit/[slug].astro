@@ -1,14 +1,18 @@
 ---
-export const prerender = false;
 import Layout from "~/layouts/Layout.astro";
 import { languages } from "~/i18n/ui";
 import { useTranslations } from "~/i18n/utils";
 import { Icon } from "astro-icon/components";
 import { getCollection } from 'astro:content';
 
-const sessionCookie = Astro.cookies.get('meamart_session');
-if (!sessionCookie) {
-  return Astro.redirect(`/${Astro.params.lang || 'ar'}/login`);
+export async function getStaticPaths() {
+  const businesses = await getCollection('businesses');
+  const publishedAds = businesses.filter((b: any) => b.data?.published);
+  return Object.keys(languages).flatMap((lang) => {
+    return publishedAds.map((ad: any) => ({
+      params: { lang, slug: ad.id }
+    }));
+  });
 }
 
 const lang = Astro.params.lang || "ar";
@@ -21,7 +25,9 @@ const adSlug = Astro.params.slug;
 ---
 
 <Layout title={title} description={description}>
-  <div class="min-h-screen py-10">
+  <!-- Auth Gate Wrapper -->
+  <div id="auth-gate" class="opacity-0 transition-opacity duration-300">
+  <div class="min-h-screen py-10" data-slug={adSlug}>
     <div class="container mx-auto px-4 max-w-2xl">
       <!-- Steps Indicator -->
       <div class="mb-8">
@@ -170,8 +176,8 @@ const adSlug = Astro.params.slug;
                 <Icon name="lucide:upload-cloud" class="w-8 h-8" />
               </div>
               <div class="mt-4 flex flex-col items-center justify-center gap-2 pointer-events-none">
-                <h1 class="text-3xl sm:text-4xl font-extrabold text-zinc-900 dark:text-white mb-2">تعديل الإعلان</h1>
-        <p class="text-lg text-zinc-600 dark:text-zinc-400">قم بتحديث بيانات إعلانك لتظهر فوراً بعد المراجعة.</p>
+                <p class="font-bold text-lg">اضغط لرفع الصور</p>
+                <p class="text-sm text-zinc-500">أو اسحب الصور وأفلتها هنا</p>
               </div>
             </div>
             
@@ -202,6 +208,7 @@ const adSlug = Astro.params.slug;
         
       </form>
     </div>
+  </div>
   </div>
 </Layout>
 
@@ -250,8 +257,32 @@ const adSlug = Astro.params.slug;
 </style>
 
 <script>
-  // Simple Multi-step Logic
-  document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("DOMContentLoaded", async () => {
+    const lang = document.documentElement.lang || "ar";
+    const authGate = document.getElementById('auth-gate');
+    
+    // Check auth
+    try {
+      const meRes = await fetch('/api/auth/me');
+      if (meRes.ok) {
+        const data = await meRes.json();
+        if (data.authenticated && data.user) {
+          // Show page
+          if (authGate) authGate.classList.remove('opacity-0');
+        } else {
+          window.location.replace(`/${lang}/login`);
+          return;
+        }
+      } else {
+        window.location.replace(`/${lang}/login`);
+        return;
+      }
+    } catch (e) {
+      window.location.replace(`/${lang}/login`);
+      return;
+    }
+    
+    // Original script starts here
     let currentStep = 1;
     const totalSteps = 4;
     
