@@ -15,7 +15,15 @@ import { getCityLabel } from '~/utils/cities';
 import { generateCustomQRCode } from '~/utils/qrcode';
 import { buildAdJsonLd } from '~/utils/schemaGenerator';
 
-
+export async function getStaticPaths() {
+  const businesses = await getCollection('businesses');
+  const publishedAds = businesses.filter((b: any) => b.data?.published);
+  return Object.keys(languages).flatMap((lang) => {
+    return publishedAds.map((ad: any) => ({
+      params: { lang, slug: ad.id }
+    }));
+  });
+}
 
 const { lang, slug } = Astro.params;
 const t = useTranslations(lang);
