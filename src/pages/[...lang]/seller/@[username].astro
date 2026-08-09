@@ -100,8 +100,7 @@ const sellerAds = allAds.filter(ad => ad.data.author_id === user.id && ad.data.p
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {sellerAds.map(ad => (
             <AdCard 
-              id={ad.id}
-              data={ad.data}
+              ad={ad}
               lang={safeLang} 
               categoryTitle="" 
               categoryIcon="" 
