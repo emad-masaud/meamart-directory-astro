@@ -17,11 +17,7 @@ export function getStaticPaths() {
 }
 const { lang } = Astro.params as { lang: "ar" | "en" };
 const t = useTranslations(lang);
-const seller = {
-  name: t['gen.isar.index.4'] || 'كتالوج ميمارت',
-  avatar: '/logo.svg',
-  phone: ''
-};
+const seller = null;
 
 // Fetch products from businesses collection
 let rawProducts: any[] = [];
