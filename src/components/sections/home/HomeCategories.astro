@@ -11,23 +11,7 @@ interface Props {
 const { lang = defaultLang } = Astro.props as Props;
 const t = useTranslations(lang);
 
-const iconComponents: Record<string, any> = {
-  Car,
-  Home,
-  Briefcase,
-  Wrench,
-  Smartphone,
-  Sofa,
-  ShoppingBag,
-  Baby,
-  PawPrint,
-  Dumbbell,
-  Building2,
-  UtensilsCrossed,
-  Plane,
-  Package,
-  MapPin,
-};
+// icon component mapping removed in favor of dynamic astro-icon name
 
 const items = categoriesStructure.map((group) => {
   const style = categoryStyles[group.key] || {
@@ -70,7 +54,7 @@ const items = categoriesStructure.map((group) => {
     >
       {
         items.map((item) => {
-          const IconComponent = iconComponents[item.icon] || Tag;
+          const iconName = `lucide:${(item.icon || 'Tag').replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()}`;
           return (
             <a
               href={item.href}
@@ -79,7 +63,7 @@ const items = categoriesStructure.map((group) => {
               <div
                 class={`mb-3 flex h-12 w-12 items-center justify-center rounded-full border ${item.style.bg} ${item.style.text} ${item.style.border} transition-all duration-300 ${item.style.hoverBg} ${item.style.hoverText} shadow-xs`}
               >
-                <IconComponent className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" />
+                <Icon name={iconName} class="h-5 w-5 transition-transform duration-300 group-hover:scale-110" />
               </div>
               <span class="text-xs font-bold text-zinc-800 dark:text-zinc-200 group-hover:text-primary transition-colors line-clamp-1">
                 {item.label}

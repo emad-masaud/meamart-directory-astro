@@ -14,23 +14,7 @@ export function getStaticPaths() {
 const { lang } = Astro.params;
 const t = useTranslations(lang as keyof typeof languages);
 
-const iconComponents: Record<string, any> = {
-  Car,
-  Home,
-  Briefcase,
-  Wrench,
-  Smartphone,
-  Sofa,
-  ShoppingBag,
-  Baby,
-  PawPrint,
-  Dumbbell,
-  Building2,
-  UtensilsCrossed,
-  Plane,
-  Package,
-  MapPin,
-};
+// icon component mapping removed in favor of dynamic astro-icon name
 ---
 
 <Layout
@@ -47,7 +31,7 @@ const iconComponents: Record<string, any> = {
       {
         categoriesStructure.map((group: any) => {
           const parentLabel = lang === "ar" ? group.labelAr : group.labelEn;
-          const IconComponent = iconComponents[group.icon] || Tag;
+          const iconName = `lucide:${(group.icon || 'Tag').replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()}`;
           const style = categoryStyles[group.key] || {
             bg: "bg-zinc-50 dark:bg-zinc-800/30",
             text: "text-zinc-650 dark:text-zinc-300",
@@ -60,11 +44,9 @@ const iconComponents: Record<string, any> = {
             <div class="flex flex-col rounded-3xl border border-zinc-200/50 bg-white/40 p-6 shadow-xs backdrop-blur-md dark:border-zinc-800/50 dark:bg-zinc-900/40 transition-all duration-300 hover:border-primary/30 hover:shadow-md dark:hover:border-zinc-700/50 group">
               {/* Header */}
               <div class="flex items-center gap-3 mb-6">
-                <span
-                  class={`flex h-12 w-12 items-center justify-center rounded-full border ${style.bg} ${style.text} ${style.border} shrink-0 transition-colors duration-300`}
-                >
-                  <IconComponent className="h-5 w-5" />
-                </span>
+                <div class={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors duration-300 ${style.bg} ${style.text} ${style.hoverBg} ${style.hoverText}`}>
+                  <Icon name={iconName} class="w-6 h-6" />
+                </div>
                 <div>
                   <h3 class="text-lg font-bold text-zinc-900 dark:text-zinc-50 leading-tight">
                     {parentLabel}
