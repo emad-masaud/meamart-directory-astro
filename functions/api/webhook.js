@@ -24,6 +24,19 @@ export async function onRequestPost(context) {
       return new Response(JSON.stringify({ error: "Failed to parse incoming data", details: e.message }), { status: 400 });
     }
     
+    // Ignore BotSailor system webhooks (like message delivered, new subscriber)
+    // We only want to process actual form submissions.
+    if (data.webhook_type === "message_status_change" || data.webhook_type === "new_subscriber") {
+      return new Response(JSON.stringify({ success: true, message: "Ignored system webhook" }), { status: 200 });
+    }
+    
+    // Check if it's actually an ad submission by looking for specific fields
+    // Because the Webview directly sends fields like title or form_data.title
+    const hasTitle = data.title || data?.form_data?.title;
+    if (!hasTitle) {
+      return new Response(JSON.stringify({ success: false, message: "No title provided, ignoring payload." }), { status: 200 });
+    }
+
     // 2. Get the GitHub Token from Cloudflare Environment Variables
     const githubToken = context.env.GITHUB_TOKEN;
     
