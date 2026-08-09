@@ -10,7 +10,11 @@ export async function onRequestPost(context) {
     const description = formData.get('description') || '';
     const price = formData.get('price') || '';
     const name = formData.get('name') || '';
-    const phone = formData.get('phone') || '';
+    const countryCode = formData.get('countryCode') || '';
+    let rawPhone = formData.get('phone') || '';
+    // If phone starts with 0 and a country code is provided, strip the 0
+    if (countryCode && rawPhone.startsWith('0')) rawPhone = rawPhone.substring(1);
+    const phone = countryCode + rawPhone;
     const callorchat = formData.get('callorchat') || 'whatsapp';
     
     // The images
