@@ -19,7 +19,7 @@ export function getStaticPaths() {
           <Icon name="lucide:layout-dashboard" class="w-8 h-8 text-primary" />
           لوحة التحكم
         </h1>
-        <p class="mt-2 text-zinc-600 dark:text-zinc-400">مرحباً بك، <span id="user-phone" class="font-bold"></span></p>
+        <p class="mt-2 text-zinc-600 dark:text-zinc-400">مرحباً بك، <span id="user-name" class="font-bold"></span></p>
       </div>
       
       <div class="flex gap-3">
@@ -64,21 +64,20 @@ export function getStaticPaths() {
     const loadingState = document.getElementById('loading-state');
     const emptyState = document.getElementById('empty-state');
     const adsGrid = document.getElementById('ads-grid');
-    const userPhoneSpan = document.getElementById('user-phone');
+    const userNameSpan = document.getElementById('user-name');
     const logoutBtn = document.getElementById('logout-btn');
     const lang = document.documentElement.lang || 'ar';
     
     // Check Auth
-    // Check Auth
-    let userPhone: string | null = null;
+    let userEmail: string | null = null;
     try {
       const meRes = await fetch('/api/auth/me');
       if (meRes.ok) {
         const data = await meRes.json();
-        if (data.authenticated) {
-          userPhone = data.phone;
-          if (userPhoneSpan) {
-            userPhoneSpan.textContent = userPhone;
+        if (data.authenticated && data.user) {
+          userEmail = data.user.email;
+          if (userNameSpan) {
+            userNameSpan.textContent = data.user.name || data.user.email;
           }
         } else {
           window.location.href = `/${lang}/login`;
@@ -101,7 +100,7 @@ export function getStaticPaths() {
     }
 
     try {
-      const adsRes = await fetch(`/api/my-ads?phone=${userPhone}`);
+      const adsRes = await fetch(`/api/my-ads?email=${userEmail}`);
       if (adsRes.ok) {
         const ads: any[] = await adsRes.json();
         if (loadingState) loadingState.classList.add('hidden');

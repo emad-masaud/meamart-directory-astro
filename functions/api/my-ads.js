@@ -1,11 +1,11 @@
 export async function onRequestGet(context) {
   try {
-    // 1. Get the phone number from the query parameters
+    // 1. Get the email from the query parameters
     const url = new URL(context.request.url);
-    const phone = url.searchParams.get('phone');
+    const email = url.searchParams.get('email');
 
-    if (!phone) {
-      return new Response(JSON.stringify({ error: "Missing 'phone' parameter" }), { 
+    if (!email) {
+      return new Response(JSON.stringify({ error: "Missing 'email' parameter" }), { 
         status: 400,
         headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
       });
@@ -25,12 +25,9 @@ export async function onRequestGet(context) {
 
     const allAds = await adsResponse.json();
 
-    // 3. Filter ads belonging to this phone number
-    // We check both the exact phone field, or if the ID starts with the phone
+    // 3. Filter ads belonging to this email
     const myAds = allAds.filter(ad => 
-      String(ad.phone) === String(phone) || 
-      String(ad.id).startsWith(`${phone}-`) ||
-      String(ad.id).startsWith(`${phone}`)
+      String(ad.email).toLowerCase() === String(email).toLowerCase()
     );
 
     // 4. Return the filtered list
