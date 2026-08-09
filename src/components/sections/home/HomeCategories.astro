@@ -54,7 +54,7 @@ const items = categoriesStructure.map((group) => {
     >
       {
         items.map((item) => {
-          const iconName = `lucide:${(item.icon || 'Tag').replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()}`;
+          const iconName = `lucide:${(item.icon || 'Tag').replace(/([a-z])([A-Z0-9])/g, '$1-$2').toLowerCase()}`;
           return (
             <a
               href={item.href}

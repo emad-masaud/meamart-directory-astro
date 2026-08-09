@@ -31,7 +31,7 @@ const t = useTranslations(lang as keyof typeof languages);
       {
         categoriesStructure.map((group: any) => {
           const parentLabel = lang === "ar" ? group.labelAr : group.labelEn;
-          const iconName = `lucide:${(group.icon || 'Tag').replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()}`;
+          const iconName = `lucide:${(group.icon || 'Tag').replace(/([a-z])([A-Z0-9])/g, '$1-$2').toLowerCase()}`;
           const style = categoryStyles[group.key] || {
             bg: "bg-zinc-50 dark:bg-zinc-800/30",
             text: "text-zinc-650 dark:text-zinc-300",
