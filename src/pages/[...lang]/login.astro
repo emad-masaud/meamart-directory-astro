@@ -13,6 +13,7 @@ export function getStaticPaths() {
 
 const { lang } = Astro.params as { lang: "ar" | "en" };
 const t = useTranslations(lang);
+const googleClientId = import.meta.env.PUBLIC_GOOGLE_CLIENT_ID || '845217154240-h0eufomg31l04o71focig5v74pqu7v5d.apps.googleusercontent.com';
 ---
 
 <Layout title="تسجيل الدخول - ميمارت">
@@ -33,7 +34,7 @@ const t = useTranslations(lang);
       <div class="mt-8 flex justify-center">
         <!-- Google Sign-In Container -->
         <div id="g_id_onload"
-             data-client_id="845217154240-h0eufomg31l04o71focig5v74pqu7v5d.apps.googleusercontent.com"
+             data-client_id={googleClientId}
              data-context="signin"
              data-ux_mode="popup"
              data-callback="handleCredentialResponse"
