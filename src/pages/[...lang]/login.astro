@@ -47,43 +47,46 @@ export function getStaticPaths() {
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('login-form');
-    const submitBtn = document.getElementById('submit-btn');
+    const form = document.getElementById('login-form') as HTMLFormElement | null;
+    const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement | null;
     const submitText = document.getElementById('submit-text');
     const submitSpinner = document.getElementById('submit-spinner');
     
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      submitBtn.disabled = true;
-      submitText.textContent = 'جاري التحقق...';
-      submitSpinner.classList.remove('hidden');
-      
-      const phone = document.getElementById('phone').value;
-      
-      try {
-        const response = await fetch('/api/auth/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ phone })
-        });
+    if (form) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
         
-        const result = await response.json();
+        if (submitBtn) submitBtn.disabled = true;
+        if (submitText) submitText.textContent = 'جاري التحقق...';
+        if (submitSpinner) submitSpinner.classList.remove('hidden');
         
-        if (response.ok && result.success) {
-          window.location.href = `/${document.documentElement.lang}/dashboard`;
-        } else {
-          alert('حدث خطأ: ' + (result.error || 'غير معروف'));
+        const phoneInput = document.getElementById('phone') as HTMLInputElement | null;
+        const phone = phoneInput ? phoneInput.value : '';
+        
+        try {
+          const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ phone })
+          });
+          
+          const result = await response.json();
+          
+          if (response.ok && result.success) {
+            window.location.href = `/${document.documentElement.lang}/dashboard`;
+          } else {
+            alert('حدث خطأ: ' + (result.error || 'غير معروف'));
+          }
+        } catch (error) {
+          alert('حدث خطأ في الاتصال');
+        } finally {
+          if (submitBtn) submitBtn.disabled = false;
+          if (submitText) submitText.textContent = 'دخول';
+          if (submitSpinner) submitSpinner.classList.add('hidden');
         }
-      } catch (error) {
-        alert('حدث خطأ في الاتصال');
-      } finally {
-        submitBtn.disabled = false;
-        submitText.textContent = 'دخول';
-        submitSpinner.classList.add('hidden');
-      }
-    });
+      });
+    }
   });
 </script>

@@ -69,14 +69,15 @@ export function getStaticPaths() {
     const lang = document.documentElement.lang || 'ar';
     
     // Check Auth
-    let userPhone = null;
+    // Check Auth
+    let userPhone: string | null = null;
     try {
       const meRes = await fetch('/api/auth/me');
       if (meRes.ok) {
         const data = await meRes.json();
         if (data.authenticated) {
           userPhone = data.phone;
-          userPhoneSpan.textContent = userPhone;
+          if (userPhoneSpan) userPhoneSpan.textContent = userPhone;
         } else {
           window.location.href = `/${lang}/login`;
           return;
@@ -91,32 +92,37 @@ export function getStaticPaths() {
     }
 
     // Handle Logout
-    logoutBtn.addEventListener('click', async () => {
-      await fetch('/api/auth/logout', { method: 'POST' });
-      window.location.href = `/${lang}/login`;
-    });
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', async () => {
+        await fetch('/api/auth/logout', { method: 'POST' });
+        window.location.href = `/${lang}/login`;
+      });
+    }
 
     // Fetch Ads
     try {
       const adsRes = await fetch(`/api/my-ads?phone=${userPhone}`);
       if (adsRes.ok) {
         const ads = await adsRes.json();
-        loadingState.classList.add('hidden');
+        if (loadingState) loadingState.classList.add('hidden');
         
         if (ads.length === 0) {
-          emptyState.classList.remove('hidden');
+          if (emptyState) emptyState.classList.remove('hidden');
         } else {
-          adsGrid.classList.remove('hidden');
-          renderAds(ads);
+          if (adsGrid) {
+            adsGrid.classList.remove('hidden');
+            renderAds(ads);
+          }
         }
       }
     } catch (error) {
       console.error(error);
-      loadingState.innerHTML = '<p class="text-red-500">حدث خطأ أثناء تحميل الإعلانات</p>';
+      if (loadingState) loadingState.innerHTML = '<p class="text-red-500">حدث خطأ أثناء تحميل الإعلانات</p>';
     }
 
-    function renderAds(ads) {
-      adsGrid.innerHTML = ads.map(ad => `
+    function renderAds(ads: any[]) {
+      if (!adsGrid) return;
+      adsGrid.innerHTML = ads.map((ad: any) => `
         <div class="bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 shadow-sm hover:shadow-md transition-shadow group flex flex-col">
           <div class="relative h-48 bg-zinc-100 dark:bg-zinc-800">
             <img src="${Array.isArray(ad.image) ? ad.image[0] : (ad.image || '/images/placeholder.jpg')}" alt="${ad.title}" class="w-full h-full object-cover" onerror="this.src='/images/placeholder.jpg'" />
@@ -146,7 +152,7 @@ export function getStaticPaths() {
     }
 
     // Global delete function
-    window.deleteAd = async (slug) => {
+    (window as any).deleteAd = async (slug: string) => {
       if (confirm('هل أنت متأكد من رغبتك في حذف هذا الإعلان نهائياً؟')) {
         try {
           const res = await fetch('/api/delete-ad', {

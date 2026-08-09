@@ -275,7 +275,7 @@ publishedAds.sort((a: any, b: any) => {
       }
     }
 
-    function updateSubcategories(parentKey) {
+    function updateSubcategories(parentKey: string) {
       const group = categoriesStructure.find(g => g.key === parentKey);
       if (group && group.children.length > 0) {
         subcategoryContainer?.classList.remove('hidden');
