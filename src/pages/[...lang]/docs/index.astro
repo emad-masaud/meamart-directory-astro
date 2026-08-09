@@ -6,10 +6,7 @@ import {
   Rocket,
   ShoppingBag,
   ShieldCheck,
-  FileText,
-  ExternalLink,
-  ChevronLeft,
-  ChevronRight,
+  FileText
 } from "lucide-react";
 
 export const prerender = false;
@@ -21,10 +18,8 @@ export async function getStaticPaths() {
 const { lang } = Astro.params;
 const isAr = lang === "ar";
 
-const allDocs = await getCollection("docs");
-const docs = allDocs
-  .filter((doc) => doc.id.startsWith(`${lang}/`))
-  .sort((a, b) => (a.data.order || 99) - (b.data.order || 99));
+// const allDocs = await getCollection("docs");
+const docs: any[] = [];
 
 const categories = [
   {

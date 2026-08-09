@@ -8,7 +8,7 @@ export const GET: APIRoute = async (context) => {
   let catalogProducts: any[] = [];
   try {
     const businesses = await getCollection('businesses');
-    const activeAds = businesses.filter(b => b.data.status !== 'sold');
+    const activeAds = businesses.filter((b: any) => b.data?.status !== 'sold');
 
     catalogProducts = activeAds.map(p => ({
       id: p.id,
@@ -16,7 +16,7 @@ export const GET: APIRoute = async (context) => {
       sku: p.id || '',
       price: String(p.data.price || ''),
       description: (p.data.description || '').replace(/<[^>]*>/g, '').trim(),
-      brand: p.data.customFields?.brand || '',
+      brand: (p.data as any).custom_fields?.brand || '',
       categories: p.data.category ? [p.data.category] : []
     })).slice(0, 100);
   } catch (e) {

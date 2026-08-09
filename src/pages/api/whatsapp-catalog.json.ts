@@ -11,25 +11,25 @@ export const GET: APIRoute = async ({ url }) => {
   try {
     const origin = url.origin || 'https://meamart.com';
     const businesses = await getCollection('businesses');
-    const ads = businesses.filter(b => b.data.status !== 'sold').slice(0, 500);
+    const ads = businesses.filter((b: any) => b.data?.status !== 'sold').slice(0, 500);
 
     const catalogItems = ads.map(ad => {
       const link = `${origin}/ar/ads/${ad.id}`;
-      const imageLink = Array.isArray(ad.data.images) && ad.data.images.length > 0 ? ad.data.images[0] : `${origin}/default-ad.png`;
-      const additionalImages = Array.isArray(ad.data.images) && ad.data.images.length > 1 ? ad.data.images.slice(1, 5) : [];
+      const imageLink = (ad.data as any).image ? `${origin}${(ad.data as any).image}` : `${origin}/default-ad.png`;
+      const additionalImages: any[] = [];
 
       return {
         id: `MM-${ad.id}`,
         title: ad.data.title || '',
         description: ad.data.description || '',
         availability: 'in stock',
-        condition: ad.data.condition === 'new' ? 'new' : 'used',
-        price: `${ad.data.price || 0} ${ad.data.currency || 'SAR'}`,
+        condition: (ad.data as any).condition === 'new' ? 'new' : 'used',
+        price: `${(ad.data as any).price || 0} ${(ad.data as any).currency || 'SAR'}`,
         link: link,
         image_link: imageLink,
         additional_image_link: additionalImages.join(','),
-        brand: ad.data.customFields?.brand || 'MeaMart',
-        currency: ad.data.currency || 'SAR'
+        brand: (ad.data as any).custom_fields?.brand || 'MeaMart',
+        currency: (ad.data as any).currency || 'SAR'
       };
     });
 
