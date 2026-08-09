@@ -1,0 +1,321 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import Container from "~/components/ui/Container.astro";
+import PageHeader from "~/components/layout/PageHeader.astro";
+import AdCard from "~/components/ui/AdCard.astro";
+import { getCollection } from 'astro:content';
+import { languages } from "~/i18n/ui";
+import { useTranslations } from "~/i18n/utils";
+import { categoriesStructure } from "~/utils/categories";
+import { Icon } from 'astro-icon/components';
+
+export async function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params;
+const isArabic = lang === "ar";
+const t = useTranslations(lang as keyof typeof languages);
+
+// Fetch all ads
+const businesses = await getCollection('businesses');
+const publishedAds = businesses.filter((b: any) => b.data?.published !== false);
+
+// Sort by date (newest first)
+publishedAds.sort((a: any, b: any) => {
+  const dateA = new Date(a.data?.createdAt || 0).getTime();
+  const dateB = new Date(b.data?.createdAt || 0).getTime();
+  return dateB - dateA;
+});
+---
+
+<Layout
+  title={t["categories.page.title"] || (isArabic ? "تصفح الإعلانات | ميمارت" : "Browse Ads | MeaMart")}
+  description={t["categories.page.desc"] || ""}
+>
+  <PageHeader
+    title={isArabic ? "تصفح الإعلانات" : "Browse Ads"}
+    description={isArabic ? "ابحث وتصفح آلاف الإعلانات في مختلف الأقسام" : "Search and browse thousands of ads across various categories"}
+  />
+
+  <Container class="pb-24">
+    <div class="flex flex-col lg:flex-row gap-8 mt-8">
+      
+      {/* Sidebar Filters */}
+      <div class="w-full lg:w-1/4">
+        <div class="bg-white dark:bg-zinc-900 rounded-3xl p-6 border border-zinc-200/50 dark:border-zinc-800/50 shadow-sm sticky top-24">
+          <h3 class="text-xl font-bold mb-6 flex items-center gap-2">
+            <Icon name="lucide:filter" class="w-5 h-5 text-primary" />
+            {isArabic ? "تصفية النتائج" : "Filter Results"}
+          </h3>
+          
+          <div class="space-y-6">
+            {/* Search */}
+            <div>
+              <label class="block text-sm font-bold text-zinc-700 dark:text-zinc-300 mb-2">{isArabic ? "كلمة البحث" : "Search query"}</label>
+              <div class="relative">
+                <input type="text" id="filter-search" class="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder={isArabic ? "ابحث عن..." : "Search for..."} />
+                <Icon name="lucide:search" class="w-5 h-5 absolute left-3 top-3.5 text-zinc-400" />
+              </div>
+            </div>
+
+            {/* Categories */}
+            <div>
+              <label class="block text-sm font-bold text-zinc-700 dark:text-zinc-300 mb-2">{isArabic ? "القسم الرئيسي" : "Category"}</label>
+              <select id="filter-category" class="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all appearance-none cursor-pointer">
+                <option value="">{isArabic ? "جميع الأقسام" : "All Categories"}</option>
+                {categoriesStructure.map(c => (
+                  <option value={c.key}>{isArabic ? c.labelAr : c.labelEn}</option>
+                ))}
+              </select>
+            </div>
+            
+            {/* Subcategories (Dynamic) */}
+            <div id="subcategory-container" class="hidden">
+              <label class="block text-sm font-bold text-zinc-700 dark:text-zinc-300 mb-2">{isArabic ? "القسم الفرعي" : "Subcategory"}</label>
+              <select id="filter-subcategory" class="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all appearance-none cursor-pointer">
+                <option value="">{isArabic ? "جميع الأقسام الفرعية" : "All Subcategories"}</option>
+              </select>
+            </div>
+
+            {/* Cities */}
+            <div>
+              <label class="block text-sm font-bold text-zinc-700 dark:text-zinc-300 mb-2">{isArabic ? "المدينة" : "City"}</label>
+              <select id="filter-city" class="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all appearance-none cursor-pointer">
+                <option value="">{isArabic ? "جميع المدن" : "All Cities"}</option>
+                <option value="riyadh">الرياض</option>
+                <option value="jeddah">جدة</option>
+                <option value="mecca">مكة المكرمة</option>
+                <option value="medina">المدينة المنورة</option>
+                <option value="dammam">الدمام</option>
+                <option value="khobar">الخبر</option>
+              </select>
+            </div>
+
+            <button id="reset-filters" class="w-full py-3 px-4 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 rounded-xl font-bold transition-colors flex items-center justify-center gap-2">
+              <Icon name="lucide:rotate-ccw" class="w-4 h-4" />
+              {isArabic ? "إعادة ضبط" : "Reset"}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Ads Grid */}
+      <div class="w-full lg:w-3/4">
+        
+        <div id="results-count" class="mb-6 text-zinc-600 dark:text-zinc-400 font-medium">
+          {isArabic ? `عرض ${publishedAds.length} إعلان` : `Showing ${publishedAds.length} ads`}
+        </div>
+
+        <div id="ads-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {publishedAds.map((ad: any) => (
+            <div 
+              class="ad-card-wrapper" 
+              data-title={(ad.data.title || '').toLowerCase()}
+              data-category={ad.data.category || ''}
+              data-city={ad.data.city || ''}
+            >
+              <AdCard 
+                title={ad.data.title}
+                price={ad.data.price}
+                category={ad.data.category}
+                city={ad.data.city}
+                image={ad.data.image}
+                sellerPhone={ad.data.phone || ad.data.whatsapp || ''}
+                slug={ad.id}
+                lang={lang}
+                description={ad.data.description}
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* Empty State */}
+        <div id="empty-state" class="hidden py-20 text-center bg-white/50 dark:bg-zinc-900/50 rounded-3xl border border-zinc-200/50 dark:border-zinc-800/50">
+          <div class="w-20 h-20 mx-auto bg-primary/10 text-primary rounded-full flex items-center justify-center mb-6">
+            <Icon name="lucide:search-X" class="w-10 h-10" />
+          </div>
+          <h3 class="text-2xl font-bold mb-2">{isArabic ? "لا توجد نتائج" : "No results found"}</h3>
+          <p class="text-zinc-500 mb-6">{isArabic ? "لم نتمكن من العثور على إعلانات تطابق بحثك. جرب تغيير الفلاتر." : "We couldn't find any ads matching your search. Try changing the filters."}</p>
+          <button id="empty-reset-btn" class="inline-flex items-center gap-2 px-8 py-3 rounded-xl font-bold text-white bg-primary hover:bg-primary/90 transition-all">
+            {isArabic ? "إعادة ضبط الفلاتر" : "Reset Filters"}
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </Container>
+</Layout>
+
+<script>
+  // Categories structure passed from server for dynamic subcategory dropdown
+  const categoriesStructure = [
+    { key: "vehicles", children: [{key:"cars-for-sale", ar:"سيارات للبيع"}, {key:"cars-for-rent", ar:"سيارات للإيجار"}, {key:"car-parts", ar:"قطع غيار"}] },
+    { key: "real-estate", children: [{key:"apartments-for-sale", ar:"شقق للبيع"}, {key:"apartments-for-rent", ar:"شقق للإيجار"}, {key:"villas-for-sale", ar:"فلل للبيع"}, {key:"villas-for-rent", ar:"فلل للإيجار"}, {key:"lands", ar:"أراضي"}, {key:"commercial", ar:"تجاري"}] },
+    { key: "buy-and-sell", children: [{key:"electronics", ar:"إلكترونيات"}, {key:"furniture", ar:"أثاث"}, {key:"fashion", ar:"أزياء"}, {key:"baby", ar:"أطفال"}] },
+    { key: "services", children: [{key:"maintenance", ar:"صيانة"}, {key:"moving", ar:"نقل عفش"}, {key:"cleaning", ar:"تنظيف"}, {key:"contracting", ar:"مقاولات"}] },
+    { key: "community", children: [{key:"events", ar:"فعاليات"}, {key:"classes", ar:"دورات"}, {key:"lost-found", ar:"مفقودات"}] },
+    { key: "jobs", children: [{key:"full-time", ar:"دوام كامل"}, {key:"part-time", ar:"دوام جزئي"}, {key:"remote", ar:"عن بعد"}] }
+  ];
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('filter-search') as HTMLInputElement;
+    const categorySelect = document.getElementById('filter-category') as HTMLSelectElement;
+    const subcategoryContainer = document.getElementById('subcategory-container');
+    const subcategorySelect = document.getElementById('filter-subcategory') as HTMLSelectElement;
+    const citySelect = document.getElementById('filter-city') as HTMLSelectElement;
+    const resetBtn = document.getElementById('reset-filters');
+    const emptyResetBtn = document.getElementById('empty-reset-btn');
+    const adsGrid = document.getElementById('ads-grid');
+    const emptyState = document.getElementById('empty-state');
+    const resultsCount = document.getElementById('results-count');
+    const adCards = document.querySelectorAll('.ad-card-wrapper');
+    const isArabic = document.documentElement.lang !== 'en';
+
+    // Parse URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialCategory = urlParams.get('category');
+    const initialQ = urlParams.get('q');
+    const initialCity = urlParams.get('city');
+
+    if (initialQ) searchInput.value = initialQ;
+    if (initialCity) citySelect.value = initialCity;
+    
+    // Check if initialCategory is a parent or child
+    if (initialCategory) {
+      let isChild = false;
+      let parentKey = '';
+      
+      for (const group of categoriesStructure) {
+        if (group.key === initialCategory) {
+          categorySelect.value = initialCategory;
+          updateSubcategories(initialCategory);
+          break;
+        }
+        for (const child of group.children) {
+          if (child.key === initialCategory) {
+            isChild = true;
+            parentKey = group.key;
+            break;
+          }
+        }
+      }
+
+      if (isChild) {
+        categorySelect.value = parentKey;
+        updateSubcategories(parentKey);
+        subcategorySelect.value = initialCategory;
+      }
+    }
+
+    // Filter logic
+    function filterAds() {
+      const q = searchInput.value.toLowerCase().trim();
+      const cat = subcategorySelect.value || categorySelect.value;
+      const city = citySelect.value;
+      
+      let visibleCount = 0;
+
+      adCards.forEach((card: any) => {
+        const title = card.getAttribute('data-title') || '';
+        const cardCat = card.getAttribute('data-category') || '';
+        const cardCity = card.getAttribute('data-city') || '';
+
+        // Match Logic
+        // For category: if we selected parent "vehicles", it should match anything inside vehicles?
+        // Actually our ads usually have the child category as their category, or parent.
+        // Wait, if `cat` is parent (e.g. "vehicles"), does it match children?
+        let matchesCategory = true;
+        if (cat) {
+          if (cardCat === cat) {
+            matchesCategory = true;
+          } else {
+            // Check if cardCat is a child of the selected parent cat
+            const selectedGroup = categoriesStructure.find(g => g.key === cat);
+            if (selectedGroup) {
+              const isChildOfSelected = selectedGroup.children.some(c => c.key === cardCat);
+              matchesCategory = isChildOfSelected;
+            } else {
+              matchesCategory = false;
+            }
+          }
+        }
+
+        const matchesSearch = q === '' || title.includes(q);
+        const matchesCity = city === '' || cardCity === city;
+
+        if (matchesCategory && matchesSearch && matchesCity) {
+          card.style.display = 'block';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      // Update URL silently
+      const newUrlParams = new URLSearchParams();
+      if (q) newUrlParams.set('q', q);
+      if (cat) newUrlParams.set('category', cat);
+      if (city) newUrlParams.set('city', city);
+      
+      const newUrl = window.location.pathname + (newUrlParams.toString() ? '?' + newUrlParams.toString() : '');
+      window.history.replaceState({}, '', newUrl);
+
+      // UI updates
+      if (visibleCount === 0) {
+        adsGrid?.classList.add('hidden');
+        emptyState?.classList.remove('hidden');
+      } else {
+        adsGrid?.classList.remove('hidden');
+        emptyState?.classList.add('hidden');
+      }
+
+      if (resultsCount) {
+        resultsCount.textContent = isArabic ? `عرض ${visibleCount} إعلان` : `Showing ${visibleCount} ads`;
+      }
+    }
+
+    function updateSubcategories(parentKey) {
+      const group = categoriesStructure.find(g => g.key === parentKey);
+      if (group && group.children.length > 0) {
+        subcategoryContainer?.classList.remove('hidden');
+        
+        let options = `<option value="">${isArabic ? "جميع الأقسام الفرعية" : "All Subcategories"}</option>`;
+        group.children.forEach(child => {
+          options += `<option value="${child.key}">${isArabic ? child.ar : child.key}</option>`;
+        });
+        
+        subcategorySelect.innerHTML = options;
+      } else {
+        subcategoryContainer?.classList.add('hidden');
+        subcategorySelect.innerHTML = `<option value="">${isArabic ? "جميع الأقسام الفرعية" : "All Subcategories"}</option>`;
+      }
+    }
+
+    // Event Listeners
+    searchInput.addEventListener('input', filterAds);
+    citySelect.addEventListener('change', filterAds);
+    
+    categorySelect.addEventListener('change', (e) => {
+      const val = (e.target as HTMLSelectElement).value;
+      updateSubcategories(val);
+      filterAds();
+    });
+
+    subcategorySelect.addEventListener('change', filterAds);
+
+    function resetAll() {
+      searchInput.value = '';
+      categorySelect.value = '';
+      citySelect.value = '';
+      updateSubcategories('');
+      filterAds();
+    }
+
+    resetBtn?.addEventListener('click', resetAll);
+    emptyResetBtn?.addEventListener('click', resetAll);
+
+    // Initial filter execution
+    filterAds();
+  });
+</script>
