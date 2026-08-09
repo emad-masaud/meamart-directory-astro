@@ -57,6 +57,7 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@iconify-json/lucide": "^1.2.122",
     "@iconify-json/tabler": "^1.2.5",
     "@tailwindcss/typography": "^0.5.15",
     "astro-icon": "^1.1.1",

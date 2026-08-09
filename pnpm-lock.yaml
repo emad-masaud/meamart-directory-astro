@@ -144,6 +144,9 @@ importers:
         specifier: ^3.24.2
         version: 3.24.2
     devDependencies:
+      '@iconify-json/lucide':
+        specifier: ^1.2.122
+        version: 1.2.122
       '@iconify-json/tabler':
         specifier: ^1.2.5
         version: 1.2.5
@@ -860,6 +863,9 @@ packages:
 
   '@iarna/toml@2.2.5':
     resolution: {integrity: sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg==, tarball: https://registry.npmjs.org/@iarna/toml/-/toml-2.2.5.tgz}
+
+  '@iconify-json/lucide@1.2.122':
+    resolution: {integrity: sha512-Dpt+ZbYTyKZqyRkEHmxEcsSsRW9yRTmkaweT2A1hfH7zKHZZ7FKmcn5evTh93ZlkYq2Vpb1YZUBsjc9AxZlcUg==, tarball: https://registry.npmjs.org/@iconify-json/lucide/-/lucide-1.2.122.tgz}
 
   '@iconify-json/tabler@1.2.5':
     resolution: {integrity: sha512-BDDLgDCbJ2btwi6cPmBL04QyPyNmWy6H13ynUAX48xxpxqUuG+hT+yrqL+RCugFimrvuhcecbSfEKnFc0BW1Ng==, tarball: https://registry.npmjs.org/@iconify-json/tabler/-/tabler-1.2.5.tgz}
@@ -5043,6 +5049,10 @@ snapshots:
       vue: 3.5.11(typescript@5.6.2)
 
   '@iarna/toml@2.2.5': {}
+
+  '@iconify-json/lucide@1.2.122':
+    dependencies:
+      '@iconify/types': 2.0.0
 
   '@iconify-json/tabler@1.2.5':
     dependencies:
