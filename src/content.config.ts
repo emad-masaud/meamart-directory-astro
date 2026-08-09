@@ -25,6 +25,7 @@ const businesses = defineCollection({
     currency: z.string().optional(),
     condition: z.string().optional(),
     negotiable: z.boolean().optional(),
+    author_id: z.string().optional(),
     advertiser_name: z.string().optional(),
     logo: z.string().optional(),
     image: z.union([z.string(), z.array(z.string())]).optional(),
