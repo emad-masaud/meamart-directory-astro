@@ -206,16 +206,28 @@ const description = isArabic ? "أضف تفاصيل إعلانك الجديد ل
 
 <style>
   .step-indicator {
-    @apply relative z-10;
+    position: relative;
+    z-index: 10;
   }
   .step-indicator.active > div {
-    @apply bg-primary text-white border-white dark:border-zinc-950;
+    background-color: var(--color-primary);
+    color: white;
+    border-color: white;
+  }
+  :global(.dark) .step-indicator.active > div {
+    border-color: #09090b; /* zinc-950 */
   }
   .step-indicator.active > span {
-    @apply text-primary font-bold;
+    color: var(--color-primary);
+    font-weight: bold;
   }
   .step-indicator.completed > div {
-    @apply bg-primary text-white border-white dark:border-zinc-950;
+    background-color: var(--color-primary);
+    color: white;
+    border-color: white;
+  }
+  :global(.dark) .step-indicator.completed > div {
+    border-color: #09090b;
   }
   
   /* Make the line colored based on progress */
