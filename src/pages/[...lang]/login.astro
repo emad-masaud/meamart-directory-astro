@@ -1,0 +1,88 @@
+---
+import Layout from "../../layouts/BaseLayout.astro";
+import { Icon } from 'astro-icon/components';
+
+export function getStaticPaths() {
+  return [
+    { params: { lang: "ar" } },
+    { params: { lang: "en" } },
+  ];
+}
+---
+
+<Layout title="تسجيل الدخول - ميمارت">
+  <div class="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8 bg-white dark:bg-zinc-900 p-8 rounded-3xl shadow-xl border border-zinc-100 dark:border-zinc-800">
+      <div class="text-center">
+        <div class="mx-auto h-16 w-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-4">
+          <Icon name="lucide:user" class="w-8 h-8" />
+        </div>
+        <h2 class="text-3xl font-extrabold text-zinc-900 dark:text-white">
+          تسجيل الدخول
+        </h2>
+        <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+          أدخل رقم جوالك للدخول إلى لوحة التحكم
+        </p>
+      </div>
+      
+      <form class="mt-8 space-y-6" id="login-form">
+        <div class="rounded-md shadow-sm space-y-4">
+          <div>
+            <label for="phone" class="block text-sm font-bold text-zinc-700 dark:text-zinc-300 mb-2">رقم الجوال</label>
+            <input id="phone" name="phone" type="tel" required class="appearance-none relative block w-full px-4 py-3 border border-zinc-300 dark:border-zinc-700 placeholder-zinc-500 text-zinc-900 dark:text-white rounded-xl focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm bg-transparent" placeholder="05XXXXXXXX">
+          </div>
+        </div>
+
+        <div>
+          <button type="submit" id="submit-btn" class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-xl text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary shadow-lg transition-all">
+            <span id="submit-text">دخول</span>
+            <span id="submit-spinner" class="hidden w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin absolute right-4"></span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('login-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const submitText = document.getElementById('submit-text');
+    const submitSpinner = document.getElementById('submit-spinner');
+    
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      submitBtn.disabled = true;
+      submitText.textContent = 'جاري التحقق...';
+      submitSpinner.classList.remove('hidden');
+      
+      const phone = document.getElementById('phone').value;
+      
+      try {
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ phone })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok && result.success) {
+          window.location.href = `/${document.documentElement.lang}/dashboard`;
+        } else {
+          alert('حدث خطأ: ' + (result.error || 'غير معروف'));
+        }
+      } catch (error) {
+        alert('حدث خطأ في الاتصال');
+      } finally {
+        submitBtn.disabled = false;
+        submitText.textContent = 'دخول';
+        submitSpinner.classList.add('hidden');
+      }
+    });
+  });
+</script>

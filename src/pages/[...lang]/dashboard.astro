@@ -1,0 +1,169 @@
+---
+import Layout from "../../layouts/BaseLayout.astro";
+import { Icon } from 'astro-icon/components';
+
+export function getStaticPaths() {
+  return [
+    { params: { lang: "ar" } },
+    { params: { lang: "en" } },
+  ];
+}
+---
+
+<Layout title="لوحة التحكم - ميمارت">
+  <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 min-h-[80vh]">
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+      <div>
+        <h1 class="text-3xl font-extrabold text-zinc-900 dark:text-white flex items-center gap-3">
+          <Icon name="lucide:layout-dashboard" class="w-8 h-8 text-primary" />
+          لوحة التحكم
+        </h1>
+        <p class="mt-2 text-zinc-600 dark:text-zinc-400">مرحباً بك، <span id="user-phone" class="font-bold"></span></p>
+      </div>
+      
+      <div class="flex gap-3">
+        <a href={`/${Astro.params.lang}/ads/create`} class="px-6 py-2.5 rounded-xl font-bold text-white bg-primary hover:bg-primary/90 flex items-center gap-2 shadow-lg shadow-primary/25 transition-all">
+          <Icon name="lucide:plus" class="w-5 h-5" />
+          إعلان جديد
+        </a>
+        <button id="logout-btn" class="px-6 py-2.5 rounded-xl font-bold text-red-600 bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors flex items-center gap-2">
+          <Icon name="lucide:log-out" class="w-5 h-5" />
+          خروج
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading-state" class="py-20 flex flex-col items-center justify-center">
+      <div class="w-12 h-12 border-4 border-zinc-200 border-t-primary rounded-full animate-spin mb-4"></div>
+      <p class="text-zinc-500 font-medium">جاري تحميل إعلاناتك...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div id="empty-state" class="hidden py-20 text-center bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-100 dark:border-zinc-800">
+      <div class="w-20 h-20 mx-auto bg-primary/10 text-primary rounded-full flex items-center justify-center mb-6">
+        <Icon name="lucide:inbox" class="w-10 h-10" />
+      </div>
+      <h3 class="text-xl font-bold mb-2">لا يوجد لديك إعلانات</h3>
+      <p class="text-zinc-500 mb-6">لم تقم بنشر أي إعلان بعد. ابدأ بنشر إعلانك الأول الآن!</p>
+      <a href={`/${Astro.params.lang}/ads/create`} class="inline-flex items-center gap-2 px-8 py-3 rounded-xl font-bold text-white bg-primary hover:bg-primary/90 transition-all">
+        نشر إعلان
+      </a>
+    </div>
+
+    <!-- Ads Grid -->
+    <div id="ads-grid" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Ads will be injected here via JS -->
+    </div>
+  </div>
+</Layout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    const loadingState = document.getElementById('loading-state');
+    const emptyState = document.getElementById('empty-state');
+    const adsGrid = document.getElementById('ads-grid');
+    const userPhoneSpan = document.getElementById('user-phone');
+    const logoutBtn = document.getElementById('logout-btn');
+    const lang = document.documentElement.lang || 'ar';
+    
+    // Check Auth
+    let userPhone = null;
+    try {
+      const meRes = await fetch('/api/auth/me');
+      if (meRes.ok) {
+        const data = await meRes.json();
+        if (data.authenticated) {
+          userPhone = data.phone;
+          userPhoneSpan.textContent = userPhone;
+        } else {
+          window.location.href = `/${lang}/login`;
+          return;
+        }
+      } else {
+        window.location.href = `/${lang}/login`;
+        return;
+      }
+    } catch (error) {
+      window.location.href = `/${lang}/login`;
+      return;
+    }
+
+    // Handle Logout
+    logoutBtn.addEventListener('click', async () => {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      window.location.href = `/${lang}/login`;
+    });
+
+    // Fetch Ads
+    try {
+      const adsRes = await fetch(`/api/my-ads?phone=${userPhone}`);
+      if (adsRes.ok) {
+        const ads = await adsRes.json();
+        loadingState.classList.add('hidden');
+        
+        if (ads.length === 0) {
+          emptyState.classList.remove('hidden');
+        } else {
+          adsGrid.classList.remove('hidden');
+          renderAds(ads);
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      loadingState.innerHTML = '<p class="text-red-500">حدث خطأ أثناء تحميل الإعلانات</p>';
+    }
+
+    function renderAds(ads) {
+      adsGrid.innerHTML = ads.map(ad => `
+        <div class="bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 shadow-sm hover:shadow-md transition-shadow group flex flex-col">
+          <div class="relative h-48 bg-zinc-100 dark:bg-zinc-800">
+            <img src="${Array.isArray(ad.image) ? ad.image[0] : (ad.image || '/images/placeholder.jpg')}" alt="${ad.title}" class="w-full h-full object-cover" onerror="this.src='/images/placeholder.jpg'" />
+            <div class="absolute top-3 right-3 flex gap-2">
+              <span class="px-3 py-1 text-xs font-bold rounded-full ${ad.published ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">
+                ${ad.published ? 'منشور' : 'بانتظار المراجعة'}
+              </span>
+            </div>
+          </div>
+          <div class="p-5 flex-1 flex flex-col">
+            <h3 class="font-bold text-lg mb-2 line-clamp-1">${ad.title}</h3>
+            <p class="text-zinc-500 text-sm mb-4 line-clamp-2 flex-1">${ad.description || 'لا يوجد وصف'}</p>
+            
+            <div class="flex items-center justify-between mt-auto pt-4 border-t border-zinc-100 dark:border-zinc-800">
+              <a href="/${lang}/ads/edit/${ad.slug}" class="flex items-center gap-1.5 text-sm font-bold text-primary hover:text-primary/80 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                تعديل
+              </a>
+              <button onclick="deleteAd('${ad.slug}')" class="flex items-center gap-1.5 text-sm font-bold text-red-500 hover:text-red-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                حذف
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Global delete function
+    window.deleteAd = async (slug) => {
+      if (confirm('هل أنت متأكد من رغبتك في حذف هذا الإعلان نهائياً؟')) {
+        try {
+          const res = await fetch('/api/delete-ad', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ slug })
+          });
+          const result = await res.json();
+          if (res.ok && result.success) {
+            alert('تم حذف الإعلان بنجاح');
+            window.location.reload();
+          } else {
+            alert('خطأ: ' + (result.error || 'فشل الحذف'));
+          }
+        } catch (e) {
+          alert('حدث خطأ في الاتصال بالخادم');
+        }
+      }
+    };
+  });
+</script>
