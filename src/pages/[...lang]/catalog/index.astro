@@ -4,6 +4,7 @@ import Container from "~/components/ui/Container.astro";
 import { useTranslations } from "~/i18n/utils";
 import ProductFilters from "~/components/ui/ProductFilters";
 import { getCityLabel } from '~/utils/cities';
+import PageHeader from "~/components/layout/PageHeader.astro";
 import { ShoppingBag, Eye, Star, User, CheckCircle, MapPin, MessageSquare, Globe } from "lucide-react";
 import { getCollection } from 'astro:content';
 
@@ -184,7 +185,7 @@ const whatsappUrl = `https://wa.me/?text=Hello`;
       </h2>
 
       <ProductFilters 
-        products={formattedProducts} 
+        products={formattedProducts as any} 
         lang={lang} 
         sellerResolved={!!seller} 
         client:load 
