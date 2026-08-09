@@ -77,7 +77,9 @@ export function getStaticPaths() {
         const data = await meRes.json();
         if (data.authenticated) {
           userPhone = data.phone;
-          if (userPhoneSpan) userPhoneSpan.textContent = userPhone;
+          if (userPhoneSpan) {
+            userPhoneSpan.textContent = userPhone;
+          }
         } else {
           window.location.href = `/${lang}/login`;
           return;
@@ -91,7 +93,6 @@ export function getStaticPaths() {
       return;
     }
 
-    // Handle Logout
     if (logoutBtn) {
       logoutBtn.addEventListener('click', async () => {
         await fetch('/api/auth/logout', { method: 'POST' });
@@ -99,16 +100,16 @@ export function getStaticPaths() {
       });
     }
 
-    // Fetch Ads
     try {
       const adsRes = await fetch(`/api/my-ads?phone=${userPhone}`);
       if (adsRes.ok) {
-        const ads = await adsRes.json();
+        const ads: any[] = await adsRes.json();
         if (loadingState) loadingState.classList.add('hidden');
         
         if (ads.length === 0) {
           if (emptyState) emptyState.classList.remove('hidden');
         } else {
+          if (emptyState) emptyState.classList.add('hidden');
           if (adsGrid) {
             adsGrid.classList.remove('hidden');
             renderAds(ads);
@@ -121,37 +122,37 @@ export function getStaticPaths() {
     }
 
     function renderAds(ads: any[]) {
-      if (!adsGrid) return;
-      adsGrid.innerHTML = ads.map((ad: any) => `
-        <div class="bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 shadow-sm hover:shadow-md transition-shadow group flex flex-col">
-          <div class="relative h-48 bg-zinc-100 dark:bg-zinc-800">
-            <img src="${Array.isArray(ad.image) ? ad.image[0] : (ad.image || '/images/placeholder.jpg')}" alt="${ad.title}" class="w-full h-full object-cover" onerror="this.src='/images/placeholder.jpg'" />
-            <div class="absolute top-3 right-3 flex gap-2">
-              <span class="px-3 py-1 text-xs font-bold rounded-full ${ad.published ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">
-                ${ad.published ? 'منشور' : 'بانتظار المراجعة'}
-              </span>
+      if (adsGrid) {
+        adsGrid.innerHTML = ads.map((ad: any) => `
+          <div class="bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 shadow-sm hover:shadow-md transition-shadow group flex flex-col">
+            <div class="relative h-48 bg-zinc-100 dark:bg-zinc-800">
+              <img src="${Array.isArray(ad.image) ? ad.image[0] : (ad.image || '/images/placeholder.jpg')}" alt="${ad.title}" class="w-full h-full object-cover" onerror="this.src='/images/placeholder.jpg'" />
+              <div class="absolute top-3 right-3 flex gap-2">
+                <span class="px-3 py-1 text-xs font-bold rounded-full ${ad.published ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">
+                  ${ad.published ? 'منشور' : 'بانتظار المراجعة'}
+                </span>
+              </div>
+            </div>
+            <div class="p-5 flex-1 flex flex-col">
+              <h3 class="font-bold text-lg mb-2 line-clamp-1">${ad.title}</h3>
+              <p class="text-zinc-500 text-sm mb-4 line-clamp-2 flex-1">${ad.description || 'لا يوجد وصف'}</p>
+              
+              <div class="flex items-center justify-between mt-auto pt-4 border-t border-zinc-100 dark:border-zinc-800">
+                <a href="/${lang}/ads/edit/${ad.slug}" class="flex items-center gap-1.5 text-sm font-bold text-primary hover:text-primary/80 transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                  تعديل
+                </a>
+                <button onclick="deleteAd('${ad.slug}')" class="flex items-center gap-1.5 text-sm font-bold text-red-500 hover:text-red-600 transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                  حذف
+                </button>
+              </div>
             </div>
           </div>
-          <div class="p-5 flex-1 flex flex-col">
-            <h3 class="font-bold text-lg mb-2 line-clamp-1">${ad.title}</h3>
-            <p class="text-zinc-500 text-sm mb-4 line-clamp-2 flex-1">${ad.description || 'لا يوجد وصف'}</p>
-            
-            <div class="flex items-center justify-between mt-auto pt-4 border-t border-zinc-100 dark:border-zinc-800">
-              <a href="/${lang}/ads/edit/${ad.slug}" class="flex items-center gap-1.5 text-sm font-bold text-primary hover:text-primary/80 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-                تعديل
-              </a>
-              <button onclick="deleteAd('${ad.slug}')" class="flex items-center gap-1.5 text-sm font-bold text-red-500 hover:text-red-600 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
-                حذف
-              </button>
-            </div>
-          </div>
-        </div>
-      `).join('');
+        `).join('');
+      }
     }
 
-    // Global delete function
     (window as any).deleteAd = async (slug: string) => {
       if (confirm('هل أنت متأكد من رغبتك في حذف هذا الإعلان نهائياً؟')) {
         try {
