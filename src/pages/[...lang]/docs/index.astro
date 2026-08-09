@@ -9,10 +9,12 @@ import {
   FileText
 } from "lucide-react";
 
-export const prerender = false;
-
 export async function getStaticPaths() {
-  return [{ params: { lang: "en" } }, { params: { lang: "ar" } }];
+  return [
+    { params: { lang: undefined } },
+    { params: { lang: "ar" } },
+    { params: { lang: "en" } },
+  ];
 }
 
 const { lang } = Astro.params;

@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro';
 import { customFieldsByCategory } from '~/utils/customFields';
 import { getCollection } from 'astro:content';
 
-export const prerender = false;
+
 
 export const GET: APIRoute = async (context) => {
   let catalogProducts: any[] = [];

@@ -8,8 +8,13 @@ import PageHeader from "~/components/layout/PageHeader.astro";
 import { ShoppingBag, Eye, Star, User, CheckCircle, MapPin, MessageSquare, Globe } from "lucide-react";
 import { getCollection } from 'astro:content';
 
-export const prerender = false;
-
+export function getStaticPaths() {
+  return [
+    { params: { lang: undefined } },
+    { params: { lang: "ar" } },
+    { params: { lang: "en" } },
+  ];
+}
 const { lang } = Astro.params as { lang: "ar" | "en" };
 const t = useTranslations(lang);
 const seller: any = null; // No multi-tenant domains in this version yet

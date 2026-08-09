@@ -12,8 +12,13 @@ import { categoriesMap } from "~/utils/categories";
 import { getCityLabel } from "~/utils/cities";
 import { Eye, Share2 } from "lucide-react";
 
-export const prerender = false;
-
+export function getStaticPaths() {
+  return [
+    { params: { lang: undefined } },
+    { params: { lang: "ar" } },
+    { params: { lang: "en" } },
+  ];
+}
 const { lang } = Astro.params;
 const t = useTranslations(lang);
 const isAr = lang === "ar";

@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 
-export const prerender = false;
+
 
 /**
  * WhatsApp Catalog / Meta Commerce Manager Feed API
