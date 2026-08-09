@@ -1,5 +1,22 @@
 export async function onRequestPost(context) {
   try {
+    const cookieHeader = context.request.headers.get("Cookie");
+    let user = null;
+    
+    // Extract user from session
+    if (cookieHeader) {
+      const cookies = cookieHeader.split(';').map(c => c.trim());
+      const sessionCookie = cookies.find(c => c.startsWith('meamart_session='));
+      if (sessionCookie) {
+        const sessionData = sessionCookie.split('=')[1];
+        try {
+          user = JSON.parse(decodeURIComponent(atob(sessionData)));
+        } catch (e) {
+          user = null;
+        }
+      }
+    }
+
     const formData = await context.request.formData();
     
     // Extract text fields
@@ -75,9 +92,12 @@ export async function onRequestPost(context) {
     }
 
     // Prepare JSON file content
+    const author_id = user && user.email ? btoa(user.email).replace(/=/g, '').toLowerCase() : "";
+    
     const fileContent = {
       id: slug,
       slug: slug,
+      author_id: author_id,
       title: title,
       advertiser_name: name,
       description: description,
