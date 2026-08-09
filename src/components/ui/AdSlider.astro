@@ -1,5 +1,5 @@
 ---
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Icon } from 'astro-icon/components';
 
 interface Props {
   images: string[];
@@ -34,14 +34,14 @@ const processedImages = hasImages ? validImages.map(img => img.startsWith('http'
             class="absolute left-4 top-1/2 -translate-y-1/2 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-xs transition hover:bg-black/60 active:scale-95"
             aria-label="Previous image"
           >
-            <ChevronLeft className="h-6 w-6" />
+            <Icon name="lucide:chevron-left" class="h-6 w-6" />
           </button>
           <button
             id="ad-slider-next"
             class="absolute right-4 top-1/2 -translate-y-1/2 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-xs transition hover:bg-black/60 active:scale-95"
             aria-label="Next image"
           >
-            <ChevronRight className="h-6 w-6" />
+            <Icon name="lucide:chevron-right" class="h-6 w-6" />
           </button>
         </>
       )}
@@ -140,3 +140,4 @@ const processedImages = hasImages ? validImages.map(img => img.startsWith('http'
     });
   });
 </script>
+

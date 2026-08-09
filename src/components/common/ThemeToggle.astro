@@ -1,5 +1,5 @@
 ---
-import { Sun, Moon } from 'lucide-react';
+import { Icon } from 'astro-icon/components';
 ---
 
 <button
@@ -7,8 +7,8 @@ import { Sun, Moon } from 'lucide-react';
   aria-label="Toggle Theme"
   onclick="window.toggleTheme()"
 >
-  <Sun className="w-5 h-5 dark:hidden" />
-  <Moon className="w-5 h-5 hidden dark:block" />
+  <Icon name="lucide:sun" class="w-5 h-5 dark:hidden" />
+  <Icon name="lucide:moon" class="w-5 h-5 hidden dark:block" />
 </button>
 
 <script is:inline>
@@ -21,3 +21,4 @@ import { Sun, Moon } from 'lucide-react';
     };
   }
 </script>
+

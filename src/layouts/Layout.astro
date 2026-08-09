@@ -7,7 +7,7 @@ import Schema from "~/components/layout/Schema.astro";
 import CookieConsent from "~/components/common/CookieConsent.astro";
 import "../styles/global.css";
 import AnnouncementBanner from "~/components/sections/AnnouncementBanner.astro";
-import { LayoutGrid, MessageCircle, ShoppingBag } from "lucide-react";
+import { Icon } from 'astro-icon/components';
 
 interface Props {
   title?: string;
@@ -330,3 +330,4 @@ const dir = isRtl(lang) ? "rtl" : "ltr";
     </script>
   </body>
 </html>
+

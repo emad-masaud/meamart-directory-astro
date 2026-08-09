@@ -1,5 +1,5 @@
 ---
-import { Cookie, X } from "lucide-react";
+import { Icon } from 'astro-icon/components';
 import { ui, defaultLang } from "~/i18n/ui";
 import { isRtl, useTranslations } from "~/i18n/utils";
 
@@ -46,7 +46,7 @@ const positionClasses = isRtl(lang)
       class="text-foreground/70 hover:text-foreground transition-colors p-1"
       aria-label="Close cookie banner"
     >
-      <X className="w-5 h-5" />
+      <Icon name="lucide:x" class="w-5 h-5" />
     </button>
   </div>
 </div>
@@ -107,3 +107,4 @@ const positionClasses = isRtl(lang)
   // Run on view transitions navigation
   document.addEventListener("astro:page-load", initCookieConsent);
 </script>
+

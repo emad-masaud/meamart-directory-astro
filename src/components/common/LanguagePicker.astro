@@ -1,6 +1,6 @@
 ---
 import { languages } from '../../i18n/ui';
-import { Globe } from 'lucide-react';
+import { Icon } from 'astro-icon/components';
 
 interface Props {
     availableLangs?: string[];
@@ -88,3 +88,4 @@ const showPicker = displayLanguages.length > 1;
     setupLanguagePicker();
     document.addEventListener('astro:page-load', setupLanguagePicker);
 </script>
+

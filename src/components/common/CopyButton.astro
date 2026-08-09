@@ -1,5 +1,5 @@
 ---
-import { Copy, Check } from 'lucide-react';
+import { Icon } from 'astro-icon/components';
 
 interface Props {
   text: string;
@@ -15,10 +15,10 @@ const { text } = Astro.props;
   data-text={text}
 >
   <div class="scale-100 opacity-100 transition-all duration-200 group-[.copied]:scale-80 group-[.copied]:opacity-0 absolute inset-0 flex items-center justify-center">
-    <Copy className="w-4 h-4" />
+    <Icon name="lucide:copy" class="w-4 h-4" />
   </div>
   <div class="scale-80 opacity-0 transition-all duration-200 group-[.copied]:scale-100 group-[.copied]:opacity-100 flex items-center justify-center">
-    <Check className="w-4 h-4 text-emerald-500" />
+    <Icon name="lucide:check" class="w-4 h-4 text-emerald-500" />
   </div>
 </button>
 
@@ -50,3 +50,4 @@ const { text } = Astro.props;
   // Run on view transitions navigation
   document.addEventListener('astro:page-load', initCopyButtons);
 </script>
+

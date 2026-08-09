@@ -1,5 +1,5 @@
 ---
-import { ChevronRight, Home } from 'lucide-react';
+import { Icon } from 'astro-icon/components';
 
 interface BreadcrumbItem {
   label: string;
@@ -19,7 +19,7 @@ const { items = [] } = Astro.props;
     <li>
       <div>
         <a href="/" class="text-muted-foreground hover:text-primary transition-colors">
-          <Home className="h-4 w-4 shrink-0" />
+          <Icon name="lucide:home" class="h-4 w-4 shrink-0" />
           <span class="sr-only">Home</span>
         </a>
       </div>
@@ -27,7 +27,7 @@ const { items = [] } = Astro.props;
     {items.map((item) => (
       <li>
         <div class="flex items-center">
-          <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground/50" />
+          <Icon name="lucide:chevron-right" class="h-4 w-4 shrink-0 text-muted-foreground/50" />
           <a
             href={item.href}
             class={`ml-2 text-sm font-medium transition-colors ${
@@ -44,3 +44,4 @@ const { items = [] } = Astro.props;
     ))}
   </ol>
 </nav>
+
