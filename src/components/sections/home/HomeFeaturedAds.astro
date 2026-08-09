@@ -1,0 +1,104 @@
+---
+import { useTranslations } from '~/i18n/utils';
+import AdCard from '~/components/ui/AdCard.astro';
+import HomeSlideItem from '~/components/sections/home/HomeSlideItem.astro';
+
+interface AdItem {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  price: number;
+  currency?: string;
+  categoryKey: string;
+  categoryAr: string;
+  categoryEn: string;
+  cityAr: string;
+  cityEn: string;
+  image: string;
+  sellerPhone: string;
+}
+
+interface Props {
+  ads?: AdItem[];
+  lang?: string;
+}
+
+let { ads = [], lang = 'en' } = Astro.props as Props;
+
+if (ads.length === 0) {
+  try {
+    const { getCollection } = await import('astro:content');
+    const categoriesJson = await import('~/data/categories.json');
+    const rawAds = await getCollection('businesses', ({ data }: any) => {
+      return data.published === true && data.featured === true;
+    });
+
+    if (rawAds && rawAds.length > 0) {
+      rawAds.sort((a: any, b: any) => {
+        const idA = a.data.id.replace('ad-', '');
+        const idB = b.data.id.replace('ad-', '');
+        return Number(idB) - Number(idA);
+      });
+      
+      ads = rawAds.slice(0, 6).map((ad: any) => {
+        const categoryKey = ad.data.category || 'other';
+        const category = categoriesJson.default.find((c: any) => c.id === categoryKey) || { title: categoryKey };
+        const city = ad.data.city || '';
+        
+        return {
+          id: String(ad.data.id),
+          slug: ad.data.slug || String(ad.data.id),
+          title: ad.data.title || 'بدون عنوان',
+          description: ad.data.description || '',
+          price: 0,
+          currency: 'SAR',
+          categoryKey: categoryKey,
+          categoryAr: category.title,
+          categoryEn: category.title,
+          cityAr: city,
+          cityEn: city,
+          image: ad.data.image || '/logo.svg',
+          sellerPhone: ad.data.phone || '',
+        };
+      });
+    }
+  } catch (e) {
+    console.error('Failed to self-fetch featured ads:', e);
+  }
+}
+
+const t = useTranslations(lang);
+---
+
+{ads.length > 0 && (
+  <section class="py-12 bg-muted/30">
+    <div class="container mx-auto px-4">
+      <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h2 class="text-3xl font-bold">{t['home.featured.title']}</h2>
+        </div>
+        <a href={`/${lang}/ads?featured=1`} class="text-sm font-semibold text-primary hover:underline">
+          {t['home.featured.view_all']}
+        </a>
+      </div>
+
+      <div class="flex snap-x snap-mandatory gap-4 overflow-x-auto pt-2 pb-4 px-1">
+        {ads.slice(0, 6).map((ad) => (
+          <HomeSlideItem class="min-w-[320px] max-w-85 snap-start">
+            <AdCard
+              title={ad.title}
+              price={ad.price}
+              category={lang === 'ar' ? ad.categoryAr : ad.categoryEn}
+              city={lang === 'ar' ? ad.cityAr : ad.cityEn}
+              image={ad.image}
+              sellerPhone={ad.sellerPhone}
+              slug={`/${lang}/ads/${ad.id}`}
+              lang={lang}
+            />
+          </HomeSlideItem>
+        ))}
+      </div>
+    </div>
+  </section>
+)}

@@ -1,0 +1,90 @@
+---
+import { languages } from '../../i18n/ui';
+import { Globe } from 'lucide-react';
+
+interface Props {
+    availableLangs?: string[];
+}
+
+const { lang = 'en' } = Astro.params;
+const { availableLangs } = Astro.props;
+
+// Filter the languages list to only show available ones if provided
+const displayLanguages = availableLangs 
+    ? Object.entries(languages).filter(([key]) => availableLangs.includes(key))
+    : Object.entries(languages);
+
+// If we only have 1 (or 0) languages to show, don't render the picker
+const showPicker = displayLanguages.length > 1;
+---
+
+{showPicker && (
+<div class="relative group language-picker">
+    <button class="language-toggle h-10 w-10 flex items-center justify-center rounded-full text-foreground/65 hover:text-foreground bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 transition-all shadow-xs focus:outline-none shrink-0" aria-label="Select Language" aria-expanded="false">
+        <span class="text-xs font-bold uppercase">{lang}</span>
+    </button>
+    <div class="language-menu absolute right-0 top-full mt-2 w-32 bg-white border border-zinc-200/50 rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 dark:bg-zinc-900 dark:border-zinc-800">
+        <ul class="py-1">
+            {displayLanguages.map(([label, name]) => (
+                <li>
+                    <a 
+                        href={`/${label}${Astro.url.pathname.replace(new RegExp(`^/(${Object.keys(languages).join('|')})`), '')}`} 
+                        class={`block px-4 py-2 text-sm hover:bg-muted transition-colors ${lang === label ? 'text-primary font-bold' : 'text-foreground'}`}
+                    >
+                        {name}
+                    </a>
+                </li>
+            ))}
+        </ul>
+    </div>
+</div>
+)}
+
+<script>
+    function setupLanguagePicker() {
+        // Remove old global listeners if re-running
+        document.removeEventListener('click', handleLanguagePickerClick);
+        document.addEventListener('click', handleLanguagePickerClick);
+    }
+
+    function handleLanguagePickerClick(e: MouseEvent) {
+        const target = e.target as HTMLElement;
+        const toggle = target.closest('.language-toggle');
+        const isClickInsideMenu = target.closest('.language-menu');
+        
+        // Close all menus if clicked outside
+        if (!toggle && !isClickInsideMenu) {
+            document.querySelectorAll('.language-menu').forEach(menu => {
+                menu.classList.remove('!opacity-100', '!visible');
+            });
+            document.querySelectorAll('.language-toggle').forEach(t => {
+                t.setAttribute('aria-expanded', 'false');
+            });
+            return;
+        }
+
+        if (toggle) {
+            e.stopPropagation();
+            const container = toggle.closest('.language-picker');
+            const menu = container?.querySelector('.language-menu');
+            if (menu) {
+                // Close others
+                document.querySelectorAll('.language-menu').forEach(m => {
+                    if (m !== menu) m.classList.remove('!opacity-100', '!visible');
+                });
+                document.querySelectorAll('.language-toggle').forEach(t => {
+                    if (t !== toggle) t.setAttribute('aria-expanded', 'false');
+                });
+
+                const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+                toggle.setAttribute('aria-expanded', (!isExpanded).toString());
+                menu.classList.toggle('!opacity-100');
+                menu.classList.toggle('!visible');
+            }
+        }
+    }
+
+    // Run on invalidation/navigation for View Transitions support
+    setupLanguagePicker();
+    document.addEventListener('astro:page-load', setupLanguagePicker);
+</script>

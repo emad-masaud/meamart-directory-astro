@@ -1,0 +1,264 @@
+.link-preview {
+  --link-preview-corners: 0.5em;
+  --link-preview-padding-inline: 0.75rem;
+  background-color: #0065cb;
+  color: white;
+  font-family: sans-serif;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  margin-inline: auto;
+  margin-block: 2rem;
+  width: fit-content;
+  max-width: 100%;
+}
+.link-preview a {
+  color: white;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+lite-youtube {
+    --lyt-play-btn-bg: #f00; /* Play button background */
+    --lyt-play-btn-hover: #c00;
+    max-width: 100%; /* Ensure it's responsive */
+    border-radius: 0.5rem; /* Round corners */
+    margin-block: 2rem;
+}
+
+/* ── Unified Form Fields ─────────────────────────────────────────────────── */
+
+.form-input,
+select.form-select {
+  width: 100%;
+  border-radius: 9999px;
+  border: 1px solid var(--color-zinc-200, #e4e4e7);
+  background: rgba(255, 255, 255, 0.8);
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-textarea {
+  width: 100%;
+  border-radius: 1rem;
+  border: 1px solid var(--color-zinc-200, #e4e4e7);
+  background: rgba(255, 255, 255, 0.8);
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-input:focus,
+select.form-select:focus,
+.form-textarea:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+/* Fixed height to match input and select exactly */
+.form-input,
+select.form-select {
+  height: 46px;
+}
+
+/* Select specific: remove native arrow, add custom */
+select.form-select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+  background-position: left 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 1.25em 1.25em;
+  padding-inline-start: 2.5rem;
+  cursor: pointer;
+}
+
+[dir="ltr"] select.form-select {
+  background-position: right 0.75rem center;
+  padding-inline-start: 1rem;
+  padding-inline-end: 2.5rem;
+}
+
+/* Textarea: allow vertical resize, rounded corners not pill */
+.form-textarea {
+  border-radius: 1rem;
+  height: auto;
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* Label */
+.form-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+/* Dark mode */
+:where(.dark, .dark *) .form-input,
+:where(.dark, .dark *) select.form-select,
+:where(.dark, .dark *) .form-textarea {
+  border-color: var(--color-zinc-700, #3f3f46);
+  background-color: rgba(9, 9, 11, 0.8);
+  color: var(--color-zinc-50, #fafafa);
+  color-scheme: dark;
+}
+
+:where(.dark, .dark *) select.form-select option {
+  background-color: #18181b; /* zinc-900 */
+  color: #fafafa;
+}
+
+:where(.dark, .dark *) .form-input:focus,
+:where(.dark, .dark *) select.form-select:focus,
+:where(.dark, .dark *) .form-textarea:focus {
+  border-color: var(--color-zinc-500, #71717a);
+}
+
+:where(.dark, .dark *) select.form-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%23a1a1aa' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+}
+
+:where(.dark, .dark *) .form-label {
+  color: var(--color-zinc-400, #a1a1aa);
+}
+
+.form-label {
+  color: var(--color-zinc-600, #52525b);
+}
+
+/* ── Tom Select Overrides ─────────────────────────────────────────────────── */
+.ts-wrapper.single .ts-control,
+.ts-wrapper.single .ts-control.focus,
+html.dark .ts-wrapper.single .ts-control,
+html.dark .ts-wrapper.single .ts-control.focus {
+  background-image: none !important;
+  background-color: inherit !important;
+  box-shadow: none !important;
+}
+
+.ts-control {
+  border-radius: 9999px;
+  border: 1px solid var(--color-zinc-200, #e4e4e7);
+  background: rgba(255, 255, 255, 0.8);
+  padding: 0.75rem 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  box-shadow: none;
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+.ts-control.focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(0, 0, 139, 0.1);
+}
+.ts-wrapper.single .ts-control:after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 1.25rem;
+  margin-top: -3px;
+  width: 10px;
+  height: 6px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  transition: transform 0.2s ease;
+}
+[dir="ltr"] .ts-wrapper.single .ts-control:after {
+  left: auto;
+  right: 1.25rem;
+}
+.ts-wrapper.single.dropdown-active .ts-control:after {
+  transform: rotate(180deg);
+}
+.ts-dropdown {
+  border-radius: 1rem;
+  border: 1px solid var(--color-zinc-200, #e4e4e7);
+  background: white;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  margin-top: 8px;
+  font-size: 0.875rem;
+  z-index: 100;
+  overflow: hidden;
+  padding: 0.5rem;
+}
+.ts-dropdown .dropdown-input-wrap {
+  padding: 0 0 0.5rem 0;
+}
+.ts-dropdown .dropdown-input {
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-zinc-200, #e4e4e7);
+  box-shadow: none;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+.ts-dropdown .dropdown-input:focus {
+  border-color: var(--color-primary);
+  outline: none;
+}
+.ts-dropdown .option {
+  padding: 0.625rem 1rem;
+  cursor: pointer;
+  border-radius: 0.5rem;
+  transition: all 0.15s ease;
+  margin-bottom: 2px;
+}
+.ts-dropdown .option:last-child {
+  margin-bottom: 0;
+}
+.ts-dropdown .option:hover, .ts-dropdown .active {
+  background-color: var(--color-zinc-100, #f4f4f5);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+/* Dark Mode Overrides */
+html.dark .ts-control,
+html.dark .ts-wrapper.single .ts-control,
+html.dark .ts-wrapper.multi .ts-control {
+  border-color: var(--color-zinc-700, #3f3f46) !important;
+  background-color: rgba(9, 9, 11, 0.8) !important;
+  color: var(--color-zinc-50, #fafafa) !important;
+}
+html.dark .ts-control .item {
+  color: var(--color-zinc-50, #fafafa);
+}
+html.dark .ts-control.focus,
+html.dark .ts-wrapper.single.focus .ts-control {
+  border-color: var(--color-zinc-500, #71717a) !important;
+  box-shadow: 0 0 0 2px rgba(113, 113, 122, 0.2) !important;
+}
+html.dark .ts-wrapper.single .ts-control:after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%23a1a1aa' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E") !important;
+}
+html.dark .ts-dropdown {
+  background-color: #18181b !important; /* zinc-900 */
+  border-color: var(--color-zinc-700, #3f3f46) !important;
+  color: var(--color-zinc-50, #fafafa) !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+}
+html.dark .ts-dropdown .dropdown-input {
+  background-color: #09090b !important; /* zinc-950 */
+  border-color: var(--color-zinc-700, #3f3f46) !important;
+  color: var(--color-zinc-50, #fafafa) !important;
+}
+html.dark .ts-dropdown .dropdown-input:focus {
+  border-color: var(--color-zinc-500, #71717a) !important;
+}
+html.dark .ts-dropdown .option {
+  color: var(--color-zinc-50, #fafafa) !important;
+  background-color: transparent !important;
+}
+html.dark .ts-dropdown .option:hover, html.dark .ts-dropdown .active {
+  background-color: #27272a !important; /* zinc-800 */
+  color: white !important;
+}
+

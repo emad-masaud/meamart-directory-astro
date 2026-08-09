@@ -1,0 +1,125 @@
+---
+import { useTranslations } from '~/i18n/utils';
+import AdCard from '~/components/ui/AdCard.astro';
+import HomeSlideItem from '~/components/sections/home/HomeSlideItem.astro';
+
+interface AdItem {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  price: number;
+  currency?: string;
+  categoryKey: string;
+  categoryAr: string;
+  categoryEn: string;
+  cityAr: string;
+  cityEn: string;
+  image: string;
+  sellerPhone: string;
+}
+
+interface Props {
+  categoryLabel?: string;
+  categoryKey?: string;
+  ads?: AdItem[];
+  lang?: string;
+}
+
+let { categoryLabel = '', categoryKey = '', ads = [], lang = 'en' } = Astro.props as Props;
+
+if (ads.length === 0) {
+  try {
+    const { getCollection } = await import('astro:content');
+    const categoriesJson = await import('~/data/categories.json');
+    const rawAds = await getCollection('businesses', ({ data }: any) => {
+      return data.published === true;
+    });
+
+    if (rawAds && rawAds.length > 0) {
+      rawAds.sort((a: any, b: any) => {
+        const idA = a.data.id.replace('ad-', '');
+        const idB = b.data.id.replace('ad-', '');
+        return Number(idB) - Number(idA);
+      });
+      
+      const latestAds = rawAds.slice(0, 50);
+
+      // Count categories
+      const counts = latestAds.reduce((acc: any, ad: any) => {
+        const key = ad.data.category || 'other';
+        acc[key] = (acc[key] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>);
+
+      const sorted = Object.entries(counts).sort(([, a], [, b]) => (b as number) - (a as number));
+      if (sorted.length > 0) {
+        const topCatKey = sorted[0][0];
+        const category = categoriesJson.default.find((c: any) => c.id === topCatKey) || { title: topCatKey };
+        categoryKey = topCatKey;
+        categoryLabel = category.title;
+
+        const filteredRaw = latestAds.filter((ad: any) => (ad.data.category || 'other') === topCatKey).slice(0, 6);
+        
+        ads = filteredRaw.map((ad: any) => {
+          const city = ad.data.city || '';
+          
+          return {
+            id: String(ad.data.id),
+            slug: ad.data.slug || String(ad.data.id),
+            title: ad.data.title || 'بدون عنوان',
+            description: ad.data.description || '',
+            price: 0,
+            currency: 'SAR',
+            categoryKey: topCatKey,
+            categoryAr: category.title,
+            categoryEn: category.title,
+            cityAr: city,
+            cityEn: city,
+            image: ad.data.image || '/logo.svg',
+            sellerPhone: ad.data.phone || '',
+          };
+        });
+      }
+    }
+  } catch (e) {
+    console.error('Failed to self-fetch popular category ads:', e);
+  }
+}
+
+const t = useTranslations(lang);
+---
+
+{ads.length > 0 && (
+  <section class="py-12 bg-background">
+    <div class="container mx-auto px-4">
+      <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h2 class="text-3xl font-bold">{categoryLabel || t['home.mostRequested.title']}</h2>
+
+        </div>
+        <a href={`/${lang}/ads?category=${encodeURIComponent(categoryKey || '')}`} class="text-sm font-semibold text-primary hover:underline">
+          {t['home.mostRequested.view_all']}
+        </a>
+      </div>
+
+      <div class="flex snap-x snap-mandatory gap-4 overflow-x-auto pt-2 pb-4 px-1">
+        {ads.map((ad) => (
+          <HomeSlideItem class="min-w-[320px] max-w-85 snap-start">
+            <AdCard
+              title={ad.title}
+              price={ad.price}
+              currency={ad.currency}
+              category={lang === 'ar' ? ad.categoryAr : ad.categoryEn}
+              city={lang === 'ar' ? ad.cityAr : ad.cityEn}
+              image={ad.image}
+              sellerPhone={ad.sellerPhone}
+              slug={`/${lang}/ads/${ad.id}`}
+              lang={lang}
+            />
+          </HomeSlideItem>
+        ))}
+      </div>
+    </div>
+  </section>
+)}
