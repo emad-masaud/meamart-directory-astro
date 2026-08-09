@@ -26,7 +26,7 @@ import { getActiveConfig } from "~/utils/config";
 
 import { defaultLang } from "~/i18n/ui";
 import { isRtl, useTranslations } from "~/i18n/utils";
-import { getRelativeLocaleUrl } from "astro:i18n";
+
 
 const { lang = defaultLang } = Astro.params;
 const t = useTranslations(lang);
@@ -151,7 +151,7 @@ const dir = isRtl(lang) ? "rtl" : "ltr";
             link={
               activeConfig.announcement.localizeLink &&
               activeConfig.announcement.link
-                ? getRelativeLocaleUrl(lang, activeConfig.announcement.link)
+                ? `/${lang}${activeConfig.announcement.link}`
                 : activeConfig.announcement.link
             }
             linkText={t["announcement.action"]}
