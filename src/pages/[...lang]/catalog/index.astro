@@ -17,7 +17,11 @@ export function getStaticPaths() {
 }
 const { lang } = Astro.params as { lang: "ar" | "en" };
 const t = useTranslations(lang);
-const seller: any = null; // No multi-tenant domains in this version yet
+const seller = {
+  name: t['gen.isar.index.4'] || 'كتالوج ميمارت',
+  avatar: '/logo.svg',
+  phone: ''
+};
 
 // Fetch products from businesses collection
 let rawProducts: any[] = [];
