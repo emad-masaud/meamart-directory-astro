@@ -1,14 +1,5 @@
 ---
-import {
-  
-  User,
-  LogOut,
-  LayoutGrid,
-  ChevronDown,
-  Plus,
-  ShoppingBag,
-  QrCode,
-} from "lucide-react";
+import { Icon } from 'astro-icon/components';
 import ThemeToggle from "~/components/common/ThemeToggle.astro";
 
 
@@ -207,8 +198,8 @@ const popularLinks = await getPopularLinks(lang);
               class="h-full w-full object-cover hidden"
             />
           </div>
-          <ChevronDown
-            className="w-4 h-4 text-foreground/70 group-hover:text-foreground transition-colors"
+          <Icon name="lucide:chevron-down"
+            class="w-4 h-4 text-foreground/70 group-hover:text-foreground transition-colors"
           />
         </button>
 
@@ -238,7 +229,7 @@ const popularLinks = await getPopularLinks(lang);
             class="flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl text-zinc-700 hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-800/50 transition-colors"
             role="menuitem"
           >
-            <LayoutGrid className="w-4 h-4 text-primary" />
+            <Icon name="lucide:layout-grid" class="w-4 h-4 text-primary" />
             <span>{t["user.myAds"]}</span>
           </a>
 
@@ -247,7 +238,7 @@ const popularLinks = await getPopularLinks(lang);
             class="flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl text-zinc-700 hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-800/50 transition-colors"
             role="menuitem"
           >
-            <ShoppingBag className="w-4 h-4 text-primary" />
+            <Icon name="lucide:shopping-bag" class="w-4 h-4 text-primary" />
             <span>{t["user.myProducts"]}</span>
           </a>
 
@@ -279,7 +270,7 @@ const popularLinks = await getPopularLinks(lang);
             class="flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl text-zinc-700 hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-800/50 transition-colors"
             role="menuitem"
           >
-            <QrCode className="w-4 h-4 text-primary" />
+            <Icon name="lucide:qr-code" class="w-4 h-4 text-primary" />
             <span
               >{
                 t["seller.subnav.qr"] ||
@@ -293,7 +284,7 @@ const popularLinks = await getPopularLinks(lang);
             class="flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl text-zinc-700 hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-800/50 transition-colors"
             role="menuitem"
           >
-            <User className="w-4 h-4 text-primary" />
+            <Icon name="lucide:user" class="w-4 h-4 text-primary" />
             <span>{t["user.profile"]}</span>
           </a>
 
@@ -306,7 +297,7 @@ const popularLinks = await getPopularLinks(lang);
             role="menuitem"
             id="header-logout-link"
           >
-            <LogOut className="w-4 h-4" />
+            <Icon name="lucide:log-out" class="w-4 h-4" />
             <span>{t["user.signOut"]}</span>
           </a>
         </div>
@@ -318,7 +309,7 @@ const popularLinks = await getPopularLinks(lang);
         class="hidden md:inline-flex items-center justify-center rounded-full bg-primary text-white p-2.5 hover:bg-primary/90 transition-all shadow-xs rtl:ml-2 ltr:mr-2"
         aria-label={t["hero.getStarted"] || ACTION_LINKS.primary.label}
       >
-        <Plus className="w-5 h-5" aria-hidden="true" />
+        <Icon name="lucide:plus" class="w-5 h-5" aria-hidden="true" />
       </a>
 
       <!-- Logged-out State (hidden by default, shown via client-side script) -->

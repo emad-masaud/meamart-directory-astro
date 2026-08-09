@@ -2,11 +2,11 @@ const fs = require('fs');
 const path = require('path');
 function replaceInFile(filePath) {
     let content = fs.readFileSync(filePath, 'utf8');
-    if (content.includes('from \'lucide-react\'')) {
+    if (content.includes('lucide-react')) {
         console.log('Processing', filePath);
-        content = content.replace(/import\s+\{[^}]+\}\s+from\s+'lucide-react';?/, 'import { Icon } from \'astro-icon/components\';');
+        content = content.replace(/import\s+\{([^}]+)\}\s+from\s+["']lucide-react["'];?/, 'import { Icon } from \'astro-icon/components\';');
         
-        const tags = ['MapPin', 'Tag', 'User', 'CheckCircle', 'Check', 'Send', 'Globe', 'ExternalLink', 'MessageSquare', 'QrCode', 'Eye', 'ChevronLeft', 'ChevronRight', 'Home', 'Sun', 'Moon', 'Copy', 'X', 'Menu', 'Github', 'LogOut', 'LayoutGrid', 'LogIn', 'ShoppingBag'];
+        const tags = ['MapPin', 'Tag', 'User', 'CheckCircle', 'Check', 'Send', 'Globe', 'ExternalLink', 'MessageSquare', 'QrCode', 'Eye', 'ChevronLeft', 'ChevronRight', 'ChevronDown', 'Plus', 'Home', 'Sun', 'Moon', 'Copy', 'X', 'Menu', 'Github', 'LogOut', 'LayoutGrid', 'LogIn', 'ShoppingBag', 'Search', 'SlidersHorizontal', 'Star', 'Briefcase', 'Wrench', 'Smartphone', 'Sofa', 'Baby', 'PawPrint', 'Dumbbell', 'Building2', 'UtensilsCrossed', 'Car'];
         
         tags.forEach(tag => {
             let iconName = 'lucide:' + tag.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
