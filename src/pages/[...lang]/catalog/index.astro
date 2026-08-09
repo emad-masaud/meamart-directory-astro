@@ -1,22 +1,23 @@
 ---
 import Layout from "~/layouts/Layout.astro";
 import Container from "~/components/ui/Container.astro";
-import PageHeader from "~/components/layout/PageHeader.astro";
-import { languages } from "~/i18n/ui";
 import { useTranslations } from "~/i18n/utils";
+import ProductFilters from "~/components/ui/ProductFilters";
+import { getCityLabel } from '~/utils/cities';
+import { ShoppingBag, Eye, Star, User, CheckCircle, MapPin, MessageSquare, Globe } from "lucide-react";
 import { getCollection } from 'astro:content';
 
 export const prerender = false;
 
 const { lang } = Astro.params as { lang: "ar" | "en" };
 const t = useTranslations(lang);
-const seller = null; // No multi-tenant domains in this version yet
+const seller: any = null; // No multi-tenant domains in this version yet
 
 // Fetch products from businesses collection
 let rawProducts: any[] = [];
 try {
   const businesses = await getCollection('businesses');
-  rawProducts = businesses.filter(b => b.data.status !== 'sold').slice(0, 200);
+  rawProducts = businesses.filter((b: any) => b.data?.status !== 'sold').slice(0, 200);
 } catch (e) {
   console.error('Failed to fetch products from collection:', e);
 }
