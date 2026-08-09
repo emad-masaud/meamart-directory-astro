@@ -38,7 +38,8 @@ const googleClientId = import.meta.env.PUBLIC_GOOGLE_CLIENT_ID || '845217154240-
              data-context="signin"
              data-ux_mode="popup"
              data-callback="handleCredentialResponse"
-             data-auto_prompt="false">
+             data-auto_prompt="true"
+             data-locale={lang}>
         </div>
 
         <div class="g_id_signin"
@@ -47,6 +48,7 @@ const googleClientId = import.meta.env.PUBLIC_GOOGLE_CLIENT_ID || '845217154240-
              data-theme="outline"
              data-text="signin_with"
              data-size="large"
+             data-locale={lang}
              data-logo_alignment="left">
         </div>
       </div>
