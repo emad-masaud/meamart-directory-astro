@@ -60,8 +60,26 @@ const pages = defineCollection({
   }),
 });
 
+// Define the schema for Users (Seller Profiles)
+const users = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.json', base: "./src/data/users" }),
+  schema: z.object({
+    id: z.string(),
+    email: z.string(),
+    username: z.string().optional(),
+    name: z.string().optional(),
+    avatar: z.string().optional(),
+    header: z.string().optional(),
+    phone: z.string().optional(),
+    whatsapp: z.string().optional(),
+    description: z.string().optional(),
+    createdAt: z.string().optional(),
+  }),
+});
+
 export const collections = {
   categories,
   businesses,
   pages,
+  users,
 };

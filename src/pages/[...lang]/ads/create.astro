@@ -220,6 +220,27 @@ const description = isArabic ? "أضف تفاصيل إعلانك الجديد ل
   </div>
 </Layout>
 
+<!-- Success Modal -->
+<div id="success-modal" class="fixed inset-0 z-[100] flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+  <div class="bg-white dark:bg-zinc-900 rounded-3xl p-8 max-w-sm w-full mx-4 relative z-10 shadow-2xl text-center scale-95 transition-transform duration-300" id="success-modal-content">
+    <div class="w-20 h-20 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    </div>
+    <h3 class="text-2xl font-bold mb-2 text-zinc-900 dark:text-white">تم إنشاء الإعلان بنجاح!</h3>
+    <p class="text-zinc-500 dark:text-zinc-400 mb-8 font-medium">إعلانك جاهز الآن، لتفعيل الإعلان يرجى التواصل مع الإدارة</p>
+    <div class="space-y-3">
+      <a id="whatsapp-btn" href="#" target="_blank" class="w-full flex items-center justify-center gap-2 py-4 rounded-xl bg-emerald-500 text-white font-bold hover:bg-emerald-600 active:scale-95 transition-all shadow-lg shadow-emerald-500/25">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        تواصل عبر الواتساب
+      </a>
+      <a id="view-ad-btn" href="#" class="w-full flex items-center justify-center py-4 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-bold hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-95 transition-all">
+        الاستمرار إلى الإعلان
+      </a>
+    </div>
+  </div>
+</div>
+
 <style>
   .step-indicator {
     position: relative;
@@ -452,10 +473,35 @@ const description = isArabic ? "أضف تفاصيل إعلانك الجديد ل
         const result = await response.json();
         
         if (response.ok && result.success) {
-          alert('تم إنشاء الإعلان بنجاح!');
-          window.location.href = result.url || `/${document.documentElement.lang}/`;
+          const modal = document.getElementById('success-modal');
+          const modalContent = document.getElementById('success-modal-content');
+          const whatsappBtn = document.getElementById('whatsapp-btn') as HTMLAnchorElement;
+          const viewAdBtn = document.getElementById('view-ad-btn') as HTMLAnchorElement;
+          
+          if(modal && whatsappBtn && viewAdBtn && modalContent) {
+            modal.classList.remove('hidden');
+            // Trigger animation frame for transition
+            requestAnimationFrame(() => {
+              modal.classList.remove('opacity-0');
+              modalContent.classList.remove('scale-95');
+            });
+            
+            const adTitle = formData.get('title') || 'إعلان جديد';
+            const adminPhone = "+15559607109".replace(/[^0-9]/g, '');
+            const message = encodeURIComponent(`مرحباً، قمت بنشر إعلان جديد بعنوان "${adTitle}". أرجو مراجعته واعتماده.\nالرابط: ${window.location.origin}${result.url}`);
+            
+            whatsappBtn.href = `https://wa.me/${adminPhone}?text=${message}`;
+            viewAdBtn.href = result.url || `/${document.documentElement.lang}/`;
+          } else {
+            // Fallback if modal elements are not found
+            alert('تم إنشاء الإعلان بنجاح!');
+            window.location.href = result.url || `/${document.documentElement.lang}/`;
+          }
         } else {
           alert('حدث خطأ أثناء النشر: ' + (result.error || 'خطأ غير معروف'));
+          if (submitBtn) (submitBtn as HTMLButtonElement).disabled = false;
+          if (submitTextEl) submitTextEl.textContent = 'إعتماد الإعلان';
+          if (submitSpinnerEl) submitSpinnerEl.classList.add('hidden');
         }
       } catch (error) {
         alert('حدث خطأ في الاتصال بالخادم. يرجى المحاولة لاحقاً.');
