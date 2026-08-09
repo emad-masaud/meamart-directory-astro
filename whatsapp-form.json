@@ -1,0 +1,368 @@
+{
+    "version": "7.3",
+    "screens": [
+        {
+            "id": "NEWAD",
+            "title": "Ø¥Ø¹Ù„Ø§Ù† Ø¬Ø¯ÙŠØ¯",
+            "terminal": false,
+            "layout": {
+                "type": "SingleColumnLayout",
+                "children": [
+                    {
+                        "type": "Form",
+                        "name": "user_data",
+                        "children": [
+                            {
+                                "type": "TextSubheading",
+                                "text": "Ø§Ù„ØªÙØ§ØµÙŠÙ„ Ø§Ù„Ø£Ø³Ø§Ø³ÙŠØ©  Ù„Ù„Ø¥Ø¹Ù„Ø§Ù†"
+                            },
+                            {
+                                "type": "TextInput",
+                                "required": true,
+                                "label": "Ø¹Ù†ÙˆØ§Ù† Ø§Ù„Ø§Ø¹Ù„Ø§Ù†",
+                                "name": "title",
+                                "helper-text": "Ù…Ø«Ø§Ù„: ÙÙ„Ø© Ù„Ù„Ø¨ÙŠØ¹ØŒ Ø£Ùˆ ÙƒÙˆØ¨ Ù‚Ù‡ÙˆØ© Ù…Ø®ØªØµØ©",
+                                "input-type": "text"
+                            },
+                            {
+                                "type": "Dropdown",
+                                "label": "Ø§Ù„Ù‚Ø³Ù…",
+                                "required": true,
+                                "name": "category",
+                                "data-source": [
+                                    {
+                                        "id": "vehicles",
+                                        "title": "Ø³ÙŠØ§Ø±Ø§Øª ÙˆÙ…Ø±ÙƒØ¨Ø§Øª"
+                                    },
+                                    {
+                                        "id": "real-estate",
+                                        "title": "Ø¹Ù‚Ø§Ø±"
+                                    },
+                                    {
+                                        "id": "buy-and-sell",
+                                        "title": "Ø¨ÙŠØ¹ ÙˆØ´Ø±Ø§Ø¡"
+                                    },
+                                    {
+                                        "id": "services",
+                                        "title": "Ø®Ø¯Ù…Ø§Øª"
+                                    },
+                                    {
+                                        "id": "community",
+                                        "title": "Ù…Ø¬ØªÙ…Ø¹"
+                                    },
+                                    {
+                                        "id": "jobs",
+                                        "title": "ÙˆØ¸Ø§Ø¦Ù"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "TextInput",
+                                "required": true,
+                                "label": "Ø§Ù„Ù…Ø¯ÙŠÙ†Ø©",
+                                "name": "city",
+                                "helper-text": "Ù…Ø«Ø§Ù„: Ø§Ù„Ù…Ù†Ø§Ù…Ø©ØŒ Ø¬Ø¯Ø©ØŒ Ø§Ù„Ù‚Ø§Ù‡Ø±Ø©",
+                                "input-type": "text"
+                            },
+                            {
+                                "type": "TextInput",
+                                "required": false,
+                                "label": "Ø§Ù„Ø­ÙŠ Ø£Ùˆ Ù…Ø¹Ù„Ù… Ø¨Ø§Ø±Ø²",
+                                "name": "aria",
+                                "helper-text": "Ù…Ø«Ø§Ù„: Ø­ÙŠ Ø§Ù„ÙŠØ§Ø³Ù…ÙŠÙ†ØŒ Ø£Ùˆ ÙƒÙˆØ±Ù†ÙŠØ´ Ø§Ù„Ø®Ø¨Ø±",
+                                "input-type": "text"
+                            },
+                            {
+                                "type": "Footer",
+                                "label": "Ø§Ù„ØªØ§Ù„ÙŠ",
+                                "on-click-action": {
+                                    "name": "navigate",
+                                    "next": {
+                                        "type": "screen",
+                                        "name": "details"
+                                    },
+                                    "payload": {
+                                        "title": "${form.title}",
+                                        "category": "${form.category}",
+                                        "city": "${form.city}",
+                                        "aria": "${form.aria}"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "id": "details",
+            "title": "Ø¹Ø·Ù†Ø§ Ø§Ù„ØªÙØ§ØµÙŠÙ„",
+            "terminal": false,
+            "layout": {
+                "type": "SingleColumnLayout",
+                "children": [
+                    {
+                        "type": "Form",
+                        "name": "user_data",
+                        "children": [
+                            {
+                                "type": "TextArea",
+                                "label": "ÙˆØµÙ Ø§Ù„Ø¥Ø¹Ù„Ø§Ù†",
+                                "required": true,
+                                "helper-text": "Ø§ÙƒØªØ¨ ÙƒÙ„ Ø§Ù„ØªÙØ§ØµÙŠÙ„ Ø§Ù„Ù„ÙŠ ØªÙ‡Ù… Ø§Ù„Ø²Ø¨ÙˆÙ† Ø¨Ø¯Ù‚Ø©",
+                                "name": "description"
+                            },
+                            {
+                                "type": "TextInput",
+                                "required": false,
+                                "label": "Ø§Ù„Ø³Ø¹Ø±",
+                                "helper-text": "Ù…Ø«Ø§Ù„: 500 Ø±ÙŠØ§Ù„ØŒ Ø£Ùˆ Ø¹Ù„Ù‰ Ø§Ù„Ø³ÙˆÙ…",
+                                "name": "price",
+                                "input-type": "text"
+                            },
+                            {
+                                "type": "TextInput",
+                                "required": false,
+                                "label": "Ù…Ù…ÙŠØ²Ø§Øª Ø§Ù„Ø¥Ø¹Ù„Ø§Ù†",
+                                "helper-text": "Ø§ÙØµÙ„ Ø¨ÙŠÙ†Ù‡Ø§ Ø¨ÙØ§ØµÙ„Ø©ØŒ Ù…Ø«Ø§Ù„: Ø¬Ø¯ÙŠØ¯ØŒ Ù…Ø³ØªØ¹Ù…Ù„ØŒ ÙØ®Ù…",
+                                "name": "tags",
+                                "input-type": "text"
+                            },
+                            {
+                                "type": "Footer",
+                                "label": "Ø§Ù„ØªØ§Ù„ÙŠ",
+                                "on-click-action": {
+                                    "name": "navigate",
+                                    "next": {
+                                        "type": "screen",
+                                        "name": "contact"
+                                    },
+                                    "payload": {
+                                        "title": "${data.title}",
+                                        "category": "${data.category}",
+                                        "city": "${data.city}",
+                                        "aria": "${data.aria}",
+                                        "description": "${form.description}",
+                                        "price": "${form.price}",
+                                        "tags": "${form.tags}"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "data": {
+                "title": {
+                    "type": "string",
+                    "__example__": ""
+                },
+                "category": {
+                    "type": "string",
+                    "__example__": ""
+                },
+                "city": {
+                    "type": "string",
+                    "__example__": ""
+                },
+                "aria": {
+                    "type": "string",
+                    "__example__": ""
+                }
+            }
+        },
+        {
+            "id": "contact",
+            "title": "Ù…Ø¹Ù„ÙˆÙ…Ø§Øª Ø§Ù„ØªÙˆØ§ØµÙ„",
+            "terminal": false,
+            "layout": {
+                "type": "SingleColumnLayout",
+                "children": [
+                    {
+                        "type": "Form",
+                        "name": "user_data",
+                        "children": [
+                            {
+                                "type": "TextInput",
+                                "required": true,
+                                "label": "Ø§Ø³Ù…Ùƒ Ø£Ùˆ Ø§Ø³Ù… Ø§Ù„Ù…Ø¹Ø±Ø¶",
+                                "helper-text": "ÙƒÙŠÙ Ø­Ø§Ø¨ Ø§Ù„Ø²Ø¨ÙˆÙ† ÙŠÙ†Ø§Ø¯ÙŠÙƒØŸ",
+                                "name": "name",
+                                "input-type": "text"
+                            },
+                            {
+                                "type": "TextInput",
+                                "required": true,
+                                "label": "Ø±Ù‚Ù… Ø§Ù„Ø¬ÙˆØ§Ù„",
+                                "name": "phone",
+                                "helper-text": "Ø±Ù‚Ù… Ø§Ù„ØªÙˆØ§ØµÙ„ØŒ Ù…Ø«Ø§Ù„: 05XXXXXXXX",
+                                "input-type": "text"
+                            },
+                            {
+                                "type": "Dropdown",
+                                "label": "Ø·Ø±ÙŠÙ‚Ø© Ø§Ù„ØªÙˆØ§ØµÙ„ Ø§Ù„Ù…ÙØ¶Ù„Ø©",
+                                "required": true,
+                                "name": "callorchat",
+                                "data-source": [
+                                    {
+                                        "id": "chat",
+                                        "title": "ÙˆØ§ØªØ³Ø§Ø¨ ÙÙ‚Ø·"
+                                    },
+                                    {
+                                        "id": "call",
+                                        "title": "Ø§ØªØµØ§Ù„ ÙÙ‚Ø·"
+                                    },
+                                    {
+                                        "id": "callnchat",
+                                        "title": "ÙˆØ§ØªØ³Ø§Ø¨ ÙˆØ§ØªØµØ§Ù„"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Footer",
+                                "label": "Ø§Ù„ØªØ§Ù„ÙŠ",
+                                "on-click-action": {
+                                    "name": "navigate",
+                                    "next": {
+                                        "type": "screen",
+                                        "name": "attach"
+                                    },
+                                    "payload": {
+                                        "title": "${data.title}",
+                                        "category": "${data.category}",
+                                        "city": "${data.city}",
+                                        "aria": "${data.aria}",
+                                        "description": "${data.description}",
+                                        "price": "${data.price}",
+                                        "tags": "${data.tags}",
+                                        "name": "${form.name}",
+                                        "phone": "${form.phone}",
+                                        "callorchat": "${form.callorchat}"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "data": {
+                "title": {
+                    "type": "string",
+                    "__example__": ""
+                },
+                "category": {
+                    "type": "string",
+                    "__example__": ""
+                },
+                "city": {
+                    "type": "string",
+                    "__example__": ""
+                },
+                "aria": {
+                    "type": "string",
+                    "__example__": ""
+                },
+                "description": {
+                    "type": "string",
+                    "__example__": ""
+                },
+                "price": {
+                    "type": "string",
+                    "__example__": ""
+                },
+                "tags": {
+                    "type": "string",
+                    "__example__": ""
+                }
+            }
+        },
+        {
+            "id": "attach",
+            "title": "Ø§Ù„Ù…Ø±ÙÙ‚Ø§Øª",
+            "terminal": true,
+            "layout": {
+                "type": "SingleColumnLayout",
+                "children": [
+                    {
+                        "type": "Form",
+                        "name": "user_data",
+                        "children": [
+                            {
+                                "type": "PhotoPicker",
+                                "name": "photo",
+                                "label": "Ø£Ø¶Ù ØµÙˆØ±Ø© Ù„Ù„Ø¥Ø¹Ù„Ø§Ù†",
+                                "photo-source": "camera_gallery",
+                                "min-uploaded-photos": 1,
+                                "max-uploaded-photos": 4,
+                                "enabled": true,
+                                "visible": true
+                            },
+                            {
+                                "type": "Footer",
+                                "label": "Ø¥Ø¹ØªÙ…Ø¯ Ø§Ù„Ø¥Ø¹Ù„Ø§Ù†",
+                                "on-click-action": {
+                                    "name": "complete",
+                                    "payload": {
+                                        "title": "${data.title}",
+                                        "category": "${data.category}",
+                                        "city": "${data.city}",
+                                        "aria": "${data.aria}",
+                                        "description": "${data.description}",
+                                        "price": "${data.price}",
+                                        "tags": "${data.tags}",
+                                        "name": "${data.name}",
+                                        "phone": "${data.phone}",
+                                        "callorchat": "${data.callorchat}",
+                                        "photo": "${form.photo}"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "data": {
+                "title": {
+                    "type": "string",
+                    "__example__": ""
+                },
+                "category": {
+                    "type": "string",
+                    "__example__": ""
+                },
+                "city": {
+                    "type": "string",
+                    "__example__": ""
+                },
+                "aria": {
+                    "type": "string",
+                    "__example__": ""
+                },
+                "description": {
+                    "type": "string",
+                    "__example__": ""
+                },
+                "price": {
+                    "type": "string",
+                    "__example__": ""
+                },
+                "tags": {
+                    "type": "string",
+                    "__example__": ""
+                },
+                "name": {
+                    "type": "string",
+                    "__example__": ""
+                },
+                "phone": {
+                    "type": "string",
+                    "__example__": ""
+                },
+                "callorchat": {
+                    "type": "string",
+                    "__example__": ""
+                }
+            }
+        }
+    ]
+}
