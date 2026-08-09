@@ -77,7 +77,8 @@ export async function onRequestPost(context) {
       phone: phone,
       whatsapp: callorchat === 'whatsapp' || callorchat === 'callnchat' ? phone : "",
       price: price,
-      image: finalImagePaths.length === 1 ? finalImagePaths[0] : (finalImagePaths.length > 1 ? finalImagePaths : ""),
+      image: finalImagePaths.length > 0 ? finalImagePaths[0] : "",
+      images: finalImagePaths.length > 0 ? finalImagePaths : [],
       published: true,
       featured: false,
       tags: []
