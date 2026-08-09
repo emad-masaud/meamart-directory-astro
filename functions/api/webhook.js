@@ -44,101 +44,105 @@ export async function onRequestPost(context) {
     const slug = uniqueId.toString().toLowerCase().replace(/[^a-z0-9\-_]+/gi, '-').replace(/^-+|-+$/g, '');
     
     // Handle photo which might be an array or object from MeaChat PhotoPicker
-    let coverImageUrl = data.image || data.photo || "";
+    let rawImages = data.image || data.photo || [];
     
-    if (Array.isArray(coverImageUrl)) {
-      coverImageUrl = coverImageUrl.length > 0 ? coverImageUrl[0] : "";
+    // Normalize to array
+    if (!Array.isArray(rawImages)) {
+      rawImages = rawImages ? [rawImages] : [];
     }
     
-    if (typeof coverImageUrl === 'object' && coverImageUrl !== null) {
-      // If it has an 'id' (WhatsApp Media ID), reconstruct the MeaChat preview URL
-      if (coverImageUrl.id) {
-        coverImageUrl = `https://app.meachat.com/whatsapp/livechat/conversation/file/preview/${coverImageUrl.id}/image?bot_id=410479`;
-      } else {
-        // Try to extract URL from common object keys used by chatbots/WhatsApp
-        coverImageUrl = coverImageUrl.url || coverImageUrl.media_url || coverImageUrl.link || coverImageUrl.cdn_url || coverImageUrl.media_id || "";
+    // Extract URLs from each image (could be objects with id, or strings)
+    const imageUrls = rawImages.map(img => {
+      if (typeof img === 'string') return img;
+      if (typeof img === 'object' && img !== null) {
+        if (img.id) return `https://app.meachat.com/whatsapp/livechat/conversation/file/preview/${img.id}/image?bot_id=410479`;
+        return img.url || img.media_url || img.link || img.cdn_url || "";
       }
-    }
-    
-    if (typeof coverImageUrl !== 'string' || coverImageUrl === "[object Object]") {
-      coverImageUrl = "";
-    }
+      return "";
+    }).filter(url => url && url !== "[object Object]");
 
-    // 2.5 Fetch image from Meta API (bypassing MeaChat Cloudflare)
-    let finalCoverImagePath = coverImageUrl;
-    const mediaIdMatch = coverImageUrl.match(/\/preview\/(\d+)\//);
+    // 2.5 Fetch ALL images from Meta API and upload to GitHub
+    const finalImagePaths = [];
+    const githubRepo = "emad-masaud/meamart-directory-astro";
     
-    if (mediaIdMatch && mediaIdMatch[1]) {
-      const mediaId = mediaIdMatch[1];
-      const metaToken = context.env.META_API_TOKEN || "EAASgaIVMPuUBSGoK1RjkaZAQbqXVej0jpecTg8yT0zu0C04WomLe3UzycjG5p7u3iOtb3uGB6nDhVvtl2iKVNWy5e8rWOA5yZBUZBVHSTFjgCUwZCsjbGm1omPBqsROA5gOU5xfqmPTFCd7DClLpYBY3mg9KYkFGhkuZB5ThFpOWK6wBJp4IanEfDgpFRXnmErgZDZD";
+    for (let i = 0; i < imageUrls.length; i++) {
+      const imgUrl = imageUrls[i];
+      const mediaIdMatch = imgUrl.match(/\/preview\/(\d+)\//);
       
-      try {
-        // Step 1: Get media URL from Meta Graph API
-        const metaRes = await fetch(`https://graph.facebook.com/v18.0/${mediaId}`, {
-          headers: { "Authorization": `Bearer ${metaToken}` }
-        });
+      if (mediaIdMatch && mediaIdMatch[1]) {
+        const mediaId = mediaIdMatch[1];
+        const metaToken = context.env.META_API_TOKEN || "EAASgaIVMPuUBSGoK1RjkaZAQbqXVej0jpecTg8yT0zu0C04WomLe3UzycjG5p7u3iOtb3uGB6nDhVvtl2iKVNWy5e8rWOA5yZBUZBVHSTFjgCUwZCsjbGm1omPBqsROA5gOU5xfqmPTFCd7DClLpYBY3mg9KYkFGhkuZB5ThFpOWK6wBJp4IanEfDgpFRXnmErgZDZD";
         
-        if (metaRes.ok) {
-          const metaData = await metaRes.json();
-          if (metaData.url) {
-            // Step 2: Download the actual image binary
-            const imageRes = await fetch(metaData.url, {
-              headers: { "Authorization": `Bearer ${metaToken}` }
-            });
-            
-            if (imageRes.ok) {
-              const contentType = imageRes.headers.get("content-type") || "";
-              if (contentType.startsWith("image/")) {
-                const arrayBuffer = await imageRes.arrayBuffer();
-                
-                // Convert ArrayBuffer to Base64 safely
-                const bytes = new Uint8Array(arrayBuffer);
-                let binary = '';
-                for (let i = 0; i < bytes.byteLength; i++) {
-                    binary += String.fromCharCode(bytes[i]);
-                }
-                const base64Image = btoa(binary);
-                
-                // Determine extension and path
-                const ext = contentType.split("/")[1] || "jpg";
-                const imagePath = `public/images/businesses/${slug}.${ext}`;
-                const githubRepo = "emad-masaud/meamart-directory-astro";
-                
-                // Check if image exists to get SHA (for updates)
-                let imageSha = null;
-                const getImgRes = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${imagePath}`, {
-                    headers: { "Authorization": `Bearer ${githubToken}`, "User-Agent": "MeaMart-Webhook" }
-                });
-                if (getImgRes.ok) {
-                    const imgData = await getImgRes.json();
-                    imageSha = imgData.sha;
-                }
-                
-                // Upload image to GitHub
-                const uploadImgRes = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${imagePath}`, {
-                  method: "PUT",
-                  headers: {
-                    "Authorization": `Bearer ${githubToken}`,
-                    "Content-Type": "application/json",
-                    "User-Agent": "MeaMart-Webhook"
-                  },
-                  body: JSON.stringify({
-                    message: `Upload image for ad: ${slug}`,
-                    content: base64Image,
-                    branch: "main",
-                    ...(imageSha && { sha: imageSha })
-                  })
-                });
+        try {
+          // Step 1: Get media URL from Meta Graph API
+          const metaRes = await fetch(`https://graph.facebook.com/v18.0/${mediaId}`, {
+            headers: { "Authorization": `Bearer ${metaToken}` }
+          });
+          
+          if (metaRes.ok) {
+            const metaData = await metaRes.json();
+            if (metaData.url) {
+              // Step 2: Download the actual image binary
+              const imageRes = await fetch(metaData.url, {
+                headers: { "Authorization": `Bearer ${metaToken}` }
+              });
+              
+              if (imageRes.ok) {
+                const contentType = imageRes.headers.get("content-type") || "";
+                if (contentType.startsWith("image/")) {
+                  const arrayBuffer = await imageRes.arrayBuffer();
+                  
+                  const bytes = new Uint8Array(arrayBuffer);
+                  let binary = '';
+                  for (let j = 0; j < bytes.byteLength; j++) {
+                      binary += String.fromCharCode(bytes[j]);
+                  }
+                  const base64Image = btoa(binary);
+                  
+                  const ext = contentType.split("/")[1] || "jpg";
+                  // First image: slug.ext, subsequent: slug-2.ext, slug-3.ext
+                  const imgFileName = i === 0 ? `${slug}.${ext}` : `${slug}-${i + 1}.${ext}`;
+                  const imagePath = `public/images/businesses/${imgFileName}`;
+                  
+                  // Check if image exists (for updates)
+                  let imageSha = null;
+                  const getImgRes = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${imagePath}`, {
+                      headers: { "Authorization": `Bearer ${githubToken}`, "User-Agent": "MeaMart-Webhook" }
+                  });
+                  if (getImgRes.ok) {
+                      const imgData = await getImgRes.json();
+                      imageSha = imgData.sha;
+                  }
+                  
+                  // Upload image to GitHub
+                  const uploadImgRes = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${imagePath}`, {
+                    method: "PUT",
+                    headers: {
+                      "Authorization": `Bearer ${githubToken}`,
+                      "Content-Type": "application/json",
+                      "User-Agent": "MeaMart-Webhook"
+                    },
+                    body: JSON.stringify({
+                      message: `Upload image ${i + 1} for ad: ${slug}`,
+                      content: base64Image,
+                      branch: "main",
+                      ...(imageSha && { sha: imageSha })
+                    })
+                  });
 
-                if (uploadImgRes.ok) {
-                  finalCoverImagePath = `/images/businesses/${slug}.${ext}`;
+                  if (uploadImgRes.ok) {
+                    finalImagePaths.push(`/images/businesses/${imgFileName}`);
+                  }
                 }
               }
             }
           }
+        } catch (error) {
+          console.error(`Meta Image fetch/upload error for image ${i + 1}:`, error);
         }
-      } catch (error) {
-        console.error("Meta Image fetch/upload error:", error);
+      } else if (imgUrl.startsWith("http")) {
+        // External URL, keep as-is
+        finalImagePaths.push(imgUrl);
       }
     }
 
@@ -153,7 +157,7 @@ export async function onRequestPost(context) {
       city: data.city || data?.form_data?.city || "",
       phone: data.phone || data?.form_data?.phone || "",
       whatsapp: data.whatsapp || data.phone || data?.form_data?.whatsapp || "",
-      image: finalCoverImagePath,
+      image: finalImagePaths.length === 1 ? finalImagePaths[0] : (finalImagePaths.length > 1 ? finalImagePaths : ""),
       published: true, // Automatically publish the ad
       featured: false,
       tags: data.tags ? data.tags.split(",").map(t => t.trim()) : []
