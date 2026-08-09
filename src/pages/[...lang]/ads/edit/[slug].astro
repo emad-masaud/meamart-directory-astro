@@ -349,77 +349,31 @@ const adSlug = Astro.params.slug;
       }
     });
     
-    form?.addEventListener("submit", (e) => {
+
+    // Form Submission Logic (Edit Mode)
+    form?.addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (validateStep()) {
-        alert("تم إعتماد إعلانك بنجاح! (هذه نسخة تجريبية)");
-      }
-    });
-    
-    // File upload preview logic
-    const fileUpload = document.getElementById("file-upload") as HTMLInputElement;
-    const previewContainer = document.getElementById("image-preview-container");
-    
-    fileUpload?.addEventListener("change", function(e) {
-      if (!this.files || !previewContainer) return;
+      if (!validateStep()) return;
       
-      previewContainer.innerHTML = "";
-      previewContainer.classList.remove("hidden");
+      const submitTextEl = document.getElementById('submit-text');
+      const submitSpinnerEl = document.getElementById('submit-spinner');
       
-      const maxFiles = Math.min(this.files.length, 4);
+      if (submitBtn) (submitBtn as HTMLButtonElement).disabled = true;
+      if (submitTextEl) submitTextEl.textContent = 'جاري التحديث...';
+      if (submitSpinnerEl) submitSpinnerEl.classList.remove('hidden');
       
-      for (let i = 0; i < maxFiles; i++) {
-        const file = this.files[i];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            const div = document.createElement("div");
-            div.className = "aspect-square rounded-2xl overflow-hidden border border-zinc-200 shadow-sm relative group";
-            div.innerHTML = `
-              <img src="${e.target?.result}" class="w-full h-full object-cover" />
-              <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                <button type="button" class="bg-red-500 text-white p-2.5 rounded-full hover:bg-red-600 transition-colors shadow-lg">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-                </button>
-              </div>
-            `;
-            previewContainer.appendChild(div);
-          };
-          reader.readAsDataURL(file);
+      const formData = new FormData(form as HTMLFormElement);
+      
+      // Collect uploaded files from preview
+      const fileInput = document.getElementById('file-upload') as HTMLInputElement;
+      if (fileInput?.files) {
+        formData.delete('photo');
+        formData.delete('images');
+        const maxFiles = Math.min(fileInput.files.length, 4);
+        for (let i = 0; i < maxFiles; i++) {
+          formData.append('images', fileInput.files[i]);
         }
       }
-    });
-
-    // Form Submission Logic
-    const form = document.getElementById('create-ad-form');
-    const submitBtn = document.getElementById('submit-btn');
-    const submitText = document.getElementById('submit-text');
-    const submitSpinner = document.getElementById('submit-spinner');
-    
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      // Basic validation for step 4
-      if (uploadedFiles.length === 0) {
-        alert('الرجاء إرفاق صورة واحدة على الأقل');
-        return;
-      }
-      
-      // Prepare form data
-      const formData = new FormData(form);
-      
-      // Remove the default empty file input value if any
-      formData.delete('images');
-      
-      // Append actual files
-      uploadedFiles.forEach(file => {
-        formData.append('images', file);
-      });
-      
-      // Show loading state
-      submitBtn.disabled = true;
-      submitText.textContent = 'جاري النشر...';
-      submitSpinner.classList.remove('hidden');
       
       try {
         const response = await fetch('/api/submit-ad', {
@@ -430,19 +384,18 @@ const adSlug = Astro.params.slug;
         const result = await response.json();
         
         if (response.ok && result.success) {
-          alert('تم إنشاء الإعلان بنجاح!');
-          // Redirect to the new ad or home page
-          window.location.href = result.url || `/${document.documentElement.lang}/`;
+          alert('تم تحديث الإعلان بنجاح!');
+          window.location.href = result.url || `/${document.documentElement.lang}/dashboard`;
         } else {
-          alert('حدث خطأ أثناء النشر: ' + (result.error || 'خطأ غير معروف'));
+          alert('حدث خطأ أثناء التحديث: ' + (result.error || 'خطأ غير معروف'));
         }
       } catch (error) {
         alert('حدث خطأ في الاتصال بالخادم. يرجى المحاولة لاحقاً.');
         console.error(error);
       } finally {
-        submitBtn.disabled = false;
-        submitText.textContent = 'نشر الإعلان';
-        submitSpinner.classList.add('hidden');
+        if (submitBtn) (submitBtn as HTMLButtonElement).disabled = false;
+        if (submitTextEl) submitTextEl.textContent = 'تحديث الإعلان';
+        if (submitSpinnerEl) submitSpinnerEl.classList.add('hidden');
       }
     });
   });

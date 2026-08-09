@@ -1,9 +1,10 @@
 ---
-import Layout from "../../layouts/BaseLayout.astro";
+import Layout from "~/layouts/Layout.astro";
 import { Icon } from 'astro-icon/components';
 
 export function getStaticPaths() {
   return [
+    { params: { lang: undefined } },
     { params: { lang: "ar" } },
     { params: { lang: "en" } },
   ];

@@ -344,13 +344,6 @@ const description = isArabic ? "أضف تفاصيل إعلانك الجديد ل
       }
     });
     
-    form?.addEventListener("submit", (e) => {
-      e.preventDefault();
-      if (validateStep()) {
-        alert("تم إعتماد إعلانك بنجاح! (هذه نسخة تجريبية)");
-      }
-    });
-    
     // File upload preview logic
     const fileUpload = document.getElementById("file-upload") as HTMLInputElement;
     const previewContainer = document.getElementById("image-preview-container");
@@ -386,35 +379,30 @@ const description = isArabic ? "أضف تفاصيل إعلانك الجديد ل
     });
 
     // Form Submission Logic
-    const form = document.getElementById('create-ad-form');
-    const submitBtn = document.getElementById('submit-btn');
-    const submitText = document.getElementById('submit-text');
-    const submitSpinner = document.getElementById('submit-spinner');
-    
-    form.addEventListener('submit', async (e) => {
+    form?.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (!validateStep()) return;
       
-      // Basic validation for step 4
-      if (uploadedFiles.length === 0) {
-        alert('الرجاء إرفاق صورة واحدة على الأقل');
-        return;
-      }
+      const submitTextEl = document.getElementById('submit-text');
+      const submitSpinnerEl = document.getElementById('submit-spinner');
       
       // Prepare form data
-      const formData = new FormData(form);
+      const formData = new FormData(form as HTMLFormElement);
       
-      // Remove the default empty file input value if any
-      formData.delete('images');
-      
-      // Append actual files
-      uploadedFiles.forEach(file => {
-        formData.append('images', file);
-      });
+      // Collect uploaded files
+      if (fileUpload?.files && fileUpload.files.length > 0) {
+        formData.delete('photo');
+        formData.delete('images');
+        const maxFiles = Math.min(fileUpload.files.length, 4);
+        for (let i = 0; i < maxFiles; i++) {
+          formData.append('images', fileUpload.files[i]);
+        }
+      }
       
       // Show loading state
-      submitBtn.disabled = true;
-      submitText.textContent = 'جاري النشر...';
-      submitSpinner.classList.remove('hidden');
+      if (submitBtn) (submitBtn as HTMLButtonElement).disabled = true;
+      if (submitTextEl) submitTextEl.textContent = 'جاري النشر...';
+      if (submitSpinnerEl) submitSpinnerEl.classList.remove('hidden');
       
       try {
         const response = await fetch('/api/submit-ad', {
@@ -426,7 +414,6 @@ const description = isArabic ? "أضف تفاصيل إعلانك الجديد ل
         
         if (response.ok && result.success) {
           alert('تم إنشاء الإعلان بنجاح!');
-          // Redirect to the new ad or home page
           window.location.href = result.url || `/${document.documentElement.lang}/`;
         } else {
           alert('حدث خطأ أثناء النشر: ' + (result.error || 'خطأ غير معروف'));
@@ -435,9 +422,9 @@ const description = isArabic ? "أضف تفاصيل إعلانك الجديد ل
         alert('حدث خطأ في الاتصال بالخادم. يرجى المحاولة لاحقاً.');
         console.error(error);
       } finally {
-        submitBtn.disabled = false;
-        submitText.textContent = 'نشر الإعلان';
-        submitSpinner.classList.add('hidden');
+        if (submitBtn) (submitBtn as HTMLButtonElement).disabled = false;
+        if (submitTextEl) submitTextEl.textContent = 'إعتماد الإعلان';
+        if (submitSpinnerEl) submitSpinnerEl.classList.add('hidden');
       }
     });
   });
