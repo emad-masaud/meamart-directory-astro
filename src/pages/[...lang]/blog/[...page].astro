@@ -29,7 +29,7 @@ export async function getStaticPaths({ paginate }: { paginate: GetStaticPathsOpt
 }
 
 const { page } = Astro.props as { page: Page<CollectionEntry<'blog'>> };
-const { lang } = Astro.params;
+const lang = Astro.params.lang || 'ar';
 const t = useTranslations(lang);
 ---
 

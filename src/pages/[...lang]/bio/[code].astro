@@ -1,4 +1,12 @@
 ---
+
+export function getStaticPaths() {
+  return [
+    { params: { lang: undefined } },
+    { params: { lang: "ar" } },
+    { params: { lang: "en" } }
+  ];
+}
 import SEO from "~/components/layout/SEO.astro";
 import { supabaseAdminClient } from "~/utils/supabase";
 import { isRtl } from "~/i18n/utils";

@@ -1,4 +1,12 @@
 ---
+
+export function getStaticPaths() {
+  return [
+    { params: { lang: undefined } },
+    { params: { lang: "ar" } },
+    { params: { lang: "en" } }
+  ];
+}
 import Layout from "~/layouts/Layout.astro";
 import Container from "~/components/ui/Container.astro";
 import PageHeader from "~/components/layout/PageHeader.astro";
