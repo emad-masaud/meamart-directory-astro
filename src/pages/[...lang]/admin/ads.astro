@@ -22,7 +22,7 @@ if (!session || !session.is_admin) {
 import { getCollection } from "astro:content";
 let allAds: any[] = [];
 try {
-  const adsCollection = await getCollection("ads"));
+  const adsCollection = await getCollection("ads");
   allAds = adsCollection.map((ad: any) => ({
     id: ad.id,
     adId: ad.id,

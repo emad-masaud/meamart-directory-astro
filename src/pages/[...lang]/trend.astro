@@ -36,7 +36,7 @@ let categoryVolume: { name: string; count: number; percentage: number }[] = [];
 let locationVolume: { name: string; count: number; percentage: number }[] = [];
 
 try {
-  const ads = await getCollection("ads"));
+  const ads = await getCollection("ads");
   const activeAds = ads.filter(
     (ad: any) => ad.data?.status !== "sold",
   );
