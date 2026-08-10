@@ -20,7 +20,7 @@ export async function getStaticPaths() {
   ];
 }
 
-const { lang } = Astro.params;
+const lang = Astro.params.lang || 'ar';
 const safeLang = lang || 'ar';
 const t = useTranslations(safeLang as keyof typeof languages);
 ---

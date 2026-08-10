@@ -17,7 +17,7 @@ export async function getStaticPaths() {
   }).flat();
 }
 
-const { lang } = Astro.params;
+const lang = Astro.params.lang || 'ar';
 const { user } = Astro.props;
 const t = useTranslations(lang as any);
 const safeLang = (lang as any) || "ar";
