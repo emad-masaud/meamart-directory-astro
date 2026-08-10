@@ -39,7 +39,7 @@ export default function LoginTabsClient(props: LoginTabsProps) {
       }
       const lang = window.location.pathname.split('/')[1] || 'ar';
       const urlParams = new URLSearchParams(window.location.search);
-      const redirectUrl = urlParams.get('redirect') || `/${lang}/seller/dashboard`;
+      const redirectUrl = urlParams.get('redirect') || `/${lang}/dashboard`;
       window.location.replace(redirectUrl);
       return;
     }
