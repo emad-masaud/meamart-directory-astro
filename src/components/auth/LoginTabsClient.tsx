@@ -116,7 +116,7 @@ export default function LoginTabsClient(props: LoginTabsProps) {
           setAuthMsg(isEn ? (mode === 'register' ? 'Registered successfully! Redirecting...' : 'Signed in successfully! Redirecting...') : (data.message || 'تم بنجاح!'));
           const lang = window.location.pathname.split('/')[1] || 'ar';
           const urlParams = new URLSearchParams(window.location.search);
-          const redirectUrl = urlParams.get('redirect') || `/${lang}/seller/dashboard`;
+          const redirectUrl = urlParams.get('redirect') || `/${lang}/dashboard`;
           setTimeout(() => {
             window.location.href = redirectUrl;
           }, 800);
@@ -150,7 +150,7 @@ export default function LoginTabsClient(props: LoginTabsProps) {
         setAuthMsg(isEn ? 'Verified successfully! Redirecting...' : 'تم التحقق بنجاح! جاري الدخول...');
         const lang = window.location.pathname.split('/')[1] || 'ar';
         const urlParams = new URLSearchParams(window.location.search);
-        const redirectUrl = urlParams.get('redirect') || `/${lang}/seller/dashboard`;
+        const redirectUrl = urlParams.get('redirect') || `/${lang}/dashboard`;
         setTimeout(() => {
           window.location.href = redirectUrl;
         }, 600);
