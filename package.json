@@ -47,6 +47,7 @@
     "google-auth-library": "^9.15.1",
     "google-spreadsheet": "^4.1.4",
     "googleapis": "^146.0.0",
+    "html5-qrcode": "^2.3.8",
     "lucide-react": "^1.30.0",
     "nanostores": "^0.11.3",
     "notion-astro-loader": "^0.4.0",
