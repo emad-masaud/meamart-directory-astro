@@ -5,6 +5,7 @@ import ThemeToggle from "~/components/common/ThemeToggle.astro";
 
 import LanguagePicker from "~/components/common/LanguagePicker.astro";
 import CurrencyPicker from "~/components/common/CurrencyPicker.astro";
+import Search from "~/components/islands/Search.jsx";
 import { getPopularLinks } from "~/utils/popularLinks";
 
 import { getCollection } from "astro:content";
@@ -19,7 +20,7 @@ import { useTranslations } from "~/i18n/utils";
 // Get session from middleware or fallback to cookie parsing
 let userSession: any = null;
 
-const url = new URL(Astro.request.url);
+const url = Astro.url;
 if (url.pathname.includes("/seller") || url.pathname.includes("/login")) {
   console.log("[Header] Session check:", {
     userSession: !!userSession,
@@ -161,7 +162,17 @@ const popularLinks = await getPopularLinks(lang);
     <div class="flex items-center gap-2 shrink-0">
       {
         siteConfig.features.search && (
-          <!-- Search Removed -->
+          <Search 
+            client:only="react" 
+            lang={lang} 
+            placeholder={t["nav.search"] || "Search..."}
+            devModalLabels={{
+              title: t["search.dev.title"] || "Search is a Production Superpower! 🚀",
+              description: t["search.dev.desc"] || "To enable our lightning-fast search, Pagefind needs a static build index. Run the following command to see it in action:",
+              gotIt: t["search.dev.gotIt"] || "Got it, thanks!",
+              doc: t["search.dev.doc"] || "Documentation"
+            }}
+          />
         )
       }
       <LanguagePicker availableLangs={availableLangs} />

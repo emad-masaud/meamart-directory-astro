@@ -2,7 +2,7 @@
 import AppLogo from "./Logo.astro";
 import { Icon } from "astro-icon/components";
 
-const currentPath = new URL(Astro.request.url).pathname;
+const currentPath = Astro.url.pathname;
 const isArabic = !currentPath.startsWith('/en');
 const lang = isArabic ? "ar" : "en";
 

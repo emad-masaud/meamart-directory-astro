@@ -3,6 +3,13 @@ import Layout from "~/layouts/Layout.astro";
 import { Icon } from "astro-icon/components";
 import { getLangFromUrl, useTranslations } from "~/i18n/utils";
 
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'ar' } },
+    { params: { lang: 'en' } }
+  ];
+}
+
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 
@@ -193,6 +200,10 @@ const isRtl = lang === "ar";
         
         // Pre-fill user data (basic info from Google)
         if (data.user.name && nameInput) nameInput.value = data.user.name;
+        if (data.user.username && usernameInput) {
+          usernameInput.value = data.user.username;
+          if (usernamePreview) usernamePreview.textContent = data.user.username;
+        }
         if (data.user.picture && avatarPreview && avatarPlaceholder) {
           avatarPreview.src = data.user.picture;
           avatarPreview.classList.remove('hidden');

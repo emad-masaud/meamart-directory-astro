@@ -41,6 +41,36 @@ export async function onRequestPost(context) {
     }
 
     const githubRepo = "emad-masaud/meamart-directory-astro";
+    const userId = btoa(user.email).replace(/=/g, '').toLowerCase();
+
+    // 1. Check Username Uniqueness using usernames.json index
+    const usernamesIndexPath = "src/data/usernames.json";
+    let usernamesIndexSha = null;
+    let usernamesData = {};
+    
+    if (cleanUsername) {
+      const indexRes = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${usernamesIndexPath}`, {
+        headers: {
+          "Authorization": `Bearer ${githubToken}`,
+          "User-Agent": "MeaMart-Website"
+        }
+      });
+      
+      if (indexRes.ok) {
+        const indexFile = await indexRes.json();
+        usernamesIndexSha = indexFile.sha;
+        try {
+          usernamesData = JSON.parse(decodeURIComponent(escape(atob(indexFile.content))));
+        } catch (e) {
+          console.error("Failed to parse usernames index", e);
+        }
+      }
+      
+      // If username exists and it doesn't belong to the current user
+      if (usernamesData[cleanUsername] && usernamesData[cleanUsername] !== userId) {
+        return new Response(JSON.stringify({ success: false, error: "Username is already taken. Please choose another one." }), { status: 400 });
+      }
+    }
     
     // Process Avatar
     const avatarFile = formData.get('avatar');
@@ -117,8 +147,7 @@ export async function onRequestPost(context) {
       await new Promise(r => setTimeout(r, 1000));
     }
 
-    // Generate unique ID based on email hash or just base64 encode email
-    const userId = btoa(user.email).replace(/=/g, '').toLowerCase();
+    // Generate unique ID based on email hash or just base64 encode email (already defined above)
     
     // Check if user already exists
     const userFilePath = `src/data/users/${userId}.json`;
@@ -180,6 +209,39 @@ export async function onRequestPost(context) {
     if (!saveRes.ok) {
       const errorData = await saveRes.json();
       return new Response(JSON.stringify({ success: false, error: errorData.message || "Failed to save profile" }), { status: saveRes.status });
+    }
+
+    // Update usernames.json index if username changed or is new
+    if (cleanUsername && usernamesData[cleanUsername] !== userId) {
+      // Remove old username if they had one
+      const oldUsername = Object.keys(usernamesData).find(key => usernamesData[key] === userId);
+      if (oldUsername) {
+        delete usernamesData[oldUsername];
+      }
+      
+      usernamesData[cleanUsername] = userId;
+      
+      const indexContentBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(usernamesData, null, 2))));
+      const indexReqBody = {
+        message: `Update username index for: ${cleanUsername}`,
+        content: indexContentBase64,
+        branch: "main"
+      };
+      if (usernamesIndexSha) indexReqBody.sha = usernamesIndexSha;
+      
+      // Delay to avoid 409
+      await new Promise(r => setTimeout(r, 1000));
+      
+      await fetch(`https://api.github.com/repos/${githubRepo}/contents/${usernamesIndexPath}`, {
+        method: "PUT",
+        headers: {
+          "Authorization": `Bearer ${githubToken}`,
+          "User-Agent": "MeaMart-Website",
+          "Accept": "application/vnd.github.v3+json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(indexReqBody)
+      });
     }
 
     return new Response(JSON.stringify({ 

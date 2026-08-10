@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig, envField } from 'astro/config';
 import vue from '@astrojs/vue';
+import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
 import icon from 'astro-icon';
 import sitemap from '@astrojs/sitemap';
@@ -16,6 +17,7 @@ export default defineConfig({
   },
   integrations: [
     vue(),
+    react(),
     mdx(),
     icon(),
     sitemap()

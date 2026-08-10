@@ -11,7 +11,7 @@ const isActive = (path: string, currentPath: string | undefined) => {
 };
 
 // Get the current path safely
-const currentPath = new URL(Astro.request.url).pathname;
+const currentPath = Astro.url.pathname;
 ---
 
 <nav

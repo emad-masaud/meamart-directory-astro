@@ -4,7 +4,7 @@ import { Icon } from "astro-icon/components";
 import ColorSelector from "./header/ColorSelector.astro";
 import Logo from "./Logo.astro";
 
-const currentPath = new URL(Astro.request.url).pathname;
+const currentPath = Astro.url.pathname;
 const isArabic = !currentPath.startsWith("/en");
 
 const links = isArabic
@@ -98,8 +98,9 @@ const isActive = (path: string) => currentPath === path;
 
         <!-- CTA Button -->
         <a
+          id="header-cta"
           href={actionLink}
-          class="hidden md:inline-flex items-center justify-center rounded-full bg-primary-500 text-white px-5 py-2 font-bold hover:bg-primary-600 transition-all shadow-sm"
+          class="hidden md:inline-flex items-center justify-center rounded-full bg-emerald-500 text-white px-5 py-2 font-bold hover:bg-emerald-600 transition-all shadow-sm"
         >
           {actionText}
         </a>
@@ -127,8 +128,9 @@ const isActive = (path: string) => currentPath === path;
     </div>
     <div class="border-t border-gray-200 dark:border-gray-800 pb-4 pt-4 px-4">
       <a
+        id="mobile-header-cta"
         href={actionLink}
-        class="flex items-center justify-center rounded-full bg-primary-500 text-white px-5 py-2 w-full font-bold hover:bg-primary-600 transition-all shadow-sm"
+        class="flex items-center justify-center rounded-full bg-emerald-500 text-white px-5 py-2 w-full font-bold hover:bg-emerald-600 transition-all shadow-sm"
       >
         {actionText}
       </a>
@@ -150,4 +152,31 @@ const isActive = (path: string) => currentPath === path;
       );
     });
   }
+
+  // Handle CTA Auth State
+  document.addEventListener("DOMContentLoaded", async () => {
+    try {
+      const lang = document.documentElement.lang || "ar";
+      const createAdLink = `/${lang}/ads/create`;
+      const res = await fetch('/api/auth/me');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.authenticated) {
+          const headerCta = document.getElementById('header-cta') as HTMLAnchorElement | null;
+          const mobileHeaderCta = document.getElementById('mobile-header-cta') as HTMLAnchorElement | null;
+          
+          if (headerCta) {
+            headerCta.href = createAdLink;
+            headerCta.className = "hidden md:inline-flex items-center justify-center rounded-full bg-primary-500 text-white px-5 py-2 font-bold hover:bg-primary-600 transition-all shadow-sm";
+          }
+          if (mobileHeaderCta) {
+            mobileHeaderCta.href = createAdLink;
+            mobileHeaderCta.className = "flex items-center justify-center rounded-full bg-primary-500 text-white px-5 py-2 w-full font-bold hover:bg-primary-600 transition-all shadow-sm";
+          }
+        }
+      }
+    } catch (e) {
+      // Ignore errors, default fallback is already rendered
+    }
+  });
 </script>

@@ -1,4 +1,19 @@
 export async function onRequestPost(context) {
+  // Utility for Arabic to English transliteration
+  const transliterateArabicToEnglish = (text) => {
+    const arabicToEnglishMap = {
+      'ا': 'a', 'أ': 'a', 'إ': 'e', 'آ': 'a', 'ب': 'b', 'ت': 't', 'ث': 'th',
+      'ج': 'j', 'ح': 'h', 'خ': 'kh', 'د': 'd', 'ذ': 'dh', 'ر': 'r', 'ز': 'z',
+      'س': 's', 'ش': 'sh', 'ص': 's', 'ض': 'd', 'ط': 't', 'ظ': 'dh', 'ع': 'a',
+      'غ': 'gh', 'ف': 'f', 'ق': 'q', 'ك': 'k', 'ل': 'l', 'م': 'm', 'ن': 'n',
+      'ه': 'h', 'و': 'w', 'ي': 'y', 'ى': 'a', 'ة': 'h', 'ئ': 'e', 'ؤ': 'o',
+      'ء': 'a'
+    };
+    return text.split('').map(char => arabicToEnglishMap[char] || char).join('')
+      .toLowerCase()
+      .replace(/[^a-z0-9_]/g, ''); // keep only alphanumeric and underscore
+  };
+
   try {
     const data = await context.request.json();
     const credential = data.credential;
@@ -22,10 +37,14 @@ export async function onRequestPost(context) {
       return new Response(JSON.stringify({ success: false, error: "Email not verified" }), { status: 401 });
     }
 
+    let rawName = payload.name || '';
+    let generatedUsername = transliterateArabicToEnglish(rawName) || payload.email.split('@')[0];
+
     const userData = {
       email: payload.email,
       name: payload.name,
-      picture: payload.picture
+      picture: payload.picture,
+      username: generatedUsername
     };
     
     // Encode the JSON payload into a base64 string to store it in a cookie
