@@ -1,0 +1,121 @@
+---
+import { useTranslations } from "~/i18n/utils";
+import { Icon } from "astro-icon/components";
+
+const {
+  lang,
+  activeTab,
+  adsCount = 0,
+  productsCount = 0,
+  addressesCount = 0,
+} = Astro.props;
+
+const t = useTranslations(lang);
+
+const navItems = [
+  {
+    id: "ads",
+    href: `/${lang}/dashboard`,
+    label: t["seller.subnav.ads"] || "إعلاناتي",
+    count: adsCount,
+    iconName: "lucide:layout-grid",
+  },
+  {
+    id: "products",
+    href: `/${lang}/dashboard/products`,
+    label: t["seller.subnav.products"] || "منتجاتي",
+    count: productsCount,
+    iconName: "lucide:package",
+  },
+  {
+    id: "workspaces",
+    href: `/${lang}/dashboard/workspaces`,
+    label: lang === "ar" ? "المساحات (الكتالوج)" : "Workspaces",
+    iconName: "lucide:layout-grid",
+  },
+  {
+    id: "companies",
+    href: `/${lang}/dashboard/companies`,
+    label: lang === "ar" ? "الشركات والموردين" : "Companies & Suppliers",
+    iconName: "lucide:building-2",
+  },
+  {
+    id: "addresses",
+    href: `/${lang}/dashboard/addresses`,
+    label: t["seller.subnav.addresses"] || "عناويني",
+    count: addressesCount,
+    iconName: "lucide:map-pin",
+  },
+  {
+    id: "profile",
+    href: `/${lang}/dashboard/profile`,
+    label: t["seller.subnav.profile"] || "الملف الشخصي",
+    iconName: "lucide:user",
+  },
+  {
+    id: "qr",
+    href: `/${lang}/dashboard/qr-manager`,
+    label: t["seller.subnav.qr"] || "إدارة الباركود",
+    iconName: "lucide:qr-code",
+  },
+  {
+    id: "reports",
+    href: `/${lang}/dashboard/reports`,
+    label: t["seller.subnav.reports"] || "التقارير",
+    iconName: "lucide:bar-chart-3",
+  },
+  {
+    id: "chatbot",
+    href: `/${lang}/dashboard/chatbot`,
+    label: lang === "ar" ? "البوت الذكي" : "Smart Bot",
+    iconName: "lucide:bot",
+  },
+  {
+    id: "api",
+    href: `/${lang}/dashboard/api`,
+    label: t["seller.subnav.api"] || "API",
+    iconName: "lucide:code-2",
+  },
+];
+---
+
+<nav aria-label="Dashboard Navigation" class="mb-10 w-full px-2 sm:px-0">
+  <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 gap-3 sm:gap-4 max-w-7xl mx-auto">
+    {
+      navItems.map(({ id, href, label, count, iconName }) => {
+        const isActive = activeTab === id;
+        return (
+          <a
+            href={href}
+            class={`relative flex flex-col items-center justify-center gap-2 p-4 rounded-3xl transition-all duration-300 select-none group ${
+              isActive
+                ? "bg-primary text-white shadow-xl shadow-primary/30 scale-[1.02]"
+                : "bg-white/80 dark:bg-zinc-900/80 border border-zinc-200/50 dark:border-zinc-800/50 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 hover:scale-105 hover:shadow-lg shadow-sm"
+            }`}
+          >
+            <div class={`p-3 rounded-2xl ${isActive ? "bg-white/20" : "bg-zinc-100 dark:bg-zinc-800 group-hover:bg-primary/10 transition-colors"}`}>
+              <Icon
+                name={iconName}
+                class={`w-7 h-7 ${isActive ? "text-white" : "text-primary dark:text-primary-400 group-hover:scale-110 transition-transform"}`}
+              />
+            </div>
+            <span class="text-[11px] sm:text-xs font-bold text-center leading-tight line-clamp-2 px-1">
+              {label}
+            </span>
+            {typeof count === "number" && count > 0 && (
+              <span
+                class={`absolute -top-1 -right-1 sm:top-2 sm:right-2 flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full text-[10px] font-extrabold shadow-sm ${
+                  isActive
+                    ? "bg-white text-primary"
+                    : "bg-red-500 text-white"
+                }`}
+              >
+                {count > 99 ? '99+' : count}
+              </span>
+            )}
+          </a>
+        );
+      })
+    }
+  </div>
+</nav>

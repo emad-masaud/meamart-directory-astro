@@ -1,0 +1,102 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import Container from "~/components/ui/Container.astro";
+import { defaultLang } from "~/i18n/ui";
+import { isRtl, useTranslations } from "~/i18n/utils";
+import { getStore } from '~/lib/catalog/workspace';
+import { QrGenerator } from '~/components/catalog/QrGenerator';
+
+export const prerender = false;
+
+const { lang = defaultLang, workspace, project } = Astro.params;
+const rtl = isRtl(lang);
+const t = useTranslations(lang);
+
+let currentProject = null;
+let branches = [];
+let error = null;
+let selectedBranch = Astro.url.searchParams.get('branch');
+
+try {
+  const store = getStore(Astro.locals?.runtime?.env?.WORKSPACES_KV);
+  const projects = await store.getProjects(workspace as string);
+  currentProject = projects.find(p => p.slug === project);
+  
+  if (!currentProject) {
+    error = "Project not found";
+  } else {
+    branches = currentProject.branches || [];
+    if (!selectedBranch && branches.length > 0) {
+      selectedBranch = branches[0].slug;
+    }
+  }
+} catch (e: any) {
+  error = e.message;
+}
+
+const baseUrl = Astro.url.origin;
+
+const translations = {
+  'catalog.qr.title': t['catalog.qr.title'] || 'QR Codes & Tags',
+  'catalog.qr.desc': t['catalog.qr.desc'] || 'Generate trackable QR codes for your physical locations or marketing campaigns.',
+};
+---
+
+<Layout title={`${t['catalog.qr.title']} - ${currentProject?.name || project}`}>
+  <Container class="pb-24 pt-8">
+    <div class="max-w-5xl mx-auto space-y-8">
+      <div class="flex items-center gap-4">
+        <a href={`/${lang}/seller/products/${workspace}`} class="text-zinc-500 hover:text-primary transition-colors font-bold flex items-center gap-2">
+          <svg class={`w-5 h-5 ${rtl ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+          {t['catalog.common.back']} {workspace}
+        </a>
+      </div>
+      
+      <div class="flex items-center gap-3">
+        <h1 class="text-3xl font-extrabold text-zinc-900 dark:text-zinc-50">
+          {t['catalog.qr.title']}
+        </h1>
+      </div>
+      
+      <p class="text-zinc-500 dark:text-zinc-400 max-w-2xl text-base font-medium leading-relaxed">
+        {t['catalog.qr.desc']}
+      </p>
+
+      {error && (
+        <div class="p-4 bg-red-50 text-red-800 rounded-2xl border border-red-200 dark:bg-red-900/20 dark:border-red-900/30 font-bold">
+          {t['catalog.common.error']} {error}
+        </div>
+      )}
+
+      {!error && branches.length === 0 && (
+        <div class="p-8 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-3xl bg-zinc-50/50 dark:bg-zinc-900/20 text-center">
+          <p class="text-zinc-500 font-medium">{t['catalog.qr.empty'] || 'You need to create a branch first before generating QR codes.'}</p>
+        </div>
+      )}
+
+      {!error && branches.length > 0 && (
+        <div class="space-y-6">
+          <div class="flex items-center gap-4">
+            <label class="font-bold text-zinc-700 dark:text-zinc-300">{t['catalog.qr.branch'] || 'Branch'}:</label>
+            <select 
+              class="px-4 py-2 rounded-xl border border-zinc-200 bg-white dark:bg-zinc-800 dark:border-zinc-700 font-medium min-w-[200px]"
+              onchange="window.location.search = `?branch=${this.value}`"
+            >
+              {branches.map(b => (
+                <option value={b.slug} selected={b.slug === selectedBranch}>{b.name}</option>
+              ))}
+            </select>
+          </div>
+          
+          <QrGenerator 
+            client:load 
+            baseUrl={baseUrl} 
+            projectName={currentProject.slug} 
+            branchName={selectedBranch} 
+            t={translations}
+          />
+        </div>
+      )}
+    </div>
+  </Container>
+</Layout>

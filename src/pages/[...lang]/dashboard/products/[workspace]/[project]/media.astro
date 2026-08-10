@@ -1,0 +1,71 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import Container from "~/components/ui/Container.astro";
+import { defaultLang } from "~/i18n/ui";
+import { isRtl, useTranslations } from "~/i18n/utils";
+import { getStore } from '~/lib/catalog/workspace';
+import { MediaManager } from '~/components/catalog/MediaManager';
+
+export const prerender = false;
+
+const { lang = defaultLang, workspace, project } = Astro.params;
+const rtl = isRtl(lang);
+const t = useTranslations(lang);
+
+let currentProject = null;
+let error = null;
+
+try {
+  const store = getStore(Astro.locals?.runtime?.env?.WORKSPACES_KV);
+  const projects = await store.getProjects(workspace as string);
+  currentProject = projects.find(p => p.slug === project);
+  
+  if (!currentProject) {
+    error = "Project not found";
+  }
+} catch (e: any) {
+  error = e.message;
+}
+
+const translations = {
+  'catalog.media.title': t['catalog.media.title'] || 'Media Manager',
+  'catalog.media.desc': t['catalog.media.desc'] || 'Upload product images directly to your Cloudflare R2 bucket.',
+  'catalog.media.drag': t['catalog.media.drag'] || 'Drag & drop images here, or click to select',
+  'catalog.media.uploading': t['catalog.media.uploading'] || 'Uploading...',
+  'catalog.media.recent': t['catalog.media.recent'] || 'Recently Uploaded',
+  'catalog.media.no_images': t['catalog.media.no_images'] || 'You haven\'t uploaded any images yet.',
+  'catalog.media.copy_url': t['catalog.media.copy_url'] || 'Copy URL',
+};
+---
+
+<Layout title={`${t['catalog.media.title']} - ${currentProject?.name || project}`}>
+  <Container class="pb-24 pt-8">
+    <div class="max-w-5xl mx-auto space-y-8">
+      <div class="flex items-center gap-4">
+        <a href={`/${lang}/seller/products/${workspace}`} class="text-zinc-500 hover:text-primary transition-colors font-bold flex items-center gap-2">
+          <svg class={`w-5 h-5 ${rtl ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+          {t['catalog.common.back']} {workspace}
+        </a>
+      </div>
+      
+      <div class="flex items-center gap-3">
+        <h1 class="text-3xl font-extrabold text-zinc-900 dark:text-zinc-50">
+          {t['catalog.media.title']}
+        </h1>
+        <span class="px-3 py-1 text-xs font-bold bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 rounded-full">{t['catalog.media.storage']}</span>
+      </div>
+      
+      <p class="text-zinc-500 dark:text-zinc-400 max-w-2xl text-base font-medium leading-relaxed">
+        {t['catalog.media.desc']}
+      </p>
+
+      {error ? (
+        <div class="p-4 bg-red-50 text-red-800 rounded-2xl border border-red-200 dark:bg-red-900/20 dark:border-red-900/30 font-bold">
+          {t['catalog.common.error']} {error}
+        </div>
+      ) : (
+        <MediaManager client:load t={translations} />
+      )}
+    </div>
+  </Container>
+</Layout>

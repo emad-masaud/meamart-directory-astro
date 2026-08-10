@@ -1,0 +1,152 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import Container from "~/components/ui/Container.astro";
+import PageHeader from "~/components/layout/PageHeader.astro";
+import { defaultLang } from "~/i18n/ui";
+import { isRtl, useTranslations } from "~/i18n/utils";
+import SellerSubNav from "~/components/seller/SellerSubNav.astro";
+import { getMeamartSession } from "~/utils/session";
+import { kvGet } from "~/utils/kv";
+
+import { getWorkspaceProjects, getWorkspaceMembers } from '~/lib/catalog/workspace';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '~/components/catalog/ui/card';
+import { Button } from '~/components/catalog/ui/button';
+
+export const prerender = false;
+
+const { lang = defaultLang, workspace } = Astro.params;
+const rtl = isRtl(lang);
+const t = useTranslations(lang);
+
+let session = Astro.locals.userSession || (await getMeamartSession(Astro));
+
+if (!session) {
+  return Astro.redirect(`/${lang}/login`);
+}
+
+let adsCount = 0;
+let addressesCount = 0;
+let productsCount = 0; 
+
+try {
+  const userId = session.wp_user_id || session.email;
+  const kvKey = `seller_addresses_${userId}`;
+  const dataStr = await kvGet(Astro, kvKey);
+  if (dataStr) {
+    addressesCount = JSON.parse(dataStr).length;
+  }
+} catch (e) {
+  console.error("[Seller Products] Error fetching addresses count:", e);
+}
+
+let projects = [];
+let members = [];
+let error = null;
+
+try {
+  projects = await getWorkspaceProjects(workspace as string);
+  members = await getWorkspaceMembers(workspace as string);
+} catch (e: any) {
+  error = e.message;
+}
+
+const title = `${t["catalog.projects.title"]} - ${workspace}`;
+---
+
+<Layout title={title}>
+  <PageHeader
+    title={title}
+    description={`${t["catalog.projects.desc"]} ${workspace}`}
+  />
+
+  <Container class="pb-24">
+    <SellerSubNav
+      lang={lang}
+      activeTab="products"
+      adsCount={adsCount}
+      productsCount={productsCount}
+      addressesCount={addressesCount}
+    />
+
+    <div class="space-y-8 pt-2">
+      <div class="flex justify-between items-center">
+        <div>
+          <h1 class="text-3xl font-bold text-zinc-900 dark:text-zinc-50">{t["catalog.projects.title"]}</h1>
+          <p class="text-zinc-500 dark:text-zinc-400 mt-1">{t["catalog.projects.desc"]} {workspace}</p>
+        </div>
+        <div class="flex gap-2">
+          <Button variant="outline" className="rounded-full font-bold">{t["catalog.projects.invite"]}</Button>
+          <Button className="bg-primary hover:bg-primary/90 text-white rounded-full font-bold shadow-md shadow-primary/20">+ {t["catalog.projects.new"]}</Button>
+        </div>
+      </div>
+
+      {error && (
+        <div class="p-4 bg-red-50 text-red-800 rounded-2xl border border-red-200 dark:bg-red-900/20 dark:border-red-900/30">
+          {t["catalog.common.error"]} {error}
+        </div>
+      )}
+
+      <section>
+        <h2 class="text-xl font-bold mb-4 text-zinc-900 dark:text-zinc-50">{t["catalog.projects.title"]}</h2>
+        {projects.length === 0 ? (
+          <div class="text-center p-8 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-3xl bg-white/40 dark:bg-zinc-900/40">
+            <p class="text-zinc-500 font-medium">{t["catalog.projects.empty"]}</p>
+          </div>
+        ) : (
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {projects.map((proj: any) => (
+              <Card className="rounded-3xl border border-zinc-200/50 bg-white/40 p-1 shadow-xs backdrop-blur-md dark:border-zinc-800/50 dark:bg-zinc-900/40 transition-all hover:shadow-md">
+                <CardHeader className="p-5">
+                  <CardTitle className="text-lg font-bold text-zinc-900 dark:text-zinc-50">{proj.name}</CardTitle>
+                  <CardDescription className="text-xs text-zinc-500 mt-1">Slug: {proj.slug}</CardDescription>
+                </CardHeader>
+                <CardContent className="flex flex-col gap-3 px-5 pb-5">
+                  <Button variant="outline" className="w-full rounded-full font-bold border-zinc-200 dark:border-zinc-700">{t["catalog.projects.manage_branches"]}</Button>
+                  <div class="grid grid-cols-2 gap-3">
+                    <a href={`/${lang}/seller/products/${workspace}/${proj.slug}/tags`} class="w-full">
+                      <Button variant="secondary" className="w-full rounded-full font-bold bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700">{t["catalog.projects.qr_codes"]}</Button>
+                    </a>
+                    <a href={`/${lang}/seller/products/${workspace}/${proj.slug}/ai-writer`} class="w-full">
+                      <Button variant="secondary" className="w-full rounded-full font-bold text-purple-700 border border-purple-200/50 bg-purple-50 hover:bg-purple-100 dark:bg-purple-900/20 dark:text-purple-400 dark:border-purple-800/30">{t["catalog.projects.ai_writer"]}</Button>
+                    </a>
+                  </div>
+                  <a href={`/${lang}/seller/products/${workspace}/${proj.slug}/media`} class="w-full">
+                    <Button variant="secondary" className="w-full rounded-full font-bold text-blue-700 border border-blue-200/50 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800/30">{t["catalog.projects.upload_images"]}</Button>
+                  </a>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold mb-4 text-zinc-900 dark:text-zinc-50">{t["catalog.team.title"]}</h2>
+        <div class="bg-white/40 dark:bg-zinc-900/40 border border-zinc-200/50 dark:border-zinc-800/50 rounded-3xl overflow-hidden backdrop-blur-md">
+          <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-800">
+            <thead class="bg-zinc-50/50 dark:bg-zinc-800/30">
+              <tr>
+                <th class="px-6 py-4 text-start text-xs font-bold text-zinc-500 uppercase tracking-wider">{t["catalog.team.user"]}</th>
+                <th class="px-6 py-4 text-start text-xs font-bold text-zinc-500 uppercase tracking-wider">{t["catalog.team.role"]}</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800">
+              {members.map((member: any) => (
+                <tr class="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/30 transition-colors">
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-bold text-zinc-900 dark:text-zinc-50">{member.profile?.email || member.user_id}</div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                      {member.role}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </Container>
+</Layout>

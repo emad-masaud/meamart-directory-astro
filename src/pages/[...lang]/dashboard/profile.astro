@@ -4,6 +4,7 @@ export const prerender = true;
 import Layout from "~/layouts/Layout.astro";
 import { Icon } from "astro-icon/components";
 import { getLangFromUrl, useTranslations } from "~/i18n/utils";
+import DashboardSubNav from "~/components/dashboard/DashboardSubNav.astro";
 
 export function getStaticPaths() {
   return [
@@ -25,14 +26,16 @@ const isRtl = lang === "ar";
     <p class="text-zinc-500 font-medium animate-pulse">جاري التحقق من الجلسة...</p>
   </div>
 
-  <div class="container mx-auto px-4 py-8 lg:py-12 max-w-4xl opacity-0 transition-opacity duration-500" id="main-content">
+  <div class="container mx-auto px-4 py-8 lg:py-12 max-w-7xl opacity-0 transition-opacity duration-500" id="main-content">
     
-    <div class="mb-8">
+    <DashboardSubNav lang={lang} activeTab="profile" />
+
+    <div class="mb-8 max-w-4xl mx-auto">
       <h1 class="text-3xl font-black text-zinc-900 dark:text-white mb-2">الملف الشخصي للمعلن</h1>
       <p class="text-zinc-500 dark:text-zinc-400 font-medium">قم بتخصيص صفحتك الشخصية التي ستظهر للزبائن</p>
     </div>
 
-    <div class="bg-white dark:bg-zinc-900 rounded-3xl p-6 lg:p-10 shadow-xl border border-zinc-100 dark:border-zinc-800 relative overflow-hidden">
+    <div class="bg-white dark:bg-zinc-900 rounded-3xl p-6 lg:p-10 shadow-xl border border-zinc-100 dark:border-zinc-800 relative overflow-hidden max-w-4xl mx-auto">
       
       <!-- Decorative element -->
       <div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>

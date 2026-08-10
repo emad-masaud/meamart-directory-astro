@@ -1,0 +1,76 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import Container from "~/components/ui/Container.astro";
+import { defaultLang } from "~/i18n/ui";
+import { isRtl, useTranslations } from "~/i18n/utils";
+import { getStore } from '~/lib/catalog/workspace';
+import { AiWriter } from '~/components/catalog/AiWriter';
+
+export const prerender = false;
+
+const { lang = defaultLang, workspace, project } = Astro.params;
+const rtl = isRtl(lang);
+const t = useTranslations(lang);
+
+let currentProject = null;
+let error = null;
+
+try {
+  const store = getStore(Astro.locals?.runtime?.env?.WORKSPACES_KV);
+  const projects = await store.getProjects(workspace as string);
+  currentProject = projects.find(p => p.slug === project);
+  
+  if (!currentProject) {
+    error = "Project not found";
+  }
+} catch (e: any) {
+  error = e.message;
+}
+
+// Pass translations to React component
+const translations = {
+  'catalog.ai.title': t['catalog.ai.title'] || 'AI Content Assistant',
+  'catalog.ai.desc': t['catalog.ai.desc'] || 'Generate SEO-friendly titles and descriptions',
+  'catalog.ai.product_name': t['catalog.ai.product_name'] || 'Product Name (Basic)',
+  'catalog.ai.product_placeholder': t['catalog.ai.product_placeholder'] || 'e.g. Nike Air Max, iPhone 15...',
+  'catalog.ai.details': t['catalog.ai.details'] || 'Additional Details (Optional)',
+  'catalog.ai.details_placeholder': t['catalog.ai.details_placeholder'] || 'e.g. Red color, waterproof...',
+  'catalog.ai.generate': t['catalog.ai.generate'] || 'Generate Arabic Content',
+  'catalog.ai.generating': t['catalog.ai.generating'] || 'Generating...',
+  'catalog.ai.output': t['catalog.ai.output'] || 'Generated Output',
+  'catalog.ai.output_desc': t['catalog.ai.output_desc'] || 'Copy these directly into your Google Sheet',
+  'catalog.ai.empty_output': t['catalog.ai.empty_output'] || 'Fill out the form and generate to see results.',
+};
+---
+
+<Layout title={`${t['catalog.ai.title']} - ${currentProject?.name || project}`}>
+  <Container class="pb-24 pt-8">
+    <div class="max-w-5xl mx-auto space-y-8">
+      <div class="flex items-center gap-4">
+        <a href={`/${lang}/seller/products/${workspace}`} class="text-zinc-500 hover:text-primary transition-colors font-bold flex items-center gap-2">
+          <svg class={`w-5 h-5 ${rtl ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+          {t['catalog.common.back']} {workspace}
+        </a>
+      </div>
+      
+      <div class="flex items-center gap-3">
+        <h1 class="text-3xl font-extrabold text-zinc-900 dark:text-zinc-50">
+          {t['catalog.ai.title']}
+        </h1>
+        <span class="px-3 py-1 text-xs font-bold bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 rounded-full">{t['catalog.ai.beta']}</span>
+      </div>
+      
+      <p class="text-zinc-500 dark:text-zinc-400 max-w-2xl text-base font-medium leading-relaxed">
+        {t['catalog.ai.desc']}
+      </p>
+
+      {error ? (
+        <div class="p-4 bg-red-50 text-red-800 rounded-2xl border border-red-200 dark:bg-red-900/20 dark:border-red-900/30 font-bold">
+          {t['catalog.common.error']} {error}
+        </div>
+      ) : (
+        <AiWriter client:load t={translations} />
+      )}
+    </div>
+  </Container>
+</Layout>
