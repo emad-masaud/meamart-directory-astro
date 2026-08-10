@@ -1,0 +1,10 @@
+name = "meamart-directory"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+# Environment variables set in Cloudflare Dashboard
+
+[kv_namespaces]
+# SESSION binding used by @astrojs/cloudflare for sessions
+# Configure in Cloudflare Dashboard
