@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Github, User, LogOut, LayoutGrid, LogIn, Sun, Moon, ShoppingBag, QrCode } from 'lucide-react';
 import * as Icons from 'lucide-react';
 import { ACTION_LINKS } from '~/site.config';
