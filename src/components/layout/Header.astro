@@ -155,7 +155,7 @@ const popularLinks = await getPopularLinks(lang);
         </span>
       </div>
     </a>
-    <div class="flex-1 flex justify-center mx-4 lg:mx-8">
+    <div class="flex-1 hidden lg:flex justify-center mx-4 lg:mx-8">
       <div class="flex gap-4">{links.map((link: any) => (<a href={link.href} class="text-sm font-bold">{link.label}</a>))}</div>
     </div>
 
