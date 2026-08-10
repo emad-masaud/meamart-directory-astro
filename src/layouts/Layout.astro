@@ -326,25 +326,31 @@ const dir = isRtl(lang) ? "rtl" : "ltr";
     
     <!-- Auth state logic for bottom CTA -->
     <script>
-      document.addEventListener("DOMContentLoaded", async () => {
-        try {
-          const res = await fetch('/api/auth/me');
-          if (res.ok) {
-            const data = await res.json();
-            if (data.authenticated) {
-              const bottomCta = document.getElementById('bottom-nav-cta') as HTMLAnchorElement | null;
-              if (bottomCta) {
-                const lang = document.documentElement.lang || "ar";
-                bottomCta.href = `/${lang}/ads/create`;
-                bottomCta.removeAttribute('target'); // don't open in new tab
-                bottomCta.className = "flex h-12 w-12 items-center justify-center rounded-full bg-primary-500 text-white shadow-lg shadow-primary-500/20 hover:bg-primary-600 active:scale-95 transition-all";
-              }
+      function updateBottomCTA() {
+        const bottomCta = document.getElementById('bottom-nav-cta');
+        if (!bottomCta) return;
+        
+        const sessionStr = localStorage.getItem("meamart_session_active");
+        if (sessionStr) {
+          try {
+            const session = JSON.parse(sessionStr);
+            if (session && session.name) {
+              const lang = document.documentElement.lang || "ar";
+              bottomCta.href = `/${lang}/ads/create`;
+              bottomCta.removeAttribute('target'); // don't open in new tab
+              bottomCta.className = "flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary/90 active:scale-95 transition-all";
             }
+          } catch (e) {
+            // Ignore
           }
-        } catch (e) {
-          // Ignore
         }
+      }
+
+      document.addEventListener("DOMContentLoaded", updateBottomCTA);
+      window.addEventListener("storage", (e) => {
+        if (e.key === "meamart_session_active") updateBottomCTA();
       });
+      window.addEventListener("session-update", updateBottomCTA);
     </script>
   </body>
 </html>

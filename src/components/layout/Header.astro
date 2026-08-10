@@ -6,6 +6,7 @@ import ThemeToggle from "~/components/common/ThemeToggle.astro";
 import LanguagePicker from "~/components/common/LanguagePicker.astro";
 import CurrencyPicker from "~/components/common/CurrencyPicker.astro";
 import Search from "~/components/islands/Search.jsx";
+import MobileMenu from "~/components/islands/MobileMenu.jsx";
 import { getPopularLinks } from "~/utils/popularLinks";
 
 import { getCollection } from "astro:content";
@@ -165,7 +166,7 @@ const popularLinks = await getPopularLinks(lang);
           <Search 
             client:only="react" 
             lang={lang} 
-            placeholder={t["nav.search"] || "Search..."}
+            placeholder={t["search.placeholder"] || "Search..."}
             devModalLabels={{
               title: t["search.dev.title"] || "Search is a Production Superpower! 🚀",
               description: t["search.dev.desc"] || "To enable our lightning-fast search, Pagefind needs a static build index. Run the following command to see it in action:",
@@ -314,12 +315,37 @@ const popularLinks = await getPopularLinks(lang);
 
       <!-- Primary Action Button (Create Ad) -->
       <a
-        href={primaryHref}
-        class="hidden md:inline-flex items-center justify-center rounded-full bg-primary text-white p-2.5 hover:bg-primary/90 transition-all shadow-xs rtl:ml-2 ltr:mr-2"
+        id="header-create-ad-btn"
+        href={`/${lang}/seller/dashboard`}
+        class="hidden items-center justify-center rounded-full bg-primary text-white p-2.5 hover:bg-primary/90 transition-all shadow-xs rtl:ml-2 ltr:mr-2"
         aria-label={t["hero.getStarted"] || ACTION_LINKS.primary.label}
       >
         <Icon name="lucide:plus" class="w-5 h-5" aria-hidden="true" />
       </a>
+      
+      <!-- Primary Action Button (WhatsApp) -->
+      {
+        (() => {
+          const whatsappNum = activeConfig?.contact?.phone?.main?.replace(/[^0-9]/g, "") || "15559607109";
+          const whatsappUrl = `https://wa.me/${whatsappNum}?text=${encodeURIComponent(
+            lang === "ar"
+              ? "يا هلا، أبي أضيف إعلان"
+              : "Hello, I want to post an ad",
+          )}`;
+          return (
+            <a
+              id="header-whatsapp-ad-btn"
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="hidden md:inline-flex items-center justify-center rounded-full bg-emerald-500 text-white p-2.5 hover:bg-emerald-600 transition-all shadow-xs rtl:ml-2 ltr:mr-2"
+              aria-label="Create Ad via WhatsApp"
+            >
+              <Icon name="lucide:plus" class="w-5 h-5" aria-hidden="true" />
+            </a>
+          );
+        })()
+      }
 
       <!-- Logged-out State (hidden by default, shown via client-side script) -->
       {
@@ -337,7 +363,25 @@ const popularLinks = await getPopularLinks(lang);
 
 
       <div class="md:hidden">
-        <!-- Mobile Menu Removed -->
+        <MobileMenu
+          client:idle
+          links={links}
+          currentPath={Astro.url.pathname}
+          labels={{
+            menu: t["nav.menu"],
+            getStarted: t["hero.getStarted"] || ACTION_LINKS.primary.label,
+          }}
+          userSession={userSession}
+          lang={lang}
+          availableLangs={availableLangs && availableLangs.length > 1
+            ? availableLangs
+            : Object.keys(languages)}
+        >
+          <div class="flex items-center justify-center gap-8 mt-2">
+            <LanguagePicker availableLangs={availableLangs} />
+            <ThemeToggle />
+          </div>
+        </MobileMenu>
       </div>
     </div>
   </div>
@@ -384,6 +428,18 @@ const popularLinks = await getPopularLinks(lang);
             loginBtn.classList.add("hidden");
             loginBtn.classList.remove("flex");
           }
+          const createAdBtn = document.getElementById("header-create-ad-btn");
+          const whatsappAdBtn = document.getElementById("header-whatsapp-ad-btn");
+
+          if (createAdBtn) {
+            createAdBtn.classList.remove("hidden");
+            createAdBtn.classList.add("md:inline-flex");
+          }
+          if (whatsappAdBtn) {
+            whatsappAdBtn.classList.add("hidden");
+            whatsappAdBtn.classList.remove("md:inline-flex");
+          }
+
           return;
         }
       } catch (e) {
@@ -402,6 +458,17 @@ const popularLinks = await getPopularLinks(lang);
     if (loginBtn && !window.location.pathname.includes('/admin')) {
       loginBtn.classList.remove("hidden");
       loginBtn.classList.add("flex");
+    }
+    
+    const createAdBtn = document.getElementById("header-create-ad-btn");
+    const whatsappAdBtn = document.getElementById("header-whatsapp-ad-btn");
+    if (createAdBtn) {
+      createAdBtn.classList.add("hidden");
+      createAdBtn.classList.remove("md:inline-flex");
+    }
+    if (whatsappAdBtn) {
+      whatsappAdBtn.classList.remove("hidden");
+      whatsappAdBtn.classList.add("md:inline-flex");
     }
 
   }
