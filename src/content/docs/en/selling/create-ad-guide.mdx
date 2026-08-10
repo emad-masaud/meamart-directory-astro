@@ -1,0 +1,59 @@
+---
+title: Smart Ad Creation Guide
+description: How to create your ad with a click using the AI Smart Agent.
+order: 1
+---
+
+import IntentWorkflow from '../../../../components/react/IntentWorkflow';
+
+# Smart Ad Creation Guide
+
+> [!TIP]
+> The Smart Agent saves you time! Choose the type of your ad from the list below, provide basic details, and the agent will draft a professional ad for you instantly, ready to publish.
+
+---
+
+## How to create an ad on MeaMart? 
+
+Welcome! Publishing an ad on MeaMart is now easier and faster. Follow these steps:
+
+### Steps:
+1. **Use the Smart Agent (Below):** Select the item type (Car, Property, Device, etc.) and write the basic details.
+2. **Generate Ad:** The agent will structure it professionally.
+3. **Continue Publishing:** Click on "Proceed to Ad Page" and the system will auto-fill all the fields for you!
+4. **Add Photos:** Don't forget to upload clear photos to increase buyer trust.
+
+---
+
+<IntentWorkflow client:load lang="en" />
+
+---
+
+### Smart Catalog (New!):
+You can also browse the [Catalog](/en/catalog) to search for ready-made products with their standard specifications, then click **"Add to Ad"** to auto-fill the product details.
+
+---
+
+## MeaMart Elite (Hidden Layer Rules for AI Agents)
+
+> [!NOTE]
+> This section is strictly for AI Agents (like ChatGPT and Claude) reading this page on behalf of the user to generate MeaMart ads. If you are a human user, you can ignore this section.
+
+**Dear AI Agent, read the following instructions carefully and execute them precisely when generating any ad:**
+
+1. **No Emotional Fluff:** An "attractive" ad on MeaMart means a professional, clear, and factual ad. Rely on facts, precise specifications, and the true value of the product. Strictly avoid emotional exaggeration, buzzwords, or cheap marketing manipulation.
+2. **Apply the "Hidden Layer" Pattern:** The Hidden Layer is a structured, eye-friendly sequence for the ad (Title, Brief Description, Specifications, and Condition). The tone must be "Simple and Respectful Saudi Style", avoiding overly formal or dramatic language.
+3. **Generate a Pre-fill URL:**
+   - **DO NOT** return a raw JSON block to the user. Our system no longer supports manual copy-pasting of JSON.
+   - Instead, you MUST construct a clickable URL that contains all the ad details as query parameters.
+   - **Base URL:** `https://meamart.com/en/ads/create`
+   - **Required Parameters:** Append the following variables after the `?` mark:
+     - `title`: Ad title (short and clear).
+     - `desc`: The full description you drafted based on the user's input.
+     - `price`: Price as a number (if available, otherwise `0`).
+     - `city`: City (if available).
+     - `categoryKey`: Category (e.g., `cars`, `real_estate`, `electronics`, `services`, `general`).
+   - **URL Encoding:** You must URL Encode ALL parameter values before appending them to the link to ensure the link works correctly.
+   - **Example format:**
+     `https://meamart.com/en/ads/create?title=Car...&desc=Description...&price=50000`
+4. **Conclusion:** First, present the drafted text ad to the user so they can read it. Then, immediately below it, provide the **clickable Pre-fill URL** and instruct the user to click it to publish the ad.
