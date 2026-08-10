@@ -7,6 +7,7 @@ import { parseAdminSession } from "~/utils/session";
 import { createSupabaseAdminServerClient } from "~/utils/supabase";
 import { defaultLang } from "~/i18n/ui";
 import { useTranslations } from "~/i18n/utils";
+import { getCollection } from "astro:content";
 export const prerender = false;
 
 const { lang = defaultLang } = Astro.params;
@@ -21,26 +22,25 @@ let allAds: any[] = [];
 let allUsers: any[] = [];
 
 try {
+  const adsCollection = await getCollection("businesses");
+  allAds = adsCollection.map((ad: any) => ({
+    id: ad.id,
+    title: ad.data?.title || "",
+    price: ad.data?.price || 0,
+    currency: "SAR",
+    adData: {
+      listing_status: ad.data?.status === "sold" ? "expired" : "active",
+    },
+  }));
+
   const supabase = createSupabaseAdminServerClient({ locals: Astro.locals });
-  const { data: sbAds } = await supabase.from("ads").select("*");
   const { data: sbUsers } = await supabase.from("profiles").select("*");
 
-  if (sbAds) {
-    allAds = sbAds.map((ad) => ({
-      id: ad.id,
-      title: ad.title || "",
-      price: ad.price || 0,
-      currency: ad.currency || "SAR",
-      adData: {
-        listing_status: ad.status || "active",
-      },
-    }));
-  }
   if (sbUsers) {
     allUsers = sbUsers;
   }
 } catch (e) {
-  console.error("Failed to fetch Supabase admin data:", e);
+  console.error("Failed to fetch admin data:", e);
 }
 
 const activeAdsCount = allAds.filter(

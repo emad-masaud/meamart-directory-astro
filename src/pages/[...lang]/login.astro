@@ -1,9 +1,12 @@
 ---
-export const prerender = true;
+import Layout from '~/layouts/Layout.astro';
+import Container from '~/components/ui/Container.astro';
+import PageHeader from '~/components/layout/PageHeader.astro';
+import LoginTabsClient from '~/components/auth/LoginTabsClient';
+import { defaultLang } from '~/i18n/ui';
+import { useTranslations } from '~/i18n/utils';
 
-import Layout from "~/layouts/Layout.astro";
-import { useTranslations } from "~/i18n/utils";
-import { Icon } from "astro-icon/components";
+export const prerender = false;
 
 export function getStaticPaths() {
   return [
@@ -13,78 +16,33 @@ export function getStaticPaths() {
   ];
 }
 
-const lang = Astro.params.lang || "ar";
+const { lang = defaultLang } = Astro.params;
 const t = useTranslations(lang);
-const isArabic = lang === "ar";
 const googleClientId = import.meta.env.PUBLIC_GOOGLE_CLIENT_ID || '845217154240-h0eufomg31l04o71focig5v74pqu7v5d.apps.googleusercontent.com';
+
+if (Astro.locals.userSession || Astro.cookies.get('meamart_session')?.value) {
+  const redirectTarget = Astro.url.searchParams.get('redirect') || `/${lang}/dashboard`;
+  return Astro.redirect(redirectTarget);
+}
 ---
 
-<Layout title={isArabic ? "تسجيل الدخول - ميمارت" : "Login - MeaMart"}>
-  <!-- Login Gate Wrapper -->
-  <div id="login-gate" class="opacity-0 transition-opacity duration-300">
-  <div class="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8 bg-white dark:bg-zinc-900 p-8 rounded-3xl shadow-xl border border-zinc-100 dark:border-zinc-800">
-      <div class="text-center">
-        <div class="mx-auto h-16 w-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-4">
-          <Icon name="lucide:user" class="w-8 h-8" />
-        </div>
-        <h2 class="text-3xl font-extrabold text-zinc-900 dark:text-white">
-          {isArabic ? "تسجيل الدخول" : "Sign In"}
-        </h2>
-        <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-          {isArabic ? "استخدم حساب جوجل الخاص بك للدخول إلى لوحة التحكم" : "Use your Google account to sign in to the dashboard"}
-        </p>
-      </div>
-      
-      <div class="mt-8 flex justify-center">
-        <!-- Google Sign-In Container -->
-        <div id="g_id_onload"
-             data-client_id={googleClientId}
-             data-context="signin"
-             data-ux_mode="popup"
-             data-callback="handleCredentialResponse"
-             data-auto_prompt="true"
-             data-locale={lang}>
-        </div>
+<Layout title={lang === 'ar' ? "تسجيل الدخول - ميمارت" : "Login - MeaMart"} description={lang === 'ar' ? "تسجيل الدخول إلى حسابك" : "Login to your account"}>
+  <PageHeader title={lang === 'ar' ? "تسجيل الدخول" : "Sign In"} description={lang === 'ar' ? "قم بتسجيل الدخول للوصول إلى لوحة التحكم الخاصة بك." : "Sign in to access your dashboard."} />
 
-        <div class="g_id_signin"
-             data-type="standard"
-             data-shape="pill"
-             data-theme="outline"
-             data-text="signin_with"
-             data-size="large"
-             data-locale={lang}
-             data-logo_alignment="left">
-        </div>
-      </div>
-    </div>
-  </div>
-  </div>
+  <Container class="pb-24 pt-8 max-w-md">
+    <LoginTabsClient 
+      client:load
+      signinLabel={lang === 'ar' ? "تسجيل الدخول" : "Sign In"}
+      registerLabel={lang === 'ar' ? "تسجيل حساب جديد" : "Register"}
+      signinDesc={lang === 'ar' ? "ادخل بياناتك للدخول إلى حسابك" : "Enter your credentials to sign in"}
+      registerDesc={lang === 'ar' ? "انشئ حساب جديد للبدء" : "Create a new account to get started"}
+      googleBtn={lang === 'ar' ? "تسجيل الدخول باستخدام جوجل" : "Sign in with Google"}
+      googleRegister={lang === 'ar' ? "انشاء حساب باستخدام جوجل" : "Register with Google"}
+      googleClientId={googleClientId}
+      lang={lang}
+    />
+  </Container>
 </Layout>
-
-<script>
-  document.addEventListener("DOMContentLoaded", async () => {
-    const lang = document.documentElement.lang || "ar";
-    const loginGate = document.getElementById('login-gate');
-
-    // Check if already authenticated
-    try {
-      const meRes = await fetch('/api/auth/me');
-      if (meRes.ok) {
-        const data = await meRes.json();
-        if (data.authenticated && data.user) {
-          window.location.replace(`/${lang}/dashboard`);
-          return;
-        }
-      }
-    } catch (e) {
-      // ignore
-    }
-    
-    // Show login page if not authenticated
-    if (loginGate) loginGate.classList.remove('opacity-0');
-  });
-</script>
 
 <script is:inline src="https://accounts.google.com/gsi/client" async defer></script>
 <script is:inline>

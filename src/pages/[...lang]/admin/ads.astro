@@ -19,28 +19,24 @@ if (!session || !session.is_admin) {
   return Astro.redirect(`/${lang}/admin-login`);
 }
 
-// import { erpnext } from '~/lib/erpnext/client';
-
+import { getCollection } from "astro:content";
 let allAds: any[] = [];
 try {
-  // const erpAds = await erpnext.getAllAdminListings();
-  const erpAds: any[] = [];
-  if (erpAds) {
-    allAds = erpAds.map(ad => ({
-      id: ad.name,
-      adId: ad.name,
-      title: ad.title || '',
-      price: ad.price || 0,
-      currency: 'SAR',
-      image: '/og-image.webp',
-      status: ad.status || 'Published',
-      seller: ad.owner || 'Admin',
-      phone: '',
-      date: ad.creation ? new Date(ad.creation).toLocaleDateString() : '-'
-    }));
-  }
+  const adsCollection = await getCollection("businesses");
+  allAds = adsCollection.map((ad: any) => ({
+    id: ad.id,
+    adId: ad.id,
+    title: ad.data?.title || "",
+    price: ad.data?.price || 0,
+    currency: "SAR",
+    image: ad.data?.image || ad.data?.logo || "/og-image.webp",
+    status: ad.data?.status === "sold" ? "Expired" : "Published",
+    seller: ad.data?.contactName || "Admin",
+    phone: ad.data?.phone || "",
+    date: "-"
+  }));
 } catch (e) {
-  console.error('Failed to fetch ads:', e);
+  console.error("Failed to fetch ads:", e);
 }
 ---
 

@@ -156,3 +156,12 @@ const jsonLd = {
     </div>
   </div>
 </BaseLayout>
+
+<script define:vars={{ id: business.id }}>
+  // Record view
+  if (id) {
+    try {
+      fetch(`/api/views?id=${id}`, { method: 'POST' }).catch(() => {});
+    } catch (e) {}
+  }
+</script>

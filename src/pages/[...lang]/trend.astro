@@ -1,5 +1,5 @@
 ---
-export const prerender = true;
+export const prerender = false;
 
 import Layout from "~/layouts/Layout.astro";
 import Container from "~/components/ui/Container.astro";
@@ -13,6 +13,7 @@ import { getCollection } from "astro:content";
 import { categoriesMap } from "~/utils/categories";
 import { getCityLabel } from "~/utils/cities";
 import { Eye, Share2 } from "lucide-react";
+import { kvGet } from "~/utils/kv";
 
 export function getStaticPaths() {
   return [
@@ -85,8 +86,9 @@ try {
 
     // KV Views mapping
     const adsWithViews = await Promise.all(activeAds.map(async (ad) => {
-      // Simulate views based on title
-      let views = (ad.data as any).title ? (ad.data as any).title.length * 15 : Math.floor(Math.random() * 500) + 100;
+      // Fetch actual views from KV
+      const kvValue = await kvGet(Astro, `ad:views:${ad.id}`);
+      const views = kvValue ? parseInt(kvValue, 10) : 0;
       return { ad, views };
     }));
     
