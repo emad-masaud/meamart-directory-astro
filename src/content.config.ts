@@ -74,6 +74,10 @@ const users = defineCollection({
     phone: z.string().optional(),
     whatsapp: z.string().optional(),
     description: z.string().optional(),
+    google_sheet_id: z.string().optional(),
+    is_company: z.boolean().optional().default(false),
+    company_name: z.string().optional(),
+    company_cr: z.string().optional(),
     createdAt: z.string().optional(),
   }),
 });

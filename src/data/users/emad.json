@@ -1,0 +1,14 @@
+{
+  "id": "emad",
+  "username": "emad-masaud",
+  "email": "emad@example.com",
+  "name": "Emad Masaud",
+  "phone": "0575934833",
+  "whatsapp": "0575934833",
+  "avatar": "/images/avatars/emad.png",
+  "header": "/images/headers/emad.png",
+  "description": "معلن مميز",
+  "google_sheet_id": "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms",
+  "is_company": false,
+  "createdAt": "2024-01-01T00:00:00Z"
+}
