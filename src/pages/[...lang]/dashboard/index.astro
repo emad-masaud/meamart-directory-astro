@@ -26,7 +26,7 @@ try {
   const { data: sbUsers } = await supabase.from("profiles").select("*");
 
   if (sbAds) {
-    allAds = sbAds.map((ad) => ({
+    allAds = sbAds.map((ad: any) => ({
       id: ad.id,
       title: ad.title || "",
       price: ad.price || 0,
