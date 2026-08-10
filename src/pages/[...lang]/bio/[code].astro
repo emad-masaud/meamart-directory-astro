@@ -679,7 +679,6 @@ const cardLinks = rawLinks.filter(
                   const soc = detectSocialInfo(item.url, item.label);
                   return (
                     <a
-                      key={idx}
                       href={item.url}
                       target={item.url?.startsWith("http") ? "_blank" : "_self"}
                       rel="noopener noreferrer"
