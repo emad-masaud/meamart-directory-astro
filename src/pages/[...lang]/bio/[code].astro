@@ -7,7 +7,7 @@ export function getStaticPaths() {
     { params: { lang: "en" } }
   ];
 }
-import SEO from "~/components/layout/SEO.astro";
+import Layout from '~/layouts/Layout.astro';
 import { supabaseAdminClient } from "~/utils/supabase";
 import { isRtl } from "~/i18n/utils";
 import { defaultLang } from "~/i18n/ui";
