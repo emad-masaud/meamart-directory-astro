@@ -14,7 +14,7 @@
     "@ascorbic/csv-loader": "^2.0.3",
     "@ascorbic/mock-loader": "^2.0.2",
     "@astrojs/check": "^0.9.4",
-    "@astrojs/cloudflare": "^14.2.0",
+    "@astrojs/cloudflare": "^12.6.4",
     "@astrojs/mdx": "^4.2.0",
     "@astrojs/react": "^4.4.2",
     "@astrojs/sitemap": "^3.2.1",
