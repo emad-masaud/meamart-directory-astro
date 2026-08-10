@@ -329,7 +329,7 @@ const popularLinks = await getPopularLinks(lang);
           const whatsappNum = siteConfig?.contact?.phone?.main?.replace(/[^0-9]/g, "") || "15559607109";
           const whatsappUrl = `https://wa.me/${whatsappNum}?text=${encodeURIComponent(
             lang === "ar"
-              ? "يا هلا، أبي أضيف إعلان"
+              ? "ياهلا, أبي أنشر إعلان"
               : "Hello, I want to post an ad",
           )}`;
           return (
