@@ -4,7 +4,7 @@ import Container from "~/components/ui/Container.astro";
 import PageHeader from "~/components/layout/PageHeader.astro";
 import { defaultLang } from "~/i18n/ui";
 import { isRtl, useTranslations } from "~/i18n/utils";
-import SellerSubNav from "~/components/seller/SellerSubNav.astro";
+import SellerSubNav from "~/components/dashboard/DashboardSubNav.astro";
 import { getMeamartSession } from "~/utils/session";
 import { kvGet } from "~/utils/kv";
 
@@ -60,7 +60,7 @@ const title = `${t["catalog.projects.title"]} - ${workspace}`;
   />
 
   <Container class="pb-24">
-    <SellerSubNav
+    <DashboardSubNav
       lang={lang}
       activeTab="products"
       adsCount={adsCount}

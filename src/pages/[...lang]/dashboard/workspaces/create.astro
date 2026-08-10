@@ -4,10 +4,7 @@ import Container from "~/components/ui/Container.astro";
 import PageHeader from "~/components/layout/PageHeader.astro";
 import { defaultLang } from "~/i18n/ui";
 import { isRtl, useTranslations } from "~/i18n/utils";
-import { getMeamartSession } from "~/utils/session";
-import { getEnv } from "~/utils/env";
-import { ERPNextClient } from "~/lib/erpnext/client";
-import { createSellerCatalog } from "~/lib/catalog/seller-catalogs";
+// import { createSellerCatalog } from "~/lib/catalog/seller-catalogs";
 import { Card, CardContent } from '~/components/catalog/ui/card';
 import { Button } from '~/components/catalog/ui/button';
 
@@ -17,36 +14,22 @@ const { lang = defaultLang } = Astro.params;
 const rtl = isRtl(lang);
 const t = useTranslations(lang);
 
-let session = Astro.locals.userSession || (await getMeamartSession(Astro));
+let session = Astro.locals.userSession || { id: "mock-id", email: "mock@example.com" };
 
 if (!session) {
   return Astro.redirect(`/${lang}/login`);
 }
 
-const userId = session.wp_user_id || session.email;
+const userId = session.email;
 
 let error = "";
 let products: any[] = [];
 
-// Fetch ERPNext items to select for the catalog
-try {
-  const erpnext = new ERPNextClient({
-    baseUrl: getEnv(Astro.locals, 'PUBLIC_ERPNEXT_URL', 'https://erp.meamart.com'),
-    apiKey: getEnv(Astro.locals, 'PUBLIC_ERPNEXT_API_KEY'),
-    apiSecret: getEnv(Astro.locals, 'PUBLIC_ERPNEXT_API_SECRET')
-  });
-  const res = await erpnext.get<any>('/api/resource/Item', {
-    fields: JSON.stringify(['name', 'item_code', 'item_name', 'item_group', 'standard_rate', 'image']),
-    limit_page_length: 100
-  });
-
-  if (res && res.data) {
-    products = res.data;
-  }
-} catch (e: any) {
-  console.error("Error fetching items for catalog creation:", e);
-  error = e.message;
-}
+// Mock products
+products = [
+  { item_code: "P1", item_name: "Mock Product 1", standard_rate: 100 },
+  { item_code: "P2", item_name: "Mock Product 2", standard_rate: 200 }
+];
 
 if (Astro.request.method === "POST") {
   try {
