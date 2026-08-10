@@ -254,7 +254,7 @@ export default function MobileMenu({
                 )}
 
                 <a 
-                  href={activeSession ? `/${lang}/seller/dashboard` : `https://wa.me/15559607109?text=${encodeURIComponent(lang === 'ar' ? 'يا هلا، أبي أضيف إعلان' : 'Hello, I want to post an ad')}`}
+                  href={activeSession ? `/${lang}/ads/create` : `https://wa.me/15559607109?text=${encodeURIComponent(lang === 'ar' ? 'يا هلا، أبي أضيف إعلان' : 'Hello, I want to post an ad')}`}
                   target={activeSession ? "_self" : "_blank"}
                   rel={activeSession ? "" : "noopener noreferrer"}
                   onClick={() => setIsOpen(false)}
