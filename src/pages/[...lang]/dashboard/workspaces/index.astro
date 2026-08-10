@@ -1,0 +1,112 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import Container from "~/components/ui/Container.astro";
+import PageHeader from "~/components/layout/PageHeader.astro";
+import { defaultLang } from "~/i18n/ui";
+import { isRtl, useTranslations } from "~/i18n/utils";
+import DashboardSubNav from "~/components/dashboard/DashboardSubNav.astro";
+
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '~/components/catalog/ui/card';
+import { Button as CatalogButton } from '~/components/catalog/ui/button';
+// import { getSellerCatalogs } from '~/lib/catalog/seller-catalogs';
+
+export const prerender = false;
+
+const { lang = defaultLang } = Astro.params;
+const rtl = isRtl(lang);
+const t = useTranslations(lang);
+
+const session = Astro.locals.userSession || { id: "mock-id", name: "Mock User", email: "seller@example.com" };
+
+if (!session) {
+  return Astro.redirect(`/${lang}/login`);
+}
+
+let adsCount = 0;
+let addressesCount = 0;
+let productsCount = 0;
+
+// Fetch Seller Catalogs (Workspaces)
+let workspaces: any[] = [];
+let error = null;
+const userId = session.email;
+
+const title = t["catalog.workspaces.title"] || "Catalogs & Workspaces";
+const description = t["catalog.workspaces.desc"] || "Manage your product catalogs";
+---
+
+<Layout title={title} description={description}>
+  <PageHeader
+    title={title}
+    description={description}
+  />
+
+  <Container class="pb-24">
+    <DashboardSubNav
+      lang={lang}
+      activeTab="workspaces"
+      adsCount={adsCount}
+      productsCount={productsCount}
+      addressesCount={addressesCount}
+    />
+
+    <div class="space-y-6 pt-2">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 class="text-3xl font-bold text-zinc-900 dark:text-zinc-50">{t["catalog.workspaces.title"]}</h1>
+          <p class="text-zinc-500 dark:text-zinc-400 mt-1">{t["catalog.workspaces.desc"]}</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <a href={`/${lang}/seller/workspaces/ai`} class="bg-purple-100 hover:bg-purple-200 text-purple-700 dark:bg-purple-900/30 dark:hover:bg-purple-900/50 dark:text-purple-300 rounded-full px-6 py-2 shadow-sm transition-colors flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            {lang === 'ar' ? 'مساعد AI' : 'AI Writer'}
+          </a>
+          <a href={`/${lang}/seller/workspaces/create`} class="bg-primary hover:bg-primary/90 text-white rounded-full px-6 py-2 shadow-md transition-colors">
+            + {t["catalog.workspace.new"]}
+          </a>
+        </div>
+      </div>
+
+      {error && (
+        <div class="p-4 bg-red-50 text-red-800 rounded-2xl border border-red-200 dark:bg-red-900/20 dark:border-red-900/30">
+          {t["catalog.common.error"]} {error}
+        </div>
+      )}
+
+      {workspaces.length === 0 && !error ? (
+        <div class="text-center p-12 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-3xl bg-white/40 dark:bg-zinc-900/40 shadow-xs backdrop-blur-md mt-8">
+          <h3 class="text-lg font-bold text-zinc-900 dark:text-zinc-50">{t["catalog.workspace.empty.title"]}</h3>
+          <p class="mt-2 text-sm text-zinc-500 dark:text-zinc-400">{t["catalog.workspace.empty.desc"]}</p>
+          <div class="mt-6">
+            <a href={`/${lang}/seller/workspaces/create`} class="inline-block bg-primary hover:bg-primary/90 text-white rounded-full px-8 py-2.5 font-bold shadow-md shadow-primary/20 transition-colors">
+              {t["catalog.workspace.create_btn"]}
+            </a>
+          </div>
+        </div>
+      ) : (
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+          {workspaces.map((ws: any) => (
+            <a href={`/${lang}/seller/workspaces/edit/${ws.id}`} class="block group">
+              <Card className="hover:border-primary/50 hover:shadow-lg transition-all duration-300 cursor-pointer h-full border-zinc-200/50 dark:border-zinc-800/50 rounded-3xl overflow-hidden bg-white/40 dark:bg-zinc-900/40 backdrop-blur-md">
+                <CardHeader className="bg-zinc-50/50 dark:bg-zinc-800/20 border-b border-zinc-100 dark:border-zinc-800/50 group-hover:bg-primary/5 transition-colors py-5">
+                  <CardTitle className="text-lg font-bold text-zinc-900 dark:text-zinc-50">{ws.name}</CardTitle>
+                  <CardDescription className="text-zinc-500 dark:text-zinc-400 mt-1 text-xs">{t["catalog.workspace.created"]} {new Date(ws.created_at).toLocaleDateString()}</CardDescription>
+                </CardHeader>
+                <CardContent className="pt-6">
+                  <div class="flex flex-wrap gap-2 text-sm">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 font-medium">
+                      {(ws.product_codes || []).length} منتج
+                    </span>
+                    <a href={`/${lang}/c/${ws.slug}`} target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium transition-colors">
+                      {lang === 'ar' ? 'عرض الكتالوج' : 'View Catalog'}
+                    </a>
+                  </div>
+                </CardContent>
+              </Card>
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  </Container>
+</Layout>

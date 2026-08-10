@@ -12,22 +12,34 @@ const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const isRtl = lang === "ar";
 
-// Mock Session & Data
-const session = Astro.locals.userSession || {
-  name: "Seller User",
-  email: "seller@example.com",
-  phone: "123456789",
-  username: "seller123"
-};
+import { getCollection } from "astro:content";
 
-const sellerAds: any[] = [];
+const sessionCookie = Astro.cookies.get("meamart_session")?.value;
+let session = Astro.locals.userSession;
+if (!session && sessionCookie) {
+  try {
+    session = JSON.parse(decodeURIComponent(atob(sessionCookie)));
+  } catch (e) {}
+}
+
+if (!session) {
+  return Astro.redirect(`/${lang}/login`);
+}
+
+const allAds = await getCollection("businesses");
+const sellerAds = allAds.filter((ad: any) => 
+  ad.data?.contactEmail === session.email || 
+  ad.data?.contactName === session.name || 
+  ad.data?.ownerId === session.id
+);
+
 const sellerProducts: any[] = [];
 const sellerAddresses: any[] = [];
 const needsPhoneVerification = false;
 
-const activeAdsCount = 0;
-const expiredAdsCount = 0;
-const featuredAdsCount = 0;
+const activeAdsCount = sellerAds.filter((ad: any) => ad.data?.status !== "sold").length;
+const expiredAdsCount = sellerAds.filter((ad: any) => ad.data?.status === "sold").length;
+const featuredAdsCount = sellerAds.filter((ad: any) => ad.data?.featured).length;
 
 const headerTitle = t["seller.dashboard.header.title"] || "لوحة التحكم";
 const headerSubtitle = (t["seller.dashboard.header.subtitle"] || "مرحباً بك {name}").replace("{name}", session.name || "");

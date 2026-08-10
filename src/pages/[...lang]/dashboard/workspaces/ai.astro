@@ -1,0 +1,60 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import Container from "~/components/ui/Container.astro";
+import { defaultLang } from "~/i18n/ui";
+import { isRtl, useTranslations } from "~/i18n/utils";
+import { AiWriter } from '~/components/catalog/AiWriter';
+import { getMeamartSession } from "~/utils/session";
+
+export const prerender = false;
+
+const { lang = defaultLang } = Astro.params;
+const rtl = isRtl(lang);
+const t = useTranslations(lang);
+
+let session = Astro.locals.userSession || (await getMeamartSession(Astro));
+
+if (!session) {
+  return Astro.redirect(`/${lang}/login`);
+}
+
+const translations = {
+  'catalog.ai.title': t['catalog.ai.title'] || 'مساعد كتابة المنتجات',
+  'catalog.ai.desc': t['catalog.ai.desc'] || 'قم بتوليد عناوين وأوصاف جذابة ومحسنة لمحركات البحث',
+  'catalog.ai.product_name': t['catalog.ai.product_name'] || 'اسم المنتج المبدئي',
+  'catalog.ai.product_placeholder': t['catalog.ai.product_placeholder'] || 'مثال: حذاء نايك، عطر ديور...',
+  'catalog.ai.details': t['catalog.ai.details'] || 'تفاصيل إضافية (اختياري)',
+  'catalog.ai.details_placeholder': t['catalog.ai.details_placeholder'] || 'مثال: لون أحمر، مقاوم للماء...',
+  'catalog.ai.generate': t['catalog.ai.generate'] || 'توليد المحتوى',
+  'catalog.ai.generating': t['catalog.ai.generating'] || 'جاري التوليد...',
+  'catalog.ai.output': t['catalog.ai.output'] || 'النتيجة',
+  'catalog.ai.output_desc': t['catalog.ai.output_desc'] || 'انسخ هذا المحتوى واستخدمه في منتجاتك',
+  'catalog.ai.empty_output': t['catalog.ai.empty_output'] || 'املأ النموذج واضغط توليد لرؤية النتيجة.',
+};
+---
+
+<Layout title={`${translations['catalog.ai.title']}`}>
+  <Container class="pb-24 pt-8">
+    <div class="max-w-5xl mx-auto space-y-8">
+      <div class="flex items-center gap-4">
+        <a href={`/${lang}/seller/workspaces`} class="text-zinc-500 hover:text-primary transition-colors font-bold flex items-center gap-2">
+          <svg class={`w-5 h-5 ${rtl ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+          {lang === 'ar' ? 'العودة للمساحات' : 'Back to Workspaces'}
+        </a>
+      </div>
+      
+      <div class="flex items-center gap-3">
+        <h1 class="text-3xl font-extrabold text-zinc-900 dark:text-zinc-50">
+          {translations['catalog.ai.title']}
+        </h1>
+        <span class="px-3 py-1 text-xs font-bold bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 rounded-full">الذكاء الاصطناعي</span>
+      </div>
+      
+      <p class="text-zinc-500 dark:text-zinc-400 max-w-2xl text-base font-medium leading-relaxed">
+        {translations['catalog.ai.desc']}
+      </p>
+
+      <AiWriter client:load t={translations} />
+    </div>
+  </Container>
+</Layout>

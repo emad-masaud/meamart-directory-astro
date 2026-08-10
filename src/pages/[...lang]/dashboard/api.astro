@@ -1,0 +1,43 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import Container from "~/components/ui/Container.astro";
+import PageHeader from "~/components/layout/PageHeader.astro";
+import DashboardSubNav from "~/components/dashboard/DashboardSubNav.astro";
+import { defaultLang } from "~/i18n/ui";
+import { isRtl } from "~/i18n/utils";
+
+export const prerender = false;
+
+const { lang = defaultLang } = Astro.params;
+const rtl = isRtl(lang);
+
+const session = Astro.locals.userSession || {
+  id: "seller-default-user",
+  name: "المعلن",
+};
+---
+
+<Layout
+  title="الربط البرمجي API و Webhooks | ميمارت"
+  description="إدارة المفاتيح البرمجية وإعدادات الويبهوك ومزامنة الكتالوج مع ميشات"
+>
+  <Container>
+    <div class="py-8">
+      <PageHeader
+        title={lang === "ar"
+          ? "الربط البرمجي API و Webhooks"
+          : "API & Webhooks Integration"}
+        description={lang === "ar"
+          ? "أدوات الربط المتقدمة لإدارة الباركود والإعلانات ومزامنة الكتالوج التلقائية مع ميشات"
+          : "Manage API keys, webhook notifications, and automated MeaChat catalog sync"}
+      />
+
+      <DashboardSubNav lang={lang} activeTab="api" />
+
+      <div class="mt-8 max-w-7xl mx-auto text-center p-12 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-3xl bg-white/40 dark:bg-zinc-900/40">
+        <h3 class="text-lg font-bold text-zinc-900 dark:text-zinc-50">قريباً</h3>
+        <p class="mt-2 text-sm text-zinc-500 dark:text-zinc-400">سيتم توفير واجهة API قريباً.</p>
+      </div>
+    </div>
+  </Container>
+</Layout>

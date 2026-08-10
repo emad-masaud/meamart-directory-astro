@@ -1,0 +1,160 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import Container from "~/components/ui/Container.astro";
+import PageHeader from "~/components/layout/PageHeader.astro";
+import { defaultLang } from "~/i18n/ui";
+import { isRtl, useTranslations } from "~/i18n/utils";
+import { getMeamartSession } from "~/utils/session";
+import { getEnv } from "~/utils/env";
+import { ERPNextClient } from "~/lib/erpnext/client";
+import { createSellerCatalog } from "~/lib/catalog/seller-catalogs";
+import { Card, CardContent } from '~/components/catalog/ui/card';
+import { Button } from '~/components/catalog/ui/button';
+
+export const prerender = false;
+
+const { lang = defaultLang } = Astro.params;
+const rtl = isRtl(lang);
+const t = useTranslations(lang);
+
+let session = Astro.locals.userSession || (await getMeamartSession(Astro));
+
+if (!session) {
+  return Astro.redirect(`/${lang}/login`);
+}
+
+const userId = session.wp_user_id || session.email;
+
+let error = "";
+let products: any[] = [];
+
+// Fetch ERPNext items to select for the catalog
+try {
+  const erpnext = new ERPNextClient({
+    baseUrl: getEnv(Astro.locals, 'PUBLIC_ERPNEXT_URL', 'https://erp.meamart.com'),
+    apiKey: getEnv(Astro.locals, 'PUBLIC_ERPNEXT_API_KEY'),
+    apiSecret: getEnv(Astro.locals, 'PUBLIC_ERPNEXT_API_SECRET')
+  });
+  const res = await erpnext.get<any>('/api/resource/Item', {
+    fields: JSON.stringify(['name', 'item_code', 'item_name', 'item_group', 'standard_rate', 'image']),
+    limit_page_length: 100
+  });
+
+  if (res && res.data) {
+    products = res.data;
+  }
+} catch (e: any) {
+  console.error("Error fetching items for catalog creation:", e);
+  error = e.message;
+}
+
+if (Astro.request.method === "POST") {
+  try {
+    const data = await Astro.request.formData();
+    const name = data.get("name")?.toString();
+    const slug = data.get("slug")?.toString();
+    const description = data.get("description")?.toString();
+    const product_codes = data.getAll("product_codes").map(code => code.toString());
+
+    if (!name || !slug) {
+      throw new Error(lang === 'ar' ? 'الاسم والرابط مطلوبان' : 'Name and Slug are required');
+    }
+
+    const cleanSlug = slug.toLowerCase().replace(/[^a-z0-9-]/g, '-');
+
+    await createSellerCatalog(Astro, userId, {
+      name,
+      slug: cleanSlug,
+      description,
+      product_codes
+    });
+
+    return Astro.redirect(`/${lang}/seller/workspaces`);
+  } catch (e: any) {
+    error = e.message;
+  }
+}
+
+const title = lang === 'ar' ? "إنشاء كتالوج جديد" : "Create New Catalog";
+---
+
+<Layout title={title}>
+  <PageHeader title={title} />
+  
+  <Container class="pb-24 pt-8">
+    <div class="max-w-3xl mx-auto">
+      <div class="mb-6 flex items-center justify-between">
+        <a href={`/${lang}/seller/workspaces`} class="text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 flex items-center gap-2">
+          <svg class={`w-5 h-5 ${rtl ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+          {lang === 'ar' ? 'عودة للمساحات' : 'Back to Workspaces'}
+        </a>
+      </div>
+
+      <Card className="bg-white/50 dark:bg-zinc-900/50 backdrop-blur-md border-zinc-200/50 dark:border-zinc-800/50 rounded-3xl overflow-hidden shadow-xl">
+        <CardContent className="p-8">
+          {error && (
+            <div class="mb-6 p-4 bg-red-50 text-red-800 rounded-2xl border border-red-200">
+              {error}
+            </div>
+          )}
+
+          <form method="POST" class="space-y-6">
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">{lang === 'ar' ? 'اسم الكتالوج' : 'Catalog Name'}</label>
+                <input type="text" name="name" required placeholder={lang === 'ar' ? 'مثال: عروض الصيف' : 'e.g., Summer Sale'} class="w-full flex h-10 px-3 py-2 text-sm border border-zinc-200 dark:border-zinc-800 bg-transparent rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary" />
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">{lang === 'ar' ? 'رابط الكتالوج (Slug)' : 'Catalog Link (Slug)'}</label>
+                <div class="flex items-center">
+                  <span class="text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-3 py-2 border border-zinc-200 dark:border-zinc-700 rounded-l-xl text-sm h-10 flex items-center" dir="ltr">meamart.com/c/</span>
+                  <input type="text" name="slug" required placeholder="summer-sale" class="flex-1 flex h-10 px-3 py-2 text-sm border border-l-0 border-zinc-200 dark:border-zinc-800 bg-transparent rounded-r-xl rounded-l-none text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary" dir="ltr" />
+                </div>
+                <p class="text-xs text-zinc-500 mt-1">{lang === 'ar' ? 'يجب أن يكون باللغة الإنجليزية وبدون مسافات' : 'Must be in English, no spaces'}</p>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">{lang === 'ar' ? 'الوصف (اختياري)' : 'Description (Optional)'}</label>
+                <textarea name="description" rows="3" class="w-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-transparent px-3 py-2 text-sm placeholder:text-zinc-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50"></textarea>
+              </div>
+            </div>
+
+            <div class="pt-6 border-t border-zinc-100 dark:border-zinc-800">
+              <h3 class="text-lg font-bold text-zinc-900 dark:text-zinc-50 mb-4">{lang === 'ar' ? 'تحديد المنتجات' : 'Select Products'}</h3>
+              
+              {products.length === 0 ? (
+                <div class="p-6 text-center text-zinc-500 bg-zinc-50 dark:bg-zinc-800/50 rounded-2xl">
+                  {lang === 'ar' ? 'لا يوجد لديك منتجات مضافة حالياً. الكتالوج سيكون فارغاً.' : 'You have no products yet. The catalog will be empty.'}
+                </div>
+              ) : (
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-96 overflow-y-auto p-1">
+                  {products.map(p => (
+                    <label class="flex items-start gap-3 p-3 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 cursor-pointer transition-colors">
+                      <div class="mt-1">
+                        <input type="checkbox" name="product_codes" value={p.item_code} class="w-5 h-5 rounded border-zinc-300 text-primary focus:ring-primary" />
+                      </div>
+                      <div class="flex gap-3">
+                        {p.image && <img src={p.image} class="w-12 h-12 rounded-lg object-cover" alt="" />}
+                        <div>
+                          <p class="font-medium text-zinc-900 dark:text-zinc-100 text-sm line-clamp-2">{p.item_name}</p>
+                          <p class="text-xs text-primary font-bold mt-1">{p.standard_rate} SAR</p>
+                        </div>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div class="pt-6">
+              <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-white rounded-xl py-6 text-lg font-bold shadow-lg shadow-primary/20">
+                {lang === 'ar' ? 'إنشاء الكتالوج' : 'Create Catalog'}
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
+  </Container>
+</Layout>

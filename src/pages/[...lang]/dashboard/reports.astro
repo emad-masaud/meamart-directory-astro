@@ -1,0 +1,40 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import Container from '~/components/ui/Container.astro';
+import PageHeader from '~/components/layout/PageHeader.astro';
+import DashboardSubNav from '~/components/dashboard/DashboardSubNav.astro';
+// import SellerReportsClient from '~/components/seller/SellerReportsClient';
+import { defaultLang } from '~/i18n/ui';
+import { isRtl } from '~/i18n/utils';
+
+export const prerender = false;
+
+const { lang = defaultLang } = Astro.params;
+const rtl = isRtl(lang);
+
+const session = Astro.locals.userSession || { id: "mock-id", name: "Mock User", phone: "" };
+if (!session) {
+  return Astro.redirect(`/${lang}/login`);
+}
+---
+
+<Layout title="تقارير إحصائيات المحادثات والمسحات | ميمارت" description="تقارير أداء الإعلانات والباركود ومحادثات واتساب التفاعلية وتوزيع الأجهزة والمدن">
+  <Container>
+    <div class="py-8">
+      <PageHeader
+        title="تقارير إحصائيات المحادثات والمسحات"
+        description="تابع أداء إعلاناتك وروابطك وتفاصيل مسحات الباركود ومحادثات الواتساب المفتوحة ونسب التحويل"
+      />
+
+      <DashboardSubNav
+        lang={lang}
+        activeTab="reports"
+      />
+
+      <div class="mt-8 max-w-6xl mx-auto text-center p-12 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-3xl bg-white/40 dark:bg-zinc-900/40">
+        <h3 class="text-lg font-bold text-zinc-900 dark:text-zinc-50">قريباً</h3>
+        <p class="mt-2 text-sm text-zinc-500 dark:text-zinc-400">سيتم عرض تقارير متقدمة هنا قريباً.</p>
+      </div>
+    </div>
+  </Container>
+</Layout>
