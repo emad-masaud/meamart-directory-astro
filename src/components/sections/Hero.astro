@@ -1,8 +1,8 @@
 ---
-import { defaultLang } from '~/i18n/ui';
-import { useTranslations } from '~/i18n/utils';
+import { defaultLang } from "~/i18n/ui";
+import { useTranslations } from "~/i18n/utils";
 
-import { getPopularLinks } from '~/utils/popularLinks';
+import { getPopularLinks } from "~/utils/popularLinks";
 
 interface Props {
   badge?: string;
@@ -19,40 +19,74 @@ const t = useTranslations(lang);
 const popularLinks = await getPopularLinks(lang);
 
 const {
-  badge = t['hero.badge'],
-  title = t['hero.title'],
-  highlight = t['hero.highlight'],
-  description = t['hero.subtitle'],
-  primaryCta = { text: t['hero.getStarted'], href: "/docs/knowledge-center/overview" },
-  secondaryCta = { text: t['hero.learnMore'], href: "/docs/knowledge-center/overview" }
+  badge = t["hero.badge"],
+  title = t["hero.title"],
+  highlight = t["hero.highlight"],
+  description = t["hero.subtitle"],
+  primaryCta = {
+    text: t["hero.getStarted"],
+    href: "/docs/knowledge-center/overview",
+  },
+  secondaryCta = {
+    text: t["hero.learnMore"],
+    href: "/docs/knowledge-center/overview",
+  },
 } = Astro.props;
 ---
 
-<section class="min-h-[90vh] flex items-center justify-center relative overflow-hidden pt-20 bg-background">
+<section
+  class="min-h-[75vh] flex items-center justify-center relative overflow-hidden pt-20 bg-background"
+>
   <div class="absolute inset-0 z-0 opacity-40">
-     <div class="absolute top-[20%] left-[20%] w-[500px] h-[500px] bg-blue-900/40 rounded-full blur-[128px] animate-pulse"></div>
-     <div class="absolute bottom-[20%] right-[20%] w-[500px] h-[500px] bg-indigo-900/40 rounded-full blur-[128px] animate-pulse" style="animation-delay: 2s;"></div>
+    <div
+      class="absolute top-[20%] left-[20%] w-[500px] h-[500px] bg-blue-900/40 rounded-full blur-[128px] animate-pulse"
+    >
+    </div>
+    <div
+      class="absolute bottom-[20%] right-[20%] w-[500px] h-[500px] bg-indigo-900/40 rounded-full blur-[128px] animate-pulse"
+      style="animation-delay: 2s;"
+    >
+    </div>
   </div>
 
   <div class="container mx-auto px-6 relative z-10 text-center">
     <div class="hero-content opacity-0 translate-y-5">
-
-      <h1 class="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight mb-8 text-foreground">
-        {lang === 'ar' ? 'كيف أقدر أساعدك اليوم؟' : "What's the vibe today?"}
+      <h1
+        class="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight mb-8 text-foreground"
+      >
+        {lang === "ar" ? "كيف أقدر أساعدك اليوم؟" : "What's the vibe today?"}
       </h1>
 
-      
       <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-        <form class="w-full max-w-2xl relative" action={`/${lang}/ads`} method="get">
-          <input 
-            type="text" 
+        <form
+          class="w-full max-w-2xl relative"
+          action={`/${lang}/ads`}
+          method="get"
+        >
+          <input
+            type="text"
             name="q"
-            placeholder={lang === 'ar' ? 'ابحث هنا عن اللي تبيه...' : 'Search here...'}
+            placeholder={lang === "ar"
+              ? "ابحث هنا عن اللي تبيه..."
+              : "Search here..."}
             class="w-full h-14 pl-6 pr-14 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-primary text-lg"
           />
-          <button type="submit" class="absolute right-2 rtl:left-2 rtl:right-auto top-2 bottom-2 bg-primary hover:bg-primary-600 text-white w-10 rounded-full flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          <button
+            type="submit"
+            class="absolute right-2 rtl:left-2 rtl:right-auto top-2 bottom-2 bg-primary hover:bg-primary-600 text-white w-10 rounded-full flex items-center justify-center"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
             </svg>
           </button>
         </form>
