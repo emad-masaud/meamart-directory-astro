@@ -2,7 +2,7 @@ import { getCollection } from 'astro:content';
 
 export async function GET() {
   // Fetch all published ads from the "businesses" collection
-  const allAds = await getCollection('businesses', ({ data }) => {
+  const allAds = await getCollection('ads', ({ data }) => {
     return data.published === true;
   });
   // Sort by newest first (since id is a timestamp) and limit to 10 (BotSailor requirement for interactive lists)

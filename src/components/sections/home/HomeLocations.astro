@@ -38,7 +38,7 @@ if (ads.length === 0) {
   try {
     const { getCollection } = await import('astro:content');
     const categoriesJson = await import('~/data/categories.json');
-    const rawAds = await getCollection('businesses', ({ data }: any) => {
+    const rawAds = await getCollection('ads', ({ data }: any) => {
       return data.published === true;
     });
 

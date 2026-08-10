@@ -7,7 +7,7 @@ import { getCollection } from 'astro:content';
 export const GET: APIRoute = async (context) => {
   let catalogProducts: any[] = [];
   try {
-    const businesses = await getCollection('businesses');
+    const businesses = await getCollection('ads');
     const activeAds = businesses.filter((b: any) => b.data?.status !== 'sold');
 
     catalogProducts = activeAds.map(p => ({

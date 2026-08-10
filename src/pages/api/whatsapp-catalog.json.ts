@@ -10,7 +10,7 @@ import { getCollection } from 'astro:content';
 export const GET: APIRoute = async ({ url }) => {
   try {
     const origin = url.origin || 'https://meamart.com';
-    const businesses = await getCollection('businesses');
+    const businesses = await getCollection('ads');
     const ads = businesses.filter((b: any) => b.data?.status !== 'sold').slice(0, 500);
 
     const catalogItems = ads.map(ad => {

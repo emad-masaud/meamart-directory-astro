@@ -20,7 +20,7 @@ const isArabic = lang === "ar";
 const t = useTranslations(lang as keyof typeof languages);
 
 // Fetch all ads
-const businesses = await getCollection('businesses');
+const businesses = await getCollection('ads');
 const publishedAds = businesses.filter((b: any) => b.data?.published !== false);
 
 // Sort by date (newest first)

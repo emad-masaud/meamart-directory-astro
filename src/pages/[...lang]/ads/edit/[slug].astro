@@ -8,7 +8,7 @@ import { Icon } from "astro-icon/components";
 import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
-  const businesses = await getCollection('businesses');
+  const businesses = await getCollection('ads');
   const publishedAds = businesses.filter((b: any) => b.data?.published);
   return Object.keys(languages).flatMap((lang) => {
     return publishedAds.map((ad: any) => ({

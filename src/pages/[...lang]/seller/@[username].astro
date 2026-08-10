@@ -24,7 +24,7 @@ const { user } = Astro.props;
 const t = useTranslations(lang as any);
 const safeLang = (lang as any) || "ar";
 
-const allAds = await getCollection("businesses");
+const allAds = await getCollection("ads"));
 // Filter ads for this specific seller
 const sellerAds = allAds.filter(ad => ad.data.author_id === user.id && ad.data.published);
 ---

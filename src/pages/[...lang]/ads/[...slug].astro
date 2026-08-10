@@ -18,7 +18,7 @@ import { generateCustomQRCode } from '~/utils/qrcode';
 import { buildAdJsonLd } from '~/utils/schemaGenerator';
 
 export async function getStaticPaths() {
-  const businesses = await getCollection('businesses');
+  const businesses = await getCollection('ads');
   const publishedAds = businesses.filter((b: any) => b.data?.published);
   return Object.keys(languages).flatMap((lang) => {
     return publishedAds.map((ad: any) => ({
@@ -35,7 +35,7 @@ const isAr = lang === 'ar';
 let ad = null;
 
 try {
-  const businesses = await getCollection('businesses');
+  const businesses = await getCollection('ads');
   const business = businesses.find((a: any) => a.id === slug || a.data?.slug === slug);
   if (business && business.data?.published) {
     ad = {

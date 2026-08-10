@@ -22,7 +22,7 @@ let allAds: any[] = [];
 let allUsers: any[] = [];
 
 try {
-  const adsCollection = await getCollection("businesses");
+  const adsCollection = await getCollection("ads"));
   allAds = adsCollection.map((ad: any) => ({
     id: ad.id,
     title: ad.data?.title || "",

@@ -23,7 +23,7 @@ const seller = null;
 // Fetch products from businesses collection
 let rawProducts: any[] = [];
 try {
-  const businesses = await getCollection("businesses");
+  const businesses = await getCollection("ads"));
   rawProducts = businesses
     .filter((b: any) => b.data?.status !== "sold")
     .slice(0, 200);

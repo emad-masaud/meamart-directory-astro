@@ -26,7 +26,7 @@ if (!session) {
   return Astro.redirect(`/${lang}/login`);
 }
 
-const allAds = await getCollection("businesses");
+const allAds = await getCollection("ads"));
 const sellerAds = allAds.filter((ad: any) => 
   ad.data?.contactEmail === session.email || 
   ad.data?.contactName === session.name || 

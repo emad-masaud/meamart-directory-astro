@@ -6,7 +6,7 @@ import { getCollection } from "astro:content";
 import { Icon } from "astro-icon/components";
 
 export async function getStaticPaths() {
-  const businesses = await getCollection("businesses");
+  const businesses = await getCollection("ads"));
   
   const paths: any[] = [];
   businesses.forEach((business) => {
