@@ -134,10 +134,10 @@ try {
 >
   /** @type {NodeListOf<HTMLButtonElement>} */
   const deleteBtns = document.querySelectorAll('.delete-ad-btn');
-  const scriptEl = document.currentScript;
-  const confirmMsg = scriptEl?.dataset.confirm ?? 'Are you sure?';
-  const errorMsg = scriptEl?.dataset.error ?? 'Error:';
-  const unexpectedMsg = scriptEl?.dataset.unexpected ?? 'An unexpected error occurred.';
+  const scriptElDelete = document.currentScript;
+  const confirmMsg = scriptElDelete?.dataset.confirm ?? 'Are you sure?';
+  const errorMsg = scriptElDelete?.dataset.error ?? 'Error:';
+  const unexpectedMsg = scriptElDelete?.dataset.unexpected ?? 'An unexpected error occurred.';
 
   deleteBtns.forEach(btn => {
     /** @type {HTMLButtonElement} */
@@ -174,8 +174,8 @@ try {
 </script>
 
 <script data-copied={t['admin.ads.copied']}>
-  const scriptEl = document.currentScript;
-  const copiedMsg = scriptEl?.dataset.copied || 'Copied';
+  const scriptElCopy = document.currentScript;
+  const copiedMsg = scriptElCopy?.dataset.copied || 'Copied';
 
   document.querySelectorAll('.copy-id-btn').forEach(btn => {
     btn.addEventListener('click', () => {
