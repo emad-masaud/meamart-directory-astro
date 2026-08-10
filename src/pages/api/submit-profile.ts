@@ -1,7 +1,5 @@
 import type { APIRoute } from 'astro';
 import { R2Storage } from '~/lib/storage/r2';
-import fs from 'node:fs/promises';
-import path from 'node:path';
 
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
@@ -34,6 +32,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
     let avatarUrl = '';
     let headerUrl = '';
 
+    const userId = btoa(session.email).replace(/=/g, '').toLowerCase();
+
     // Upload logic if R2 is configured
     if (accountId && accessKeyId && secretAccessKey && bucketName) {
       const r2 = new R2Storage({
@@ -43,8 +43,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
         bucketName,
         publicDomain,
       });
-
-      const userId = btoa(session.email).replace(/=/g, '').toLowerCase();
 
       if (avatarFile && avatarFile.size > 0) {
         const ext = avatarFile.name.split('.').pop();
@@ -61,20 +59,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
       console.warn("R2 storage is not configured. Media files will not be uploaded.");
     }
 
-    // Save profile data locally (for development/static build)
-    const userId = btoa(session.email).replace(/=/g, '').toLowerCase();
-    const userFilePath = path.join(process.cwd(), 'src', 'data', 'users', `${userId}.json`);
-    
-    let existingData = {};
-    try {
-      const fileContent = await fs.readFile(userFilePath, 'utf-8');
-      existingData = JSON.parse(fileContent);
-    } catch (e) {
-      // File doesn't exist, create new
-    }
-
+    // Mock saving the profile data since Cloudflare Workers cannot use node:fs
     const newProfileData = {
-      ...existingData,
       id: userId,
       email: session.email,
       username,
@@ -86,9 +72,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
       ...(headerUrl && { header: headerUrl }),
       updatedAt: new Date().toISOString()
     };
-
-    await fs.mkdir(path.dirname(userFilePath), { recursive: true });
-    await fs.writeFile(userFilePath, JSON.stringify(newProfileData, null, 2));
+    
+    console.log("Mock saved profile data (Cannot use node:fs in Cloudflare Worker):", newProfileData);
 
     return new Response(JSON.stringify({ success: true, user: newProfileData }), {
       status: 200,
