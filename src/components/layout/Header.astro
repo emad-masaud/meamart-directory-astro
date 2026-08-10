@@ -326,7 +326,7 @@ const popularLinks = await getPopularLinks(lang);
       <!-- Primary Action Button (WhatsApp) -->
       {
         (() => {
-          const whatsappNum = activeConfig?.contact?.phone?.main?.replace(/[^0-9]/g, "") || "15559607109";
+          const whatsappNum = siteConfig?.contact?.phone?.main?.replace(/[^0-9]/g, "") || "15559607109";
           const whatsappUrl = `https://wa.me/${whatsappNum}?text=${encodeURIComponent(
             lang === "ar"
               ? "يا هلا، أبي أضيف إعلان"

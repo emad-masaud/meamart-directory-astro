@@ -336,7 +336,7 @@ const dir = isRtl(lang) ? "rtl" : "ltr";
             const session = JSON.parse(sessionStr);
             if (session && session.name) {
               const lang = document.documentElement.lang || "ar";
-              bottomCta.href = `/${lang}/ads/create`;
+              bottomCta.setAttribute('href', `/${lang}/ads/create`);
               bottomCta.removeAttribute('target'); // don't open in new tab
               bottomCta.className = "flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary/90 active:scale-95 transition-all";
             }
