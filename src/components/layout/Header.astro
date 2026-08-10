@@ -364,7 +364,7 @@ const popularLinks = await getPopularLinks(lang);
 
       <div class="md:hidden">
         <MobileMenu
-          client:idle
+          client:load
           links={links}
           currentPath={Astro.url.pathname}
           labels={{
@@ -414,7 +414,12 @@ const popularLinks = await getPopularLinks(lang);
             avatarImg.classList.remove("hidden");
             if (avatarInitials) avatarInitials.classList.add("hidden");
           } else if (avatarInitials) {
-            avatarInitials.textContent = session.name.charAt(0).toUpperCase();
+            const isArabic = /[\u0600-\u06FF]/.test(session.name);
+            let initial = session.name.charAt(0);
+            if (isArabic && session.email) {
+              initial = session.email.charAt(0);
+            }
+            avatarInitials.textContent = initial.toUpperCase();
             avatarInitials.classList.remove("hidden");
             if (avatarImg) avatarImg.classList.add("hidden");
           }

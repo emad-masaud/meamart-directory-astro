@@ -175,7 +175,7 @@ const dir = isRtl(lang) ? "rtl" : "ltr";
           <div class="h-16 flex items-center justify-around px-6">
             <div class="w-12 h-12"></div>
 
-            <!-- Center: Add Ad Action -->
+            <!-- Center: Dynamic Add Ad Action -->
             {
               (() => {
                 const whatsappNum = activeConfig.contact.phone.main.replace(
@@ -188,16 +188,27 @@ const dir = isRtl(lang) ? "rtl" : "ltr";
                     : "Hello, I want to post an ad",
                 )}`;
                 return (
-                  <a
-                    id="bottom-nav-cta"
-                    href={whatsappUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 active:scale-95 transition-all"
-                    aria-label="Post Ad"
-                  >
-                    <Icon name="lucide:plus" class="w-6 h-6" />
-                  </a>
+                  <>
+                    <a
+                      id="bottom-nav-whatsapp-btn"
+                      href={whatsappUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 active:scale-95 transition-all"
+                      aria-label="Post Ad via WhatsApp"
+                    >
+                      <Icon name="lucide:plus" class="w-6 h-6" />
+                    </a>
+                    
+                    <a
+                      id="bottom-nav-create-ad-btn"
+                      href={`/${lang}/ads/create`}
+                      class="hidden h-12 w-12 items-center justify-center rounded-full bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary/90 active:scale-95 transition-all"
+                      aria-label="Post Ad"
+                    >
+                      <Icon name="lucide:plus" class="w-6 h-6" />
+                    </a>
+                  </>
                 );
               })()
             }
@@ -217,6 +228,38 @@ const dir = isRtl(lang) ? "rtl" : "ltr";
     <!-- Global Alert Override -->
     <script>
       (function() {
+        // Mobile bottom nav auth check
+        function updateBottomNavAuthUI() {
+          const sessionStr = localStorage.getItem("meamart_session_active");
+          const createAdBtn = document.getElementById("bottom-nav-create-ad-btn");
+          const whatsappBtn = document.getElementById("bottom-nav-whatsapp-btn");
+
+          if (createAdBtn && whatsappBtn) {
+            if (sessionStr) {
+              try {
+                const session = JSON.parse(sessionStr);
+                if (session && session.name) {
+                  createAdBtn.classList.remove("hidden");
+                  createAdBtn.classList.add("flex");
+                  whatsappBtn.classList.add("hidden");
+                  whatsappBtn.classList.remove("flex");
+                  return;
+                }
+              } catch (e) {
+                console.error("Failed to parse session:", e);
+              }
+            }
+            // Fallback: not logged in
+            createAdBtn.classList.add("hidden");
+            createAdBtn.classList.remove("flex");
+            whatsappBtn.classList.remove("hidden");
+            whatsappBtn.classList.add("flex");
+          }
+        }
+
+        updateBottomNavAuthUI();
+        window.addEventListener("storage", updateBottomNavAuthUI);
+
         const originalAlert = window.alert;
         window.alert = function(message) {
           try {

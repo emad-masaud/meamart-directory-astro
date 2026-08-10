@@ -701,7 +701,6 @@ const cardLinks = rawLinks.filter(
                 const soc = detectSocialInfo(item.url, item.label);
                 return (
                   <a
-                    key={idx}
                     href={item.url}
                     target={item.url?.startsWith("http") ? "_blank" : "_self"}
                     rel="noopener noreferrer"
@@ -722,7 +721,7 @@ const cardLinks = rawLinks.filter(
           cardLinks.map((item: any, idx: number) => {
             if (item.isSection) {
               return (
-                <div key={idx} class="pt-5 pb-1 flex items-center gap-3">
+                <div class="pt-5 pb-1 flex items-center gap-3">
                   <div class="h-px flex-1 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
                   <h3
                     class="text-xs font-extrabold uppercase tracking-wider px-3 py-1 rounded-full bg-white/5 border border-white/10"
@@ -785,7 +784,6 @@ const cardLinks = rawLinks.filter(
 
               return item.url ? (
                 <a
-                  key={idx}
                   href={item.url}
                   target={item.url.startsWith("http") ? "_blank" : "_self"}
                   rel="noopener noreferrer"
@@ -795,7 +793,6 @@ const cardLinks = rawLinks.filter(
                 </a>
               ) : (
                 <div
-                  key={idx}
                   class={`block w-full ${cardRoundedClass} ${borderClass} ${cardBgClass} py-3.5 px-4`}
                 >
                   {content}
@@ -813,7 +810,6 @@ const cardLinks = rawLinks.filter(
 
             return (
               <a
-                key={idx}
                 href={item.url}
                 target={item.url?.startsWith("http") ? "_blank" : "_self"}
                 rel="noopener noreferrer"
