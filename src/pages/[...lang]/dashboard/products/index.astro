@@ -8,16 +8,43 @@ import { getLangFromUrl, useTranslations } from "~/i18n/utils";
 import DashboardSubNav from "~/components/dashboard/DashboardSubNav.astro";
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/catalog/ui/card';
 
+import { getCollection } from "astro:content";
+import { GoogleSheetsDatabase } from "~/lib/catalog/google-sheets";
+
 const lang = getLangFromUrl(Astro.url);
 const isRtl = lang === "ar";
 const t = useTranslations(lang);
 
 let session = Astro.locals.userSession;
 
-// Mock data / Empty State since ERPNext is replaced by JSON/Google Sheets
 let productsCount = 0;
 let products: any[] = [];
 let error = null;
+
+if (session) {
+  const users = await getCollection('users');
+  const userProfile = users.find((u: any) => u.data.email === session.email || u.data.username === session.id || u.id === session.id);
+  const googleSheetId = userProfile?.data.google_sheet_id;
+
+  if (googleSheetId) {
+    const clientEmail = import.meta.env.GOOGLE_CLIENT_EMAIL || process.env.GOOGLE_CLIENT_EMAIL;
+    const privateKey = import.meta.env.GOOGLE_PRIVATE_KEY || process.env.GOOGLE_PRIVATE_KEY;
+    
+    if (clientEmail && privateKey) {
+      try {
+        const db = new GoogleSheetsDatabase(googleSheetId, clientEmail, privateKey);
+        products = await db.getProducts();
+        productsCount = products.length;
+      } catch (err: any) {
+        error = err.message;
+      }
+    } else {
+      error = lang === 'ar' ? "مفاتيح Google API غير متوفرة في إعدادات الخادم." : "Google API keys are not configured on the server.";
+    }
+  } else {
+    error = lang === 'ar' ? "لم تقم بربط Google Sheet بملفك الشخصي بعد." : "You have not linked a Google Sheet to your profile yet.";
+  }
+}
 
 const title = lang === 'ar' ? "إدارة المنتجات" : "Manage Products";
 const description = lang === 'ar' ? "أضف وعدل منتجاتك المرتبطة بنظام المستودع و Google Sheets" : "Add and edit your products linked to Google Sheets";

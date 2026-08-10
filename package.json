@@ -19,6 +19,8 @@
     "@astrojs/react": "^6.0.0",
     "@astrojs/sitemap": "^3.7.0",
     "@astrojs/vue": "^7.0.0",
+    "@aws-sdk/client-s3": "^3.1107.0",
+    "@aws-sdk/s3-request-presigner": "^3.1107.0",
     "@fontsource-variable/dm-sans": "^5.2.5",
     "@fontsource-variable/eb-garamond": "^5.2.5",
     "@fontsource-variable/gabarito": "^5.2.5",
