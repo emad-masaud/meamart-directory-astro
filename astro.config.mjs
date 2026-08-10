@@ -7,7 +7,6 @@ import icon from 'astro-icon';
 import sitemap from '@astrojs/sitemap';
 import { ViteToml } from 'vite-plugin-toml';
 import tailwindcss from '@tailwindcss/vite';
-import remarkEmoji from 'remark-emoji';
 
 import cloudflare from '@astrojs/cloudflare';
 
@@ -16,9 +15,6 @@ export default defineConfig({
   output: "server",
   adapter: cloudflare(),
   site: "https://meamart.com",
-  markdown: {
-    remarkPlugins: [remarkEmoji],
-  },
   integrations: [
     vue(),
     react(),
