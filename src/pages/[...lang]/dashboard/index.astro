@@ -2,262 +2,131 @@
 import Layout from "~/layouts/Layout.astro";
 import Container from "~/components/ui/Container.astro";
 import PageHeader from "~/components/layout/PageHeader.astro";
-import AdminNavTabs from "~/components/admin/AdminNavTabs.astro";
-import { parseAdminSession } from "~/utils/session";
-import { createSupabaseAdminServerClient } from "~/utils/supabase";
+import DashboardSubNav from "~/components/dashboard/DashboardSubNav.astro";
 import { defaultLang } from "~/i18n/ui";
-import { useTranslations } from "~/i18n/utils";
+import { useTranslations, getLangFromUrl } from "~/i18n/utils";
+
 export const prerender = false;
 
-const { lang = defaultLang } = Astro.params;
+const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
+const isRtl = lang === "ar";
 
-const session = await parseAdminSession(Astro.cookies, Astro.locals);
-if (!session || !session.is_admin) {
-  return Astro.redirect(`/${lang}/admin-login`);
-}
+// Mock Session & Data
+const session = Astro.locals.userSession || {
+  name: "Seller User",
+  email: "seller@example.com",
+  phone: "123456789",
+  username: "seller123"
+};
 
-let allAds: any[] = [];
-let allUsers: any[] = [];
+const sellerAds: any[] = [];
+const sellerProducts: any[] = [];
+const sellerAddresses: any[] = [];
+const needsPhoneVerification = false;
 
-try {
-  const supabase = createSupabaseAdminServerClient({ locals: Astro.locals });
-  const { data: sbAds } = await supabase.from("ads").select("*");
-  const { data: sbUsers } = await supabase.from("profiles").select("*");
+const activeAdsCount = 0;
+const expiredAdsCount = 0;
+const featuredAdsCount = 0;
 
-  if (sbAds) {
-    allAds = sbAds.map((ad: any) => ({
-      id: ad.id,
-      title: ad.title || "",
-      price: ad.price || 0,
-      currency: ad.currency || "SAR",
-      adData: {
-        listing_status: ad.status || "active",
-      },
-    }));
-  }
-  if (sbUsers) {
-    allUsers = sbUsers;
-  }
-} catch (e) {
-  console.error("Failed to fetch Supabase admin data:", e);
-}
-
-const activeAdsCount = allAds.filter(
-  (ad) => ad.adData?.listing_status === "active",
-).length;
-const expiredAdsCount = allAds.filter(
-  (ad) => ad.adData?.listing_status === "expired",
-).length;
+const headerTitle = t["seller.dashboard.header.title"] || "لوحة التحكم";
+const headerSubtitle = (t["seller.dashboard.header.subtitle"] || "مرحباً بك {name}").replace("{name}", session.name || "");
 ---
 
-<Layout title="Admin Dashboard | MeaMart" description="MeaMart Admin Dashboard">
-  <PageHeader
-    title={t["admin.dashboard.title"]}
-    description={t["admin.dashboard.desc"]}
-  />
+<Layout title={headerTitle} description={headerSubtitle}>
+  <PageHeader title={headerTitle} description={headerSubtitle} />
 
-  <Container class="pb-24 max-w-full">
-    <AdminNavTabs lang={lang} activeTab="dashboard" />
-
-    <!-- Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-      <div
-        class="rounded-3xl border border-zinc-200/50 bg-white/40 p-6 backdrop-blur-md dark:border-zinc-800/50 dark:bg-zinc-900/40"
-      >
-        <div class="flex items-center justify-between">
+  {needsPhoneVerification ? (
+    <div class="max-w-7xl mx-auto mb-6 px-4">
+      <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-900/30 dark:bg-amber-900/10">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p class="text-sm font-semibold text-zinc-500 dark:text-zinc-400">
-              {t["admin.dashboard.stat.total_ads"]}
+            <p class="font-semibold">{t["seller.dashboard.header.verified"]}</p>
+            <p class="text-xs text-amber-700/80 mt-1">
+              {t["seller.dashboard.phoneWarning.body"]}
             </p>
-            <h4 class="mt-2 text-3xl font-extrabold">{allAds.length}</h4>
           </div>
-          <div
-            class="p-3 bg-primary/10 rounded-full text-primary text-sm font-extrabold"
-          >
-            AD
+          <div class="flex flex-wrap gap-2">
+            <a href="/api/auth/logout" class="px-3 py-2 rounded-md text-sm font-semibold text-amber-800 bg-amber-100 hover:bg-amber-200">
+              {t["seller.dashboard.actions.logout"] || "تسجيل الخروج"}
+            </a>
+            <a href={`/${lang}/ads/create`} class="px-3 py-2 rounded-md text-sm font-semibold bg-primary text-white hover:bg-primary/90">
+              {t["seller.dashboard.actions.create"] || "إنشاء إعلان"}
+            </a>
           </div>
         </div>
       </div>
+    </div>
+  ) : null}
 
-      <div
-        class="rounded-3xl border border-zinc-200/50 bg-white/40 p-6 backdrop-blur-md dark:border-zinc-800/50 dark:bg-zinc-900/40"
-      >
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm font-semibold text-zinc-500 dark:text-zinc-400">
-              {t["admin.dashboard.stat.total_users"]}
-            </p>
-            <h4 class="mt-2 text-3xl font-extrabold">{allUsers.length}</h4>
+  <Container class="pb-20 max-w-7xl">
+    <div class="mb-8 flex flex-col items-center justify-between gap-6 rounded-3xl border border-zinc-200/50 bg-white/40 p-6 backdrop-blur-md dark:border-zinc-800/50 dark:bg-zinc-900/40 md:flex-row">
+      <div class="flex items-center gap-4">
+        <div class="h-16 w-16 rounded-full overflow-hidden bg-primary/10 shadow-md shrink-0 flex items-center justify-center">
+          <div class="text-2xl font-bold text-primary">
+            {session.name?.charAt(0).toUpperCase()}
           </div>
-          <div
-            class="p-3 bg-blue-500/10 rounded-full text-blue-500 text-sm font-extrabold"
-          >
-            US
-          </div>
+        </div>
+
+        <div class={`space-y-1 ${isRtl ? "text-center md:text-end" : "text-center md:text-start"}`}>
+          <h3 class="text-lg font-bold text-zinc-900 dark:text-zinc-50">{session.name}</h3>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400">{session.phone}</p>
+          <p class="text-xs text-zinc-400 dark:text-zinc-500">{session.email}</p>
         </div>
       </div>
 
-      <div
-        class="rounded-3xl border border-zinc-200/50 bg-white/40 p-6 backdrop-blur-md dark:border-zinc-800/50 dark:bg-zinc-900/40"
-      >
+      <div class="flex flex-wrap items-center gap-2 w-full md:w-auto justify-end">
+        <a href={`/${lang}/@${session.username}`} class="flex-1 sm:flex-initial rounded-full px-4 py-2.5 text-xs font-bold border border-zinc-200 dark:border-zinc-800 text-emerald-600 border-emerald-500/30 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 text-center">
+          {t["seller.dashboard.nav.storePage"] || "صفحة المتجر"}
+        </a>
+        <a href={`/${lang}/dashboard/qr-manager`} class="flex-1 sm:flex-initial rounded-full px-4 py-2.5 text-xs font-bold border border-zinc-200 dark:border-zinc-800 text-primary border-primary/30 hover:bg-primary/5 text-center">
+          {t["seller.subnav.qr"] || "إدارة الباركود"}
+        </a>
+        <a href={`/${lang}/dashboard/profile`} class="flex-1 sm:flex-initial rounded-full px-4 py-2.5 text-xs font-bold border border-zinc-200 dark:border-zinc-800 text-violet-600 border-violet-500/30 hover:bg-violet-50 dark:hover:bg-violet-900/20 text-center">
+          {t["seller.dashboard.nav.storeSettings"] || "إعدادات المتجر"}
+        </a>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-8">
+      <div class="group relative overflow-hidden rounded-3xl border border-zinc-200/50 bg-white/40 p-6 backdrop-blur-md transition-all duration-300 hover:shadow-lg dark:border-zinc-800/50 dark:bg-zinc-900/40">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-semibold text-zinc-500 dark:text-zinc-400">
-              {t["admin.dashboard.stat.active_ads"]}
-            </p>
-            <h4 class="mt-2 text-3xl font-extrabold">{activeAdsCount}</h4>
+            <p class="text-sm font-semibold text-zinc-500 dark:text-zinc-400">{t["seller.dashboard.stats.active"] || "نشط"}</p>
+            <h4 class="mt-2 text-3xl font-extrabold text-zinc-900 dark:text-zinc-50">{activeAdsCount}</h4>
           </div>
-          <div
-            class="p-3 bg-emerald-500/10 rounded-full text-emerald-500 text-sm font-extrabold"
-          >
-            ON
+        </div>
+      </div>
+      <div class="group relative overflow-hidden rounded-3xl border border-zinc-200/50 bg-white/40 p-6 backdrop-blur-md transition-all duration-300 hover:shadow-lg dark:border-zinc-800/50 dark:bg-zinc-900/40">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-semibold text-zinc-500 dark:text-zinc-400">{t["seller.dashboard.stats.expired"] || "منتهي"}</p>
+            <h4 class="mt-2 text-3xl font-extrabold text-zinc-900 dark:text-zinc-50">{expiredAdsCount}</h4>
+          </div>
+        </div>
+      </div>
+      <div class="group relative overflow-hidden rounded-3xl border border-zinc-200/50 bg-white/40 p-6 backdrop-blur-md transition-all duration-300 hover:shadow-lg dark:border-zinc-800/50 dark:bg-zinc-900/40">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-semibold text-zinc-500 dark:text-zinc-400">{t["seller.dashboard.stats.featured"] || "مميز"}</p>
+            <h4 class="mt-2 text-3xl font-extrabold text-zinc-900 dark:text-zinc-50">{featuredAdsCount}</h4>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- الروابط المركزية -->
-    <div
-      class="rounded-3xl border border-zinc-200/50 bg-white/40 p-6 backdrop-blur-md dark:border-zinc-800/50 dark:bg-zinc-900/40"
-    >
-      <h3 class="text-lg font-extrabold mb-4 text-zinc-900 dark:text-white">
-        {t["admin.dashboard.links.title"]}
-      </h3>
-      <div class="overflow-x-auto">
-        <table class="w-full text-sm">
-          <thead
-            class="text-xs text-zinc-500 uppercase bg-zinc-50/50 dark:bg-zinc-800/50"
-          >
-            <tr>
-              <th class="px-4 py-3 text-start"
-                >{t["admin.dashboard.links.col.desc"]}</th
-              >
-              <th class="px-4 py-3 text-start"
-                >{t["admin.dashboard.links.col.url"]}</th
-              >
-              <th class="px-4 py-3 text-center"
-                >{t["admin.dashboard.links.col.action"]}</th
-              >
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
-            {
-              [
-                {
-                  label: "robots.txt",
-                  desc: t["admin.dashboard.links.robots"],
-                  path: "/robots.txt",
-                },
-                {
-                  label: "Sitemap XML",
-                  desc: t["admin.dashboard.links.sitemap"],
-                  path: "/sitemap-index.xml",
-                },
-                {
-                  label: "RSS Feed",
-                  desc: t["admin.dashboard.links.rss"],
-                  path: "/rss.xml",
-                },
-                {
-                  label: "Bot Info API",
-                  desc: t["admin.dashboard.links.bot_info"],
-                  path: "/api/ads/bot-info",
-                },
-                {
-                  label: "Product Info API",
-                  desc: t["admin.dashboard.links.product_info"],
-                  path: "/api/products/product-info",
-                },
-                {
-                  label: "Products API",
-                  desc: t["admin.dashboard.links.products_api"],
-                  path: "/api/v1/products",
-                },
-                {
-                  label: "Export JSON",
-                  desc: t["admin.dashboard.links.export_json"],
-                  path: "/api/seller/export-json",
-                },
-              ].map((link) => (
-                <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
-                  <td class="px-4 py-3">
-                    <div class="font-bold text-zinc-900 dark:text-white text-xs">
-                      {link.label}
-                    </div>
-                    <div class="text-[11px] text-zinc-500">{link.desc}</div>
-                  </td>
-                  <td class="px-4 py-3">
-                    <code class="text-[11px] font-mono text-primary bg-primary/5 px-2 py-1 rounded-lg break-all">
-                      {link.path}
-                    </code>
-                  </td>
-                  <td class="px-4 py-3 text-center">
-                    <div class="flex items-center justify-center gap-1">
-                      <a
-                        href={link.path}
-                        target="_blank"
-                        class="p-1.5 text-zinc-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
-                        title="Open"
-                      >
-                        <svg
-                          class="w-3.5 h-3.5"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                          />
-                        </svg>
-                      </a>
-                      <button
-                        class="copy-link-btn p-1.5 text-zinc-400 hover:text-emerald-500 hover:bg-emerald-500/10 rounded-lg transition-colors"
-                        data-path={link.path}
-                        title="Copy full URL"
-                      >
-                        <svg
-                          class="w-3.5 h-3.5"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            }
-          </tbody>
-        </table>
-      </div>
+    <DashboardSubNav
+      lang={lang}
+      activeTab="ads"
+      productsCount={sellerProducts.length}
+    />
+
+    <div class="mt-16 text-center p-12 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-3xl bg-white/40 dark:bg-zinc-900/40">
+      <h3 class="text-lg font-bold text-zinc-900 dark:text-zinc-50">لا توجد إعلانات</h3>
+      <p class="mt-2 text-sm text-zinc-500 dark:text-zinc-400">ابدأ بإنشاء إعلانك الأول ليظهر هنا.</p>
+      <a href={`/${lang}/ads/create`} class="mt-4 inline-block bg-primary hover:bg-primary/90 text-white rounded-full px-6 py-2 shadow-md">
+        إنشاء إعلان
+      </a>
     </div>
   </Container>
 </Layout>
-
-<script>
-  document.querySelectorAll(".copy-link-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const path = btn.getAttribute("data-path");
-      if (path) {
-        const fullUrl = window.location.origin + path;
-        navigator.clipboard.writeText(fullUrl).then(() => {
-          btn.classList.add("text-emerald-500");
-          setTimeout(() => {
-            btn.classList.remove("text-emerald-500");
-          }, 1200);
-        });
-      }
-    });
-  });
-</script>
