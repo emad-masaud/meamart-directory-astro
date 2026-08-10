@@ -329,7 +329,7 @@ export default function ProductFilters({ products, lang, sellerResolved = false 
                 className="group relative rounded-3xl border border-zinc-200/50 bg-white/45 p-4 shadow-xs backdrop-blur-md dark:border-zinc-800/50 dark:bg-zinc-900/45 overflow-hidden transition duration-300 hover:-translate-y-1 hover:shadow-md hover:border-zinc-300 dark:hover:border-zinc-700 flex flex-col justify-between h-full"
               >
                 <div>
-                  <div className="relative aspect-square w-full rounded-full overflow-hidden bg-zinc-100 dark:bg-zinc-850 mb-4">
+                  <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-zinc-100 dark:bg-zinc-850 mb-4">
                     <img 
                       src={p.image} 
                       alt={p.name} 
