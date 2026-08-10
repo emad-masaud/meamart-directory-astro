@@ -30,6 +30,9 @@ export default defineConfig({
     // @ts-ignore - ignore tailwindcss vite plugin type mismatch
     plugins: [tailwindcss(), ViteToml()]
   },
+  experimental: {
+    session: true,
+  },
   env: {
     schema: {
       POSTHOG_API_KEY: envField.string({ context: "client", access: "public", optional: true }),
