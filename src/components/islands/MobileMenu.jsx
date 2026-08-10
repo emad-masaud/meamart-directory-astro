@@ -254,9 +254,11 @@ export default function MobileMenu({
                 )}
 
                 <a 
-                  href={`/${lang}/ads/create`}
+                  href={activeSession ? `/${lang}/seller/dashboard` : `https://wa.me/15559607109?text=${encodeURIComponent(lang === 'ar' ? 'يا هلا، أبي أضيف إعلان' : 'Hello, I want to post an ad')}`}
+                  target={activeSession ? "_self" : "_blank"}
+                  rel={activeSession ? "" : "noopener noreferrer"}
                   onClick={() => setIsOpen(false)}
-                  className="w-full py-3 px-4 bg-primary text-white text-center font-bold rounded-xl hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/25 flex items-center justify-center gap-2"
+                  className={`w-full py-3 px-4 text-white text-center font-bold rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 ${activeSession ? 'bg-primary hover:bg-primary/90 hover:shadow-primary/25' : 'bg-emerald-500 hover:bg-emerald-600 hover:shadow-emerald-500/25'}`}
                 >
                   {labels.getStarted}
                 </a>
