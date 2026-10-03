@@ -107,7 +107,7 @@ const popularLinks = await getPopularLinks(lang);
           href={`/${lang}/seller/profile`}
           class="underline underline-offset-4 hover:text-amber-900 dark:hover:text-amber-200 font-bold"
         >
-          {lang === "ar" ? "ØªØ­Ø¯ÙŠØ« Ø§Ù„Ø¢Ù†" : "Update Now"}
+          {t["header.update_now"]}
         </a>
       </div>
     )
@@ -151,7 +151,7 @@ const popularLinks = await getPopularLinks(lang);
       <div class="hidden md:flex flex-col items-start justify-center">
         <span class="font-bold leading-tight text-lg">{t["brand.name"] || siteConfig.name}</span>
         <span class="text-[11px] text-muted-foreground/80 leading-tight mt-0.5 font-medium">
-          {lang === "ar" ? "طلباتك أوامر" : "Your Wishes Are Commands"}
+          {t["footer.wishes"]}
         </span>
       </div>
     </a>
@@ -282,10 +282,7 @@ const popularLinks = await getPopularLinks(lang);
           >
             <Icon name="lucide:qr-code" class="w-4 h-4 text-primary" />
             <span
-              >{
-                t["seller.subnav.qr"] ||
-                  (lang === "ar" ? "Ø§Ù„Ø¨Ø§Ø±ÙƒÙˆØ¯ ÙˆØ§Ù„Ø±Ø§Ø¨Ø· Ø§Ù„Ù…ÙˆØ­Ø¯" : "QR & Bio Link")
-              }</span
+              >{t["seller.subnav.qr"] || t["header.qr_bio_link"]}</span
             >
           </a>
 
