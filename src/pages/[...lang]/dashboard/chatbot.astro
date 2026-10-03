@@ -24,12 +24,8 @@ const session = Astro.locals.userSession || {
   <Container>
     <div class="py-8">
       <PageHeader
-        title={lang === "ar"
-          ? "محرر البوت الذكي"
-          : "Smart Bot Editor"}
-        description={lang === "ar"
-          ? "إدارة ردود البوت التلقائية ومتابعة المحادثات وتجهيز الويبهوك"
-          : "Manage bot auto-replies, track conversations and setup webhook"}
+        title={t('auto.smart_bot_editor')}
+        description={t('auto.manage_bot_auto_repl')}
       />
 
       <DashboardSubNav lang={lang} activeTab="chatbot" />

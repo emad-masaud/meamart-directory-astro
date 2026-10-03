@@ -59,7 +59,7 @@ const description = t["catalog.workspaces.desc"] || "Manage your product catalog
         <div class="flex items-center gap-3">
           <a href={`/${lang}/seller/workspaces/ai`} class="bg-purple-100 hover:bg-purple-200 text-purple-700 dark:bg-purple-900/30 dark:hover:bg-purple-900/50 dark:text-purple-300 rounded-full px-6 py-2 shadow-sm transition-colors flex items-center gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-            {lang === 'ar' ? 'مساعد AI' : 'AI Writer'}
+            {t('auto.ai_writer')}
           </a>
           <a href={`/${lang}/seller/workspaces/create`} class="bg-primary hover:bg-primary/90 text-white rounded-full px-6 py-2 shadow-md transition-colors">
             + {t["catalog.workspace.new"]}
@@ -98,7 +98,7 @@ const description = t["catalog.workspaces.desc"] || "Manage your product catalog
                       {(ws.product_codes || []).length} منتج
                     </span>
                     <a href={`/${lang}/c/${ws.slug}`} target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-300 font-medium transition-colors">
-                      {lang === 'ar' ? 'عرض الكتالوج' : 'View Catalog'}
+                      {t('auto.view_catalog')}
                     </a>
                   </div>
                 </CardContent>

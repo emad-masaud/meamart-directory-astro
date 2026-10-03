@@ -23,7 +23,13 @@ export default function HeroChatAssistant({ lang }: Props) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  const t = ui[lang as keyof typeof ui] || ui['en'];
+  const t = (key: string) => {
+    const l = lang || 'en';
+    const translations = ui[l as keyof typeof ui] || ui['en'];
+    return (translations as any)[key] || `{${key}}`;
+  };
+
+  
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -132,7 +138,7 @@ export default function HeroChatAssistant({ lang }: Props) {
       >
         <Plus className="w-6 h-6 text-zinc-500 dark:text-zinc-400 mr-4" />
         <span className="flex-1 text-left text-zinc-500 dark:text-zinc-400 text-lg font-medium">
-          {lang === 'ar' ? 'اسأل المساعد...' : 'Ask Assistant'}
+          {t('auto.ask_assistant')}
         </span>
         <div className="flex items-center gap-4 text-zinc-500 dark:text-zinc-400 ml-4">
           <Mic className="w-5 h-5 hover:text-zinc-800 dark:hover:text-white transition-colors cursor-pointer" />
@@ -152,7 +158,7 @@ export default function HeroChatAssistant({ lang }: Props) {
                 </div>
                 <div className="text-start">
                   <h3 className="font-bold text-zinc-900 dark:text-white leading-tight">
-                    {lang === 'ar' ? 'مساعد ميمارت' : 'MeaMart Assistant'}
+                    {t('auto.meamart_assistant')}
                   </h3>
                   <div className="flex items-center gap-1.5 mt-0.5">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -241,7 +247,7 @@ export default function HeroChatAssistant({ lang }: Props) {
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder={lang === 'ar' ? 'اكتب رسالتك هنا...' : 'Type your message...'}
+                  placeholder={t('auto.type_your_message')}
                   className="w-full resize-none rounded-2xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 py-3.5 px-4 pr-12 text-sm outline-hidden focus:border-primary focus:ring-1 focus:ring-primary dark:text-white transition-all min-h-[52px] max-h-[150px]"
                   rows={1}
                   dir="auto"

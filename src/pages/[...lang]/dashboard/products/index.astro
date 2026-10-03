@@ -69,10 +69,10 @@ const description = lang === 'ar' ? "أضف وعدل منتجاتك المرتب
         <div class="flex gap-2">
           <button class="bg-emerald-600 hover:bg-emerald-700 text-white rounded-full px-6 py-2 shadow-md flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-            {lang === 'ar' ? 'مزامنة مع Google Sheets' : 'Sync with Google Sheets'}
+            {t('auto.sync_with_google_she')}
           </button>
           <a href={`/${lang}/dashboard/products/create`} class="bg-primary hover:bg-primary/90 text-white rounded-full px-6 py-2 shadow-md text-center">
-            + {lang === 'ar' ? 'إضافة منتج جديد' : 'Add New Product'}
+            + {t('auto.add_new_product')}
           </a>
         </div>
       </div>
@@ -85,8 +85,8 @@ const description = lang === 'ar' ? "أضف وعدل منتجاتك المرتب
 
       {products.length === 0 && !error ? (
         <div class="text-center p-12 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-3xl bg-white/40 dark:bg-zinc-900/40 shadow-xs backdrop-blur-md mt-8">
-          <h3 class="text-lg font-bold text-zinc-900 dark:text-zinc-50">{lang === 'ar' ? 'لا توجد منتجات' : 'No Products'}</h3>
-          <p class="mt-2 text-sm text-zinc-500 dark:text-zinc-400">{lang === 'ar' ? 'قم بإضافة منتجك الأول ليرتبط بنظام Google Sheets.' : 'Add your first product to link it with Google Sheets.'}</p>
+          <h3 class="text-lg font-bold text-zinc-900 dark:text-zinc-50">{t('auto.no_products')}</h3>
+          <p class="mt-2 text-sm text-zinc-500 dark:text-zinc-400">{t('auto.add_your_first_produ')}</p>
         </div>
       ) : (
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">

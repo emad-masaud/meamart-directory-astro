@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { ui } from "~/i18n/ui";
 import QRCode from 'qrcode';
 import { Camera } from 'lucide-react';
 
@@ -216,6 +217,12 @@ function detectSocialIcon(url = '', label = ''): { icon: React.ReactNode; name: 
 }
 
 export default function SellerQrManagerClient({ lang = 'ar' }: { lang?: string }) {
+  const t = (key: string) => {
+    const l = lang || 'en';
+    const translations = ui[l as keyof typeof ui] || ui['en'];
+    return (translations as any)[key] || `{${key}}`;
+  };
+
   const [links, setLinks] = useState<QrLink[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -1655,7 +1662,7 @@ export default function SellerQrManagerClient({ lang = 'ar' }: { lang?: string }
                     }`}
                   >
                     <span>✍️</span>
-                    <span>{lang === 'ar' ? 'تعديل المحتوى' : 'Edit Content'}</span>
+                    <span>{t('auto.edit_content')}</span>
                   </button>
                   <button
                     type="button"
@@ -1667,7 +1674,7 @@ export default function SellerQrManagerClient({ lang = 'ar' }: { lang?: string }
                     }`}
                   >
                     <span>📱</span>
-                    <span>{lang === 'ar' ? 'المعاينة الحية' : 'Live Preview'}</span>
+                    <span>{t('auto.live_preview')}</span>
                   </button>
                 </div>
 
@@ -1794,7 +1801,7 @@ export default function SellerQrManagerClient({ lang = 'ar' }: { lang?: string }
                               <div className="flex items-center gap-1">
                                 <input
                                   type="text"
-                                  placeholder={lang === 'ar' ? "أيقونة أو رابط صورة" : "Icon / Image URL"}
+                                  placeholder={t('auto.icon_image_url')}
                                   value={item.icon || ''}
                                   onChange={e => {
                                     const val = e.target.value;
@@ -1806,7 +1813,7 @@ export default function SellerQrManagerClient({ lang = 'ar' }: { lang?: string }
                                   }}
                                   className="w-24 rounded-full border border-emerald-500/30 bg-white px-2.5 py-1.5 text-xs font-medium dark:bg-zinc-950 dark:text-zinc-100"
                                 />
-                                <label className="cursor-pointer bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 p-1.5 rounded-full border border-emerald-500/20 transition text-xs flex items-center justify-center shrink-0" title={lang === 'ar' ? 'رفع صورة أيقونة مخصصة' : 'Upload custom image icon'}>
+                                <label className="cursor-pointer bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 p-1.5 rounded-full border border-emerald-500/20 transition text-xs flex items-center justify-center shrink-0" title={t('auto.upload_custom_image_')}>
                                   <span>🖼️</span>
                                   <input
                                     type="file"
@@ -1873,7 +1880,7 @@ export default function SellerQrManagerClient({ lang = 'ar' }: { lang?: string }
                             <div className="flex items-center gap-1 shrink-0">
                               <input
                                 type="text"
-                                placeholder={lang === 'ar' ? "أيقونة" : "Icon"}
+                                placeholder={t('auto.icon')}
                                 value={item.icon || ''}
                                 onChange={e => {
                                   const val = e.target.value;
@@ -1885,7 +1892,7 @@ export default function SellerQrManagerClient({ lang = 'ar' }: { lang?: string }
                                 }}
                                 className="w-14 rounded-full border border-zinc-200 bg-white px-1.5 py-1.5 text-xs font-bold dark:border-zinc-800 dark:bg-zinc-950 text-center"
                               />
-                              <label className="cursor-pointer bg-primary/10 hover:bg-primary/20 text-primary p-1.5 rounded-full border border-primary/20 transition text-xs flex items-center justify-center shrink-0" title={lang === 'ar' ? 'رفع صورة أيقونة' : 'Upload image icon'}>
+                              <label className="cursor-pointer bg-primary/10 hover:bg-primary/20 text-primary p-1.5 rounded-full border border-primary/20 transition text-xs flex items-center justify-center shrink-0" title={t('auto.upload_image_icon')}>
                                 <span>🖼️</span>
                                 <input
                                   type="file"

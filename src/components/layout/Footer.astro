@@ -83,7 +83,7 @@ const t = useTranslations(lang);
         <span>{(t['footer.copyright'] || '').replace('{year}', today.getFullYear().toString())}</span>
         <span class="hidden sm:inline text-foreground/20">|</span>
         <span class="flex items-center gap-1.5">
-          {lang === 'ar' ? 'بني بحب عن طريق ميتشات' : 'Built with love by'} 
+          {t('auto.built_with_love_by')} 
           <a href="https://meachat.com" target="_blank" rel="noopener noreferrer" class="font-semibold hover:text-primary transition-colors text-foreground">
             Meachat.LLC
           </a>

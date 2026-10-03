@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { ui } from "~/i18n/ui";
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, User, LogOut, LayoutGrid, LogIn, Sun, Moon, ShoppingBag, QrCode } from 'lucide-react';
 import * as Icons from 'lucide-react';
@@ -16,6 +17,11 @@ export default function MobileMenu({
   availableLangs = null,
   children
 }) {
+  const t = (key) => {
+    const l = lang || 'en';
+    const translations = ui[l] || ui['en'];
+    return translations[key] || `{${key}}`;
+  };
   const [isOpen, setIsOpen] = useState(false);
   const [activeSession, setActiveSession] = useState(userSession);
 
@@ -169,7 +175,7 @@ export default function MobileMenu({
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">{lang === 'ar' ? 'مرحباً بك' : 'Welcome'}</p>
+                        <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">{t('auto.welcome')}</p>
                         <p className="text-sm font-bold text-zinc-800 dark:text-zinc-200 truncate">{activeSession.name}</p>
                       </div>
                     </div>
@@ -182,7 +188,7 @@ export default function MobileMenu({
                         className="flex items-center justify-center gap-2 py-2.5 text-xs font-bold rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"
                       >
                         <LayoutGrid className="w-4 h-4 text-primary" />
-                        <span>{lang === 'ar' ? 'إعلاناتي' : 'My Ads'}</span>
+                        <span>{t('auto.my_ads')}</span>
                       </a>
                       <a 
                         href={`/${lang}/seller/products`} 
@@ -190,7 +196,7 @@ export default function MobileMenu({
                         className="flex items-center justify-center gap-2 py-2.5 text-xs font-bold rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"
                       >
                         <ShoppingBag className="w-4 h-4 text-primary" />
-                        <span>{lang === 'ar' ? 'منتجاتي' : 'My Products'}</span>
+                        <span>{t('auto.my_products')}</span>
                       </a>
                       <a 
                         href={`/${lang}/seller/addresses`} 
@@ -198,7 +204,7 @@ export default function MobileMenu({
                         className="flex items-center justify-center gap-2 py-2.5 text-xs font-bold rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"
                       >
                         <Icons.MapPin className="w-4 h-4 text-primary" />
-                        <span>{lang === 'ar' ? 'عناويني' : 'My Addresses'}</span>
+                        <span>{t('auto.my_addresses')}</span>
                       </a>
                       <a 
                         href={`/${lang}/seller/profile`} 
@@ -206,7 +212,7 @@ export default function MobileMenu({
                         className="flex items-center justify-center gap-2 py-2.5 text-xs font-bold rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"
                       >
                         <User className="w-4 h-4 text-primary" />
-                        <span>{lang === 'ar' ? 'الملف الشخصي' : 'My Profile'}</span>
+                        <span>{t('auto.my_profile')}</span>
                       </a>
                       <a 
                         href={`/${lang}/seller/qr-manager`} 
@@ -214,7 +220,7 @@ export default function MobileMenu({
                         className="flex items-center justify-center gap-2 py-2.5 text-xs font-bold rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors col-span-2"
                       >
                         <QrCode className="w-4 h-4 text-primary" />
-                        <span>{lang === 'ar' ? 'الباركود والرابط الموحد' : 'QR & Bio Link'}</span>
+                        <span>{t('auto.qr_bio_link')}</span>
                       </a>
                     </div>
                     {activeSession.is_admin && (
@@ -224,7 +230,7 @@ export default function MobileMenu({
                         className="flex items-center justify-center gap-2 py-2.5 text-xs font-bold rounded-xl border border-primary/20 bg-primary/5 text-primary hover:bg-primary/10 transition-colors w-full"
                       >
                         <User className="w-4 h-4" />
-                        <span>{lang === 'ar' ? 'لوحة تحكم الإدارة' : 'Admin Dashboard'}</span>
+                        <span>{t('auto.admin_dashboard')}</span>
                       </a>
                     )}
 
@@ -237,7 +243,7 @@ export default function MobileMenu({
                       className="flex items-center justify-center gap-2 w-full py-2.5 text-xs font-bold rounded-xl bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 hover:bg-red-100/50 dark:hover:bg-red-950/45 transition-colors"
                     >
                       <LogOut className="w-4 h-4" />
-                      <span>{lang === 'ar' ? 'تسجيل الخروج' : 'Sign Out'}</span>
+                      <span>{t('auto.sign_out')}</span>
                     </a>
                   </div>
                 ) : (
@@ -248,7 +254,7 @@ export default function MobileMenu({
                       className="w-full py-3 px-4 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 text-center font-bold rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-all flex items-center justify-center gap-2"
                     >
                       <LogIn className="w-4 h-4" />
-                      <span>{lang === 'ar' ? 'تسجيل الدخول' : 'Sign In'}</span>
+                      <span>{t('auto.sign_in')}</span>
                     </a>
                   </div>
                 )}

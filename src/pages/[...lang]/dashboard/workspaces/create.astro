@@ -69,7 +69,7 @@ const title = lang === 'ar' ? "إنشاء كتالوج جديد" : "Create New C
       <div class="mb-6 flex items-center justify-between">
         <a href={`/${lang}/seller/workspaces`} class="text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 flex items-center gap-2">
           <svg class={`w-5 h-5 ${rtl ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-          {lang === 'ar' ? 'عودة للمساحات' : 'Back to Workspaces'}
+          {t('auto.back_to_workspaces')}
         </a>
       </div>
 
@@ -84,31 +84,31 @@ const title = lang === 'ar' ? "إنشاء كتالوج جديد" : "Create New C
           <form method="POST" class="space-y-6">
             <div class="space-y-4">
               <div>
-                <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">{lang === 'ar' ? 'اسم الكتالوج' : 'Catalog Name'}</label>
-                <input type="text" name="name" required placeholder={lang === 'ar' ? 'مثال: عروض الصيف' : 'e.g., Summer Sale'} class="w-full flex h-10 px-3 py-2 text-sm border border-zinc-200 dark:border-zinc-800 bg-transparent rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary" />
+                <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">{t('auto.catalog_name')}</label>
+                <input type="text" name="name" required placeholder={t('auto.e_g_summer_sale')} class="w-full flex h-10 px-3 py-2 text-sm border border-zinc-200 dark:border-zinc-800 bg-transparent rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary" />
               </div>
               
               <div>
-                <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">{lang === 'ar' ? 'رابط الكتالوج (Slug)' : 'Catalog Link (Slug)'}</label>
+                <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">{t('auto.catalog_link_slug')}</label>
                 <div class="flex items-center">
                   <span class="text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-3 py-2 border border-zinc-200 dark:border-zinc-700 rounded-l-xl text-sm h-10 flex items-center" dir="ltr">meamart.com/c/</span>
                   <input type="text" name="slug" required placeholder="summer-sale" class="flex-1 flex h-10 px-3 py-2 text-sm border border-l-0 border-zinc-200 dark:border-zinc-800 bg-transparent rounded-r-xl rounded-l-none text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary" dir="ltr" />
                 </div>
-                <p class="text-xs text-zinc-500 mt-1">{lang === 'ar' ? 'يجب أن يكون باللغة الإنجليزية وبدون مسافات' : 'Must be in English, no spaces'}</p>
+                <p class="text-xs text-zinc-500 mt-1">{t('auto.must_be_in_english_n')}</p>
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">{lang === 'ar' ? 'الوصف (اختياري)' : 'Description (Optional)'}</label>
+                <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">{t('auto.description_optional')}</label>
                 <textarea name="description" rows="3" class="w-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-transparent px-3 py-2 text-sm placeholder:text-zinc-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50"></textarea>
               </div>
             </div>
 
             <div class="pt-6 border-t border-zinc-100 dark:border-zinc-800">
-              <h3 class="text-lg font-bold text-zinc-900 dark:text-zinc-50 mb-4">{lang === 'ar' ? 'تحديد المنتجات' : 'Select Products'}</h3>
+              <h3 class="text-lg font-bold text-zinc-900 dark:text-zinc-50 mb-4">{t('auto.select_products')}</h3>
               
               {products.length === 0 ? (
                 <div class="p-6 text-center text-zinc-500 bg-zinc-50 dark:bg-zinc-800/50 rounded-2xl">
-                  {lang === 'ar' ? 'لا يوجد لديك منتجات مضافة حالياً. الكتالوج سيكون فارغاً.' : 'You have no products yet. The catalog will be empty.'}
+                  {t('auto.you_have_no_products')}
                 </div>
               ) : (
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-96 overflow-y-auto p-1">
@@ -132,7 +132,7 @@ const title = lang === 'ar' ? "إنشاء كتالوج جديد" : "Create New C
 
             <div class="pt-6">
               <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-white rounded-xl py-6 text-lg font-bold shadow-lg shadow-primary/20">
-                {lang === 'ar' ? 'إنشاء الكتالوج' : 'Create Catalog'}
+                {t('auto.create_catalog')}
               </Button>
             </div>
           </form>

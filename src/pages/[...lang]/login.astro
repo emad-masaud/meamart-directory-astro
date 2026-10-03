@@ -26,18 +26,18 @@ if (Astro.locals.userSession || Astro.cookies.get('meamart_session')?.value) {
 }
 ---
 
-<Layout title={lang === 'ar' ? "تسجيل الدخول - ميمارت" : "Login - MeaMart"} description={lang === 'ar' ? "تسجيل الدخول إلى حسابك" : "Login to your account"}>
-  <PageHeader title={lang === 'ar' ? "تسجيل الدخول" : "Sign In"} description={lang === 'ar' ? "قم بتسجيل الدخول للوصول إلى لوحة التحكم الخاصة بك." : "Sign in to access your dashboard."} />
+<Layout title={t('auto.login_meamart')} description={t('auto.login_to_your_accoun')}>
+  <PageHeader title={t('auto.sign_in')} description={t('auto.sign_in_to_access_yo')} />
 
   <Container class="pb-24 pt-8 max-w-md">
     <LoginTabsClient 
       client:load
-      signinLabel={lang === 'ar' ? "تسجيل الدخول" : "Sign In"}
-      registerLabel={lang === 'ar' ? "تسجيل حساب جديد" : "Register"}
-      signinDesc={lang === 'ar' ? "ادخل بياناتك للدخول إلى حسابك" : "Enter your credentials to sign in"}
-      registerDesc={lang === 'ar' ? "انشئ حساب جديد للبدء" : "Create a new account to get started"}
-      googleBtn={lang === 'ar' ? "تسجيل الدخول باستخدام جوجل" : "Sign in with Google"}
-      googleRegister={lang === 'ar' ? "انشاء حساب باستخدام جوجل" : "Register with Google"}
+      signinLabel={t('auto.sign_in')}
+      registerLabel={t('auto.register')}
+      signinDesc={t('auto.enter_your_credentia')}
+      registerDesc={t('auto.create_a_new_account')}
+      googleBtn={t('auto.sign_in_with_google')}
+      googleRegister={t('auto.register_with_google')}
       googleClientId={googleClientId}
       lang={lang}
     />

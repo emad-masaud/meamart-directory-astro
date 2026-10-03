@@ -9,12 +9,19 @@ export function getLangFromUrl(url: URL) {
 export function useTranslations(lang: string | undefined) {
   const translations = (lang && lang in ui ? ui[lang as keyof typeof ui] : ui[defaultLang]) as typeof ui[typeof defaultLang];
 
-  return new Proxy(translations, {
+  const tFn = function(key: string) {
+    if (key in translations) {
+      return translations[key as keyof typeof translations];
+    }
+    return `{${key}}`;
+  };
+
+  return new Proxy(tFn, {
     get(target, prop) {
-      if (prop in target) {
-        return target[prop as keyof typeof target];
+      if (prop in translations) {
+        return translations[prop as keyof typeof translations];
       }
-      return `{${String(prop)}}`;
+      return target[prop as keyof typeof target] || `{${String(prop)}}`;
     }
   });
 }
